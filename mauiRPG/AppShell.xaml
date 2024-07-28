@@ -6,9 +6,29 @@
     xmlns:local="clr-namespace:mauiRPG"
     xmlns:models="clr-namespace:mauiRPG.Models"
     xmlns:views="clr-namespace:mauiRPG.Views"
-    Shell.FlyoutBehavior="Disabled"
+    Shell.FlyoutBehavior="Flyout"
     Title="mauiRPG">
-
+    <Shell.FlyoutHeader>
+        <Grid BackgroundColor="#2196F3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Label Text="Welcome to mauiRPG"
+                   FontSize="Large"
+                   TextColor="White"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   Margin="0,20" />
+            <Label Text="Choose your character"
+                   FontSize="Medium"
+                   TextColor="White"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   Margin="0,20"
+                   Grid.Row="1" />
+        </Grid>
+    </Shell.FlyoutHeader>
     <Shell.MenuBarItems>
         <MenuBarItem Text="File">
             <MenuFlyoutItem Text="Exit"
