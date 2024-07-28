@@ -9,7 +9,7 @@
     Shell.FlyoutBehavior="Disabled"
     Title="mauiRPG">
 
-    <Shell.MenuBarItems>
+<Shell.MenuBarItems>
         <MenuBarItem Text="File">
             <MenuFlyoutItem Text="Exit"
                             Command="{Binding ExitCommand}" />
@@ -40,10 +40,8 @@
             <MenuFlyoutItem Text="Change Theme"
                             Command="{Binding ChangeThemeCommand}" />
         </MenuBarItem>
-    </Shell.MenuBarItems>
-
+</Shell.MenuBarItems>
         <TabBar>
-
         <ShellContent
         Title="Home"
         ContentTemplate="{DataTemplate local:MainPage}"
@@ -52,5 +50,9 @@
         Title="Character Select"
         ContentTemplate="{DataTemplate views:CharacterSelect}"
         Route="Character Select" />
+        <ShellContent
+            Title="Level Select"
+            ContentTemplate="{DataTemplate views:LevelSelectView}"
+            Route="level Select" />
     </TabBar>
 </Shell>
