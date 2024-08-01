@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Windows.Input;
 using mauiRPG.Models;
+using mauiRPG.Views;
 
 namespace mauiRPG.ViewModels;
 
@@ -39,12 +40,12 @@ public class StageSelectViewModel
         };
     }
 
-    private void OnLevelSelected(Level level)
+    private async void OnLevelSelected(Level level)
     {
         if (level.IsUnlocked)
         {
             // Navigate to the selected level
-            Console.WriteLine($"Starting Level {level.Number}: {level.Name}");
+            await Application.Current.MainPage.Navigation.PushAsync(new LevelPage(level));
         }
         else
         {

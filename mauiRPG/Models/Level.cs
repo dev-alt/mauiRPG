@@ -12,5 +12,6 @@ namespace mauiRPG.Models
         public string Name { get; set; }
         public bool IsUnlocked { get; set; }
         public string ImageSource { get; set; }
+        public Level(){}
     }
 }

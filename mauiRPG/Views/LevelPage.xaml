@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="mauiRPG.Views.LevelPage"
+             xmlns:local="clr-namespace:mauiRPG.ViewModels"
+             Title="LevelPage">
+    <StackLayout Padding="10">
+        <Image Source="{Binding Level.ImageSource}" Aspect="AspectFill" />
+        <Label Text="{Binding Level.Name}" FontSize="24" FontAttributes="Bold" />
+        <Label Text="{Binding Level.Number}" FontSize="18" />
+        <Label Text="{Binding Level.IsUnlocked, StringFormat='Status: {0}'}" FontSize="18" />
+    </StackLayout>
+</ContentPage>
