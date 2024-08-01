@@ -5,6 +5,7 @@ public partial class CharacterSelect : ContentPage
 	public CharacterSelect()
 	{
 		InitializeComponent();
+
 	}
 
 
