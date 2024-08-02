@@ -2,65 +2,30 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="mauiRPG.Views.CharacterSelect"
-             Title="CharacterSelect">
+             Title="Create Your Character">
 
-<VerticalStackLayout>
-        <Label 
-            Text="Create a new character"
-            VerticalOptions="Center" 
-            FontSize="Large" 
-            HorizontalOptions="Center" />
+    <ScrollView>
+        <VerticalStackLayout Spacing="25" Padding="30,0" VerticalOptions="Center">
 
-    <StackLayout Padding="20">
+            <Entry x:Name="NameEntry" 
+                   Text="{Binding Name}" 
+                   Placeholder="Enter character name" />
 
-            <Label Text="Choose your character's race:" 
-                   FontSize="Large" 
-                   HorizontalOptions="Center" 
-                   Margin="0,0,0,20"/>
-            <Entry x:Name="TextEditor"
-                    Placeholder="Enter your name"
-                    HeightRequest="50" 
-                    WidthRequest="100"
-                    />
+            <Picker Title="Select Race"
+                    ItemsSource="{Binding Races}"
+                    ItemDisplayBinding="{Binding RaceName}"
+                    SelectedItem="{Binding SelectedRace}" />
 
+            <Picker Title="Select Class"
+                    ItemsSource="{Binding Classes}"
+                    ItemDisplayBinding="{Binding ClassName}"
+                    SelectedItem="{Binding SelectedClass}" />
 
-        <HorizontalStackLayout HorizontalOptions="Center" Spacing="10">
+            <Button Text="Create Character"
+                    Command="{Binding CreateCharacterCommand}"
+                    HorizontalOptions="Center" />
 
-            <Button
-                x:Name="SelectOrcBtn"
-                Text="Orc" 
-                SemanticProperties.Hint="Counts the number of times you click"
-                Clicked="SelectOrcBtn_OnClicked"
-                HorizontalOptions="Fill" />
-            <Button
-                x:Name="SelectElfBtn"
-                Text="Elf" 
-                SemanticProperties.Hint="Counts the number of times you click"
-                Clicked="SelectElfBtn_OnClicked"
-                HorizontalOptions="Fill" />
-            <Button
-                x:Name="SelectHumanBtn"
-                Text="Human" 
-                SemanticProperties.Hint="Counts the number of times you click"
-                Clicked="SelectHumanBtn_OnClicked"
-                HorizontalOptions="Fill" />
-            <Button
-                x:Name="SelectDwarfBtn"
-                Text="Dwarf" 
-                SemanticProperties.Hint="Counts the number of times you click"
-                Clicked="SelectDwarfBtn_OnClicked"
-                HorizontalOptions="Fill" />
-        </HorizontalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
 
-        <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Margin="0,60,0,0">
-            <Button Text="◀" Command="{Binding PreviousClassCommand}" WidthRequest="50"/>
-            <Label Text="{Binding CurrentClass}" WidthRequest="100" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
-            <Button Text="▶" Command="{Binding NextClassCommand}" WidthRequest="50"/>
-        </StackLayout>
-            <Image Source="{Binding CharacterImage}" HeightRequest="300" WidthRequest="300" Aspect="AspectFit"/>
-            <Button Text="Confirm Character" Command="{Binding ConfirmCharacterCommand}" HorizontalOptions="Center"/>
-    </StackLayout>
-
-</VerticalStackLayout>
 </ContentPage>
-    

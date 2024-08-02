@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="mauiRPG.Views.LevelSelectView"
              Title="Select Level">
+
     <CollectionView ItemsSource="{Binding Levels}"
                     SelectionMode="Single">
         <CollectionView.ItemTemplate>

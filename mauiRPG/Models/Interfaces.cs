@@ -24,6 +24,5 @@ namespace mauiRPG.Models
     {
         string ClassName { get; }
         void LevelUp(ICharacter character);
-        void PerformSpecialAbility(ICharacter character);
     }
 }

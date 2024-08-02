@@ -24,6 +24,7 @@ namespace mauiRPG.ViewModels
         public LevelDetailsViewModel(Level level)
         {
             Level = level;
+            _level = level;
         }
         public event PropertyChangedEventHandler? PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)

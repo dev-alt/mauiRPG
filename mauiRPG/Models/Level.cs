@@ -9,9 +9,17 @@ namespace mauiRPG.Models
     public class Level
     {
         public int Number { get; set; }
-        public string Name { get; set; }
+        public required string Name { get; set; }
         public bool IsUnlocked { get; set; }
-        public string ImageSource { get; set; }
-        public Level(){}
+        public required string ImageSource { get; set; }
+        public Level(string name, string imageSource)
+        {
+            Name = name;
+            ImageSource = imageSource;
+        }
+
+        public Level()
+        {
+        }
     }
 }

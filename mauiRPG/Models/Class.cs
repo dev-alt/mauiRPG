@@ -6,23 +6,21 @@ using System.Threading.Tasks;
 
 namespace mauiRPG.Models
 {
-    abstract class Class : IClass
+    public class Warrior : IClass
     {
-        public string ClassName { get; }
-
+        public string ClassName => "Warrior";
         public void LevelUp(ICharacter character)
         {
-
         }
 
-        public void PerformSpecialAbility(ICharacter character)
-        {
-
-        }
     }
-
-    internal class Mage : Class
+    public class Mage : IClass
     {
-
+        public string ClassName => "Mage";
+        public void LevelUp(ICharacter character)
+        {
+        }
     }
+
+
 }

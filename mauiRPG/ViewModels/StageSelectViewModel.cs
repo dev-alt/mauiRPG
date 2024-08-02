@@ -8,7 +8,7 @@ namespace mauiRPG.ViewModels;
 
 public class StageSelectViewModel
 {
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     private ObservableCollection<Level> _levels;
 
@@ -25,6 +25,7 @@ public class StageSelectViewModel
 
     public StageSelectViewModel()
     {
+        _levels = new ObservableCollection<Level>();
         InitializeLevels();
         SelectLevelCommand = new Command<Level>(OnLevelSelected);
     }
@@ -33,19 +34,25 @@ public class StageSelectViewModel
     {
         Levels = new ObservableCollection<Level>
         {
-            new Level { Number = 1, Name = "The Beginning", IsUnlocked = true, ImageSource = "level1.png" },
-            new Level { Number = 2, Name = "Dark Forest", IsUnlocked = true, ImageSource = "level2.png" },
-            new Level { Number = 3, Name = "Mystic Mountains", IsUnlocked = false, ImageSource = "level3.png" },
-            // Add more levels as needed
+            new() { Number = 1, Name = "The Beginning", IsUnlocked = true, ImageSource = "level1.png" },
+            new() { Number = 2, Name = "Dark Forest", IsUnlocked = true, ImageSource = "level2.png" },
+            new() { Number = 3, Name = "Mystic Mountains", IsUnlocked = false, ImageSource = "level3.png" },
         };
     }
 
-    private async void OnLevelSelected(Level level)
+    private static async void OnLevelSelected(Level level)
     {
         if (level.IsUnlocked)
         {
-            // Navigate to the selected level
-            await Application.Current.MainPage.Navigation.PushAsync(new LevelPage(level));
+            var mainPage = Application.Current?.MainPage;
+            if (mainPage != null)
+            {
+                await mainPage.Navigation.PushAsync(new LevelPage(level));
+            }
+            else
+            {
+                Console.WriteLine("MainPage is null!");
+            }
         }
         else
         {
