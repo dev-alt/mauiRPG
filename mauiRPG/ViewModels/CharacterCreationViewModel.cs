@@ -108,14 +108,7 @@ namespace mauiRPG.ViewModels
             _gameStateService.CurrentPlayer = player;
 
             // Ensure player.Name is not null
-            if (player.Name != null)
-            {
-                _logger.LogInformation("Character created and set as CurrentPlayer: {PlayerName}", player.Name);
-            }
-            else
-            {
-                _logger.LogWarning("Character created but player name is null.");
-            }
+            _logger.LogInformation("Character created and set as CurrentPlayer: {PlayerName}", player.Name);
 
             await Application.Current.MainPage.DisplayAlert("Success", "Character successfully created.", "OK");
 
