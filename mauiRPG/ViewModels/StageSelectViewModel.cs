@@ -2,16 +2,17 @@
 using System.ComponentModel;
 using System.Windows.Input;
 using mauiRPG.Models;
+using mauiRPG.Services;
 using mauiRPG.Views;
 
 namespace mauiRPG.ViewModels;
 
 public class StageSelectViewModel
 {
+    private readonly GameStateService _gameStateService;
+    private Player _currentPlayer;
     public event PropertyChangedEventHandler? PropertyChanged;
-
     private ObservableCollection<Level> _levels;
-
     public ObservableCollection<Level> Levels
     {
         get => _levels;
@@ -21,13 +22,25 @@ public class StageSelectViewModel
             OnPropertyChanged(nameof(Levels));
         }
     }
-    public ICommand SelectLevelCommand { get; private set; }
-
-    public StageSelectViewModel()
+    public Player CurrentPlayer
     {
+        get => _currentPlayer;
+        set
+        {
+            _currentPlayer = value;
+            OnPropertyChanged(nameof(CurrentPlayer));
+        }
+    }
+    public ICommand SelectLevelCommand { get; private set; }
+    public ICommand ViewPlayerInfoCommand { get; private set; }
+    public StageSelectViewModel(GameStateService gameStateService)
+    {
+        _gameStateService = gameStateService;
+        CurrentPlayer = _gameStateService.CurrentPlayer;
         _levels = new ObservableCollection<Level>();
         InitializeLevels();
         SelectLevelCommand = new Command<Level>(OnLevelSelected);
+        ViewPlayerInfoCommand = new Command(OnViewPlayerInfo);
     }
 
     private void InitializeLevels()
@@ -39,26 +52,41 @@ public class StageSelectViewModel
             new() { Number = 3, Name = "Mystic Mountains", IsUnlocked = false, ImageSource = "level3.png" },
         };
     }
-
-    private static async void OnLevelSelected(Level level)
+    private async void OnViewPlayerInfo()
     {
-        if (level.IsUnlocked)
+        Console.WriteLine("OnViewPlayerInfo called");
+        if (CurrentPlayer != null)
         {
-            var mainPage = Application.Current?.MainPage;
-            if (mainPage != null)
+            try
             {
-                await mainPage.Navigation.PushAsync(new LevelPage(level));
+                var playerJson = System.Text.Json.JsonSerializer.Serialize(CurrentPlayer);
+                await Shell.Current.GoToAsync($"{nameof(PlayerInfoView)}?CurrentPlayer={Uri.EscapeDataString(playerJson)}");
             }
-            else
+            catch (Exception ex)
             {
-                Console.WriteLine("MainPage is null!");
+                Console.WriteLine($"Error serializing player: {ex.Message}");
+                await Application.Current.MainPage.DisplayAlert("Error", "Unable to view player information", "OK");
             }
         }
         else
         {
-            Console.WriteLine($"Level {level.Number} is locked!");
+            await Application.Current.MainPage.DisplayAlert("Error", "No player information available", "OK");
         }
     }
+
+    private async void OnLevelSelected(Level level)
+    {
+        Console.WriteLine($"OnLevelSelected called with level: {level.Name}");
+        if (level.IsUnlocked)
+        {
+            await Shell.Current.GoToAsync($"{nameof(LevelPage)}?levelNumber={level.Number}");
+        }
+        else
+        {
+            await Application.Current.MainPage.DisplayAlert("Locked", $"Level {level.Number} is locked!", "OK");
+        }
+    }
+
 
     protected virtual void OnPropertyChanged(string propertyName)
     {

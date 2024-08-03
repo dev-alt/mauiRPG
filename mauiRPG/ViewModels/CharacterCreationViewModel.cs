@@ -14,10 +14,11 @@ namespace mauiRPG.ViewModels
 {
     internal class CharacterCreationViewModel : INotifyPropertyChanged
     {
+        private readonly CharacterService _characterService;
         private string _name = "Default Name";
         private IRace _selectedRace = new Human { RaceName = "Human" };
         private IClass _selectedClass = new Mage();
-
+        private readonly GameStateService _gameStateService;
         public string Name
         {
             get => _name;
@@ -53,8 +54,10 @@ namespace mauiRPG.ViewModels
         public ObservableCollection<IClass> Classes { get; }
 
         public ICommand CreateCharacterCommand { get; }
-        public CharacterCreationViewModel()
+        public CharacterCreationViewModel(CharacterService characterService, GameStateService gameStateService)
         {
+            _gameStateService = gameStateService;
+            _characterService = characterService;
             Races = new ObservableCollection<IRace>
             {
                 new Orc { RaceName = "Orc" },
@@ -85,7 +88,9 @@ namespace mauiRPG.ViewModels
             {
                 Name = Name,
                 Race = SelectedRace,
+                RaceName = SelectedRace.RaceName,
                 Class = SelectedClass,
+                ClassName = SelectedClass.ClassName,
                 Level = 1,
                 Health = 100,
                 Strength = 10 + SelectedRace.StrengthBonus,
@@ -93,9 +98,12 @@ namespace mauiRPG.ViewModels
                 Dexterity = 10,
                 Constitution = 10
             };
+
+            _characterService.SaveCharacter(player);
+
             await Application.Current?.MainPage?.DisplayAlert("Success", "Character successfully created.", "OK")!;
 
-            await Shell.Current.GoToAsync("///level Select");
+            await Shell.Current.GoToAsync("LevelSelectView");
 
         }
 

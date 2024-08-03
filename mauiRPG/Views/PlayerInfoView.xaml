@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="mauiRPG.Views.PlayerInfoView"
+             Title="Player Info">
+
+    <StackLayout Padding="20">
+        <Label Text="{Binding Name}" FontSize="Large" FontAttributes="Bold" />
+        <Label Text="{Binding Race.RaceName, StringFormat='Race: {0}'}" />
+        <Label Text="{Binding Class.ClassName, StringFormat='Class: {0}'}" />
+        <Label Text="{Binding Level, StringFormat='Level: {0}'}" />
+        <Label Text="{Binding Health, StringFormat='Health: {0}'}" />
+        <Label Text="{Binding Strength, StringFormat='Strength: {0}'}" />
+        <Label Text="{Binding Intelligence, StringFormat='Intelligence: {0}'}" />
+        <Label Text="{Binding Dexterity, StringFormat='Dexterity: {0}'}" />
+        <Label Text="{Binding Constitution, StringFormat='Constitution: {0}'}" />
+    </StackLayout>
+
+</ContentPage>

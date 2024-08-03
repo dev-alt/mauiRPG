@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using mauiRPG.Services;
+using mauiRPG.ViewModels;
+using mauiRPG.Views;
+using Microsoft.Extensions.Logging;
 
 namespace mauiRPG
 {
@@ -14,9 +17,14 @@ namespace mauiRPG
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
+            builder.Services.AddSingleton<CharacterService>();
+            builder.Services.AddSingleton<GameStateService>();
+            builder.Services.AddTransient<CharacterSelect>();
+            builder.Services.AddTransient<LevelSelectView>();
+            builder.Services.AddTransient<StageSelectViewModel>();
 
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
 
             return builder.Build();

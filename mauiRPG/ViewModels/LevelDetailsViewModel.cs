@@ -8,7 +8,7 @@ using mauiRPG.Models;
 
 namespace mauiRPG.ViewModels
 {
-    internal class LevelDetailsViewModel : INotifyPropertyChanged
+    public class LevelDetailsViewModel : INotifyPropertyChanged
     {
         private Level _level;
 
@@ -21,16 +21,17 @@ namespace mauiRPG.ViewModels
                 OnPropertyChanged(nameof(Level));
             }
         }
+
         public LevelDetailsViewModel(Level level)
         {
             Level = level;
-            _level = level;
         }
-        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-
 }
