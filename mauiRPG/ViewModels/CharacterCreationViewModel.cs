@@ -36,7 +36,7 @@ namespace mauiRPG.ViewModels
 
         public Race SelectedRace
         {
-            get => (Race)_selectedRace;
+            get => _selectedRace;
             set
             {
                 _selectedRace = value;
@@ -66,18 +66,19 @@ namespace mauiRPG.ViewModels
 
             Races = new ObservableCollection<Race>
             {
-                new Orc { },
-                new Human {},
-                new Dwarf { },
-                new Elf {  }
+                new Orc(),
+                new Human(),
+                new Dwarf(),
+                new Elf()
             };
+
 
             Classes = new ObservableCollection<Class>
             {
                 new Class { },
             };
 
-
+            SelectedRace = Races[0];
             CreateCharacterCommand = new Command(CreateCharacter);
 
             _logger.LogInformation("CharacterCreationViewModel initialized");

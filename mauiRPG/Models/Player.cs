@@ -9,6 +9,7 @@ namespace mauiRPG.Models
     public class Player : Character
     {
         public required Race Race { get; set; }
+
         public required Class Class { get; set; }
 
     }

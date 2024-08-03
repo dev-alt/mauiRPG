@@ -13,7 +13,7 @@
 
             <Picker Title="Select Race"
                     ItemsSource="{Binding Races}"
-                    ItemDisplayBinding="{Binding RaceName}"
+                    ItemDisplayBinding="{Binding .}"
                     SelectedItem="{Binding SelectedRace}" />
 
             <Picker Title="Select Class"
