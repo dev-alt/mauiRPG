@@ -19,6 +19,11 @@ namespace mauiRPG.ViewModels
         private readonly GameStateService _gameStateService;
         private readonly ILogger<CharacterCreationViewModel> _logger;
 
+        public ObservableCollection<Race> Races { get; }
+        public ObservableCollection<Class> Classes { get; }
+        public ICommand CreateCharacterCommand { get; }
+        public event PropertyChangedEventHandler? PropertyChanged;
+
         private string _name = "Default Name";
         private Race _selectedRace = null!;
         private Class _selectedClass = null!;
@@ -54,10 +59,7 @@ namespace mauiRPG.ViewModels
             }
         }
 
-        public ObservableCollection<Race> Races { get; }
-        public ObservableCollection<Class> Classes { get; }
 
-        public ICommand CreateCharacterCommand { get; }
         public CharacterCreationViewModel(CharacterService characterService, GameStateService gameStateService, ILogger<CharacterCreationViewModel> logger)
         {
             _characterService = characterService;
@@ -86,7 +88,7 @@ namespace mauiRPG.ViewModels
         private async void CreateCharacter()
         {
             // Validate the inputs
-            if (string.IsNullOrWhiteSpace(Name) || SelectedRace == null || SelectedClass == null)
+            if (string.IsNullOrWhiteSpace(Name))
             {
                 await Application.Current?.MainPage?.DisplayAlert("Error", "Please enter a valid name, and select a race and class.", "OK")!;
                 return;
@@ -111,14 +113,13 @@ namespace mauiRPG.ViewModels
             // Ensure player.Name is not null
             _logger.LogInformation("Character created and set as CurrentPlayer: {PlayerName}", player.Name);
 
-            await Application.Current.MainPage.DisplayAlert("Success", "Character successfully created.", "OK");
+            if (Application.Current != null)
+                if (Application.Current.MainPage != null)
+                    await Application.Current.MainPage.DisplayAlert("Success", "Character successfully created.", "OK");
 
             await Shell.Current.GoToAsync($"{nameof(LevelSelectView)}");
         }
-
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
+        
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
