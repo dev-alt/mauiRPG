@@ -7,7 +7,7 @@ namespace mauiRPG.Views
     [QueryProperty(nameof(PlayerJson), "PlayerJson")]
     public partial class PlayerInfoView : ContentPage
     {
-        private string playerJson;
+        private string playerJson = null!;
         public string PlayerJson
         {
             get => playerJson;

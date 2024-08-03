@@ -6,7 +6,7 @@ namespace mauiRPG.ViewModels
 {
     public class PlayerInfoViewModel : INotifyPropertyChanged
     {
-        private Player _player;
+        private Player _player = null!;
 
         public Player Player
         {
@@ -43,7 +43,7 @@ namespace mauiRPG.ViewModels
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null!)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

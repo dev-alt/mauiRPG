@@ -10,7 +10,7 @@ namespace mauiRPG.ViewModels
 {
     public class LevelDetailsViewModel : INotifyPropertyChanged
     {
-        private Level _level;
+        private Level _level = null!;
 
         public Level Level
         {

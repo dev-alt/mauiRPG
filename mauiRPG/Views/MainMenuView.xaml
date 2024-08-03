@@ -7,46 +7,39 @@
         Spacing="25" 
         Padding="30,0" 
         VerticalOptions="Center">
-
         <Image
             Source="dotnet_bot.png"
             SemanticProperties.Description="Cute dot net bot waving hi to you!"
             HeightRequest="200"
             HorizontalOptions="Center" />
-
         <Label 
             Text="Welcome to mauiRPG"
             SemanticProperties.HeadingLevel="Level1"
             FontSize="32"
             HorizontalOptions="Center" />
-
         <Button 
             x:Name="CreateNewCharacterButton"
             Text="Create New Character"
             SemanticProperties.Hint="Creates a new character"
             Clicked="OnCreateNewCharacterClicked"
             HorizontalOptions="Center" />
-
         <Button 
             x:Name="LoadCharacterButton"
             Text="Load Character"
             SemanticProperties.Hint="Loads an existing character"
             Clicked="OnLoadCharacterClicked"
             HorizontalOptions="Center" />
-
         <Button 
             x:Name="SettingsButton"
             Text="Settings"
             SemanticProperties.Hint="Opens the settings page"
             Clicked="OnSettingsClicked"
             HorizontalOptions="Center" />
-
         <Button 
             x:Name="ExitButton"
             Text="Exit"
             SemanticProperties.Hint="Exits the application"
             Clicked="OnExitClicked"
             HorizontalOptions="Center" />
-
     </VerticalStackLayout>
 </ContentPage>

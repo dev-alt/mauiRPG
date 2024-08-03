@@ -13,7 +13,7 @@ namespace mauiRPG.ViewModels
     {
         private readonly GameStateService _gameStateService;
         private readonly ILogger<StageSelectViewModel> _logger;
-        private Player _currentPlayer;
+        private Player _currentPlayer = null!;
         private ObservableCollection<Level> _levels;
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -47,10 +47,10 @@ namespace mauiRPG.ViewModels
             _logger = logger;
 
             _logger.LogInformation("StageSelectViewModel constructor called");
-            _logger.LogInformation("GameStateService is {GameStateServiceStatus}", _gameStateService == null ? "null" : "not null");
+            _logger.LogInformation("GameStateService is {GameStateServiceStatus}", "not null");
 
             CurrentPlayer = _gameStateService.CurrentPlayer;
-            _logger.LogInformation("CurrentPlayer is {CurrentPlayerStatus}", CurrentPlayer == null ? "null" : $"set to {CurrentPlayer.Name}");
+            _logger.LogInformation("CurrentPlayer is {CurrentPlayerStatus}", $"set to {CurrentPlayer.Name}");
 
             _levels = new ObservableCollection<Level>();
             InitializeLevels();
@@ -73,27 +73,19 @@ namespace mauiRPG.ViewModels
         private async void OnViewPlayerInfo()
         {
             _logger.LogInformation("OnViewPlayerInfo called");
-            _logger.LogInformation("GameStateService is {GameStateServiceStatus}", _gameStateService == null ? "null" : "not null");
-            _logger.LogInformation("CurrentPlayer is {CurrentPlayerStatus}", _gameStateService.CurrentPlayer == null ? "null" : $"set to {_gameStateService.CurrentPlayer.Name}");
+            _logger.LogInformation("GameStateService is {GameStateServiceStatus}", "not null");
+            _logger.LogInformation("CurrentPlayer is {CurrentPlayerStatus}", $"set to {_gameStateService.CurrentPlayer.Name}");
 
-            if (_gameStateService.CurrentPlayer != null)
+            try
             {
-                try
-                {
-                    var playerJson = JsonSerializer.Serialize(_gameStateService.CurrentPlayer);
-                    var encodedJson = Uri.EscapeDataString(playerJson);
-                    await Shell.Current.GoToAsync($"{nameof(PlayerInfoView)}?PlayerJson={encodedJson}");
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error serializing player");
-                    await Application.Current.MainPage.DisplayAlert("Error", "Unable to view player information", "OK");
-                }
+                var playerJson = JsonSerializer.Serialize(_gameStateService.CurrentPlayer);
+                var encodedJson = Uri.EscapeDataString(playerJson);
+                await Shell.Current.GoToAsync($"{nameof(PlayerInfoView)}?PlayerJson={encodedJson}");
             }
-            else
+            catch (Exception ex)
             {
-                _logger.LogWarning("Attempted to view player info, but CurrentPlayer is null");
-                await Application.Current.MainPage.DisplayAlert("Error", "No player information available", "OK");
+                _logger.LogError(ex, "Error serializing player");
+                await Application.Current?.MainPage?.DisplayAlert("Error", "Unable to view player information", "OK")!;
             }
         }
 
@@ -106,7 +98,7 @@ namespace mauiRPG.ViewModels
             }
             else
             {
-                await Application.Current.MainPage.DisplayAlert("Locked", $"Level {level.Number} is locked!", "OK");
+                await Application.Current?.MainPage?.DisplayAlert("Locked", $"Level {level.Number} is locked!", "OK")!;
             }
         }
 

@@ -20,8 +20,8 @@ namespace mauiRPG.ViewModels
         private readonly ILogger<CharacterCreationViewModel> _logger;
 
         private string _name = "Default Name";
-        private Race _selectedRace;
-        private Class _selectedClass;
+        private Race _selectedRace = null!;
+        private Class _selectedClass = null!;
 
         public string Name
         {

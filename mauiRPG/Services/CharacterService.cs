@@ -29,7 +29,6 @@ namespace mauiRPG.Services
             characters.Add(character);
             var newJson = JsonSerializer.Serialize(characters);
             File.WriteAllText(_filePath, newJson);
-            Console.WriteLine($"Character saved to file: {character.Name}");
         }
 
         public void SavePlayer(Player player)
@@ -46,6 +45,22 @@ namespace mauiRPG.Services
             };
 
             SaveCharacter(character);
+        }
+
+        public List<Character> LoadCharacters()
+        {
+            if (File.Exists(_filePath))
+            {
+                var json = File.ReadAllText(_filePath);
+                return JsonSerializer.Deserialize<List<Character>>(json) ?? new List<Character>();
+            }
+            return new List<Character>();
+        }
+
+        private void SaveCharacters(List<Character> characters)
+        {
+            var json = JsonSerializer.Serialize(characters);
+            File.WriteAllText(_filePath, json);
         }
     }
 }

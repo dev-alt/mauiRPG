@@ -6,7 +6,7 @@ namespace mauiRPG.Services
     public class GameStateService
     {
         private readonly ILogger<GameStateService> _logger;
-        private Player _currentPlayer;
+        private Player _currentPlayer = null!;
 
         public GameStateService(ILogger<GameStateService> logger)
         {
