@@ -15,14 +15,10 @@ namespace mauiRPG.Models
 
     public interface IRace
     {
-        string RaceName { get; }
-        int StrengthBonus { get; }
-        int IntelligenceBonus { get; }
     }
 
     public interface IClass
     {
-        string ClassName { get; }
         void LevelUp(ICharacter character);
     }
 }

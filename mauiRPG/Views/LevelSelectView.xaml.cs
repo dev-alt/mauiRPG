@@ -19,7 +19,7 @@ namespace mauiRPG.Views
                 Console.WriteLine($"CurrentPlayer in GameStateService: {gameStateService.CurrentPlayer.Name}");
             }
 
-            viewModel.CurrentPlayer = gameStateService.CurrentPlayer;
+            if (gameStateService.CurrentPlayer != null) viewModel.CurrentPlayer = gameStateService.CurrentPlayer;
             BindingContext = viewModel;
 
             Console.WriteLine($"BindingContext set to: {BindingContext}");

@@ -79,6 +79,9 @@
 	  <MauiXaml Update="Views\LevelSelectView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\MainMenuView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\PlayerInfoView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

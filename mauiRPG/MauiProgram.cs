@@ -17,15 +17,17 @@ namespace mauiRPG
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
-            builder.Services.AddSingleton<CharacterService>();
             builder.Services.AddSingleton<GameStateService>();
+            builder.Services.AddSingleton<CharacterService>();
+
             builder.Services.AddTransient<CharacterSelect>();
+            builder.Services.AddTransient<CharacterCreationViewModel>();
             builder.Services.AddTransient<LevelSelectView>();
             builder.Services.AddTransient<StageSelectViewModel>();
 
 #if DEBUG
             builder.Logging.AddDebug();
-#endif
+        #endif
 
             return builder.Build();
         }

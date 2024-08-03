@@ -6,6 +6,12 @@ using System.Threading.Tasks;
 
 namespace mauiRPG.Models
 {
+    public class Class : IClass
+    {
+        public void LevelUp(ICharacter character)
+        {
+        }
+    }
     public class Warrior : IClass
     {
         public string ClassName => "Warrior";

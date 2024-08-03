@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace mauiRPG.Models
 {
-    public class Player : Character, ICharacter
+    public class Player : Character
     {
-        public required IRace Race { get; set; }
-        public required IClass Class { get; set; }
+        public required Race Race { get; set; }
+        public required Class Class { get; set; }
 
     }
 }

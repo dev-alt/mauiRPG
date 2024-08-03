@@ -12,8 +12,6 @@ namespace mauiRPG.Models
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
         public required string Name { get; set; }
-        public required string RaceName { get; set; }
-        public required string ClassName { get; set; }
         public int Health { get; set; }
         public int Level { get; set; }
         public int Strength { get; set; }

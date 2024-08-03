@@ -25,8 +25,6 @@ public partial class LevelPage : ContentPage
 
     private void LoadLevel(int levelNumber)
     {
-        // Here you would typically load the level data based on the level number
-        // For now, we'll just create a dummy Level object
         var level = new Level
         {
             Number = levelNumber,

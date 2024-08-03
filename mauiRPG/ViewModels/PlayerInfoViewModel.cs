@@ -18,8 +18,6 @@ namespace mauiRPG.ViewModels
                     _player = value;
                     OnPropertyChanged();
                     OnPropertyChanged(nameof(Name));
-                    OnPropertyChanged(nameof(RaceName));
-                    OnPropertyChanged(nameof(ClassName));
                     OnPropertyChanged(nameof(Level));
                     OnPropertyChanged(nameof(Health));
                     OnPropertyChanged(nameof(Strength));
@@ -31,8 +29,6 @@ namespace mauiRPG.ViewModels
         }
 
         public string Name => Player?.Name ?? "N/A";
-        public string RaceName => Player?.Race?.RaceName ?? "N/A";
-        public string ClassName => Player?.Class?.ClassName ?? "N/A";
         public string Level => Player?.Level.ToString() ?? "N/A";
         public string Health => Player?.Health.ToString() ?? "N/A";
         public string Strength => Player?.Strength.ToString() ?? "N/A";
@@ -40,12 +36,12 @@ namespace mauiRPG.ViewModels
         public string Dexterity => Player?.Dexterity.ToString() ?? "N/A";
         public string Constitution => Player?.Constitution.ToString() ?? "N/A";
 
-        public PlayerInfoViewModel(Player player = null)
+        public PlayerInfoViewModel(Player player = null!)
         {
             Player = player;
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {

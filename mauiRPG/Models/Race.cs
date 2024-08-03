@@ -6,30 +6,28 @@ using System.Threading.Tasks;
 
 namespace mauiRPG.Models
 {
-    internal class Orc : IRace
+    public class Race : IRace
     {
-        public required string RaceName { get; init; } 
-        public int StrengthBonus { get; } = 0;
-        public int IntelligenceBonus { get; } = 0;
+    }
+    internal class Orc : Race
+    {
+
+
     }
 
-    internal class Human : IRace
+    internal class Human : Race
     {
-        public required string RaceName { get; init; }
-        public int StrengthBonus { get; } = 0;
-        public int IntelligenceBonus { get; } = 0;
+
     }
-    internal class Dwarf : IRace
+    internal class Dwarf : Race
     {
-        public required string RaceName { get; init; }
-        public int StrengthBonus { get; } = 0;
-        public int IntelligenceBonus { get; } = 0;
+
+
     }
-    internal class Elf : IRace
+    internal class Elf : Race
     {
-        public required string RaceName { get; init; }
-        public int StrengthBonus { get; } = 0;
-        public int IntelligenceBonus { get; } = 0;
+
+
     }
 
 

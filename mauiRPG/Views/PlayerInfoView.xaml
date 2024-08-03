@@ -5,9 +5,9 @@
              Title="Player Info">
 
     <StackLayout Padding="20">
-        <Label Text="{Binding Name}" FontSize="Large" FontAttributes="Bold" />
-        <Label Text="{Binding Race.RaceName, StringFormat='Race: {0}'}" />
-        <Label Text="{Binding Class.ClassName, StringFormat='Class: {0}'}" />
+        <Label Text="{Binding Name, StringFormat='Name: {0}'}" FontSize="Large" />
+        <Label Text="{Binding RaceName, StringFormat='Race: {0}'}" />
+        <Label Text="{Binding ClassName, StringFormat='Class: {0}'}" />
         <Label Text="{Binding Level, StringFormat='Level: {0}'}" />
         <Label Text="{Binding Health, StringFormat='Health: {0}'}" />
         <Label Text="{Binding Strength, StringFormat='Strength: {0}'}" />

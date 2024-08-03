@@ -37,8 +37,6 @@ namespace mauiRPG.Services
             Character character = new Character
             {
                 Name = player.Name,
-                RaceName = player.Race.RaceName,
-                ClassName = player.Class.ClassName,
                 Health = player.Health,
                 Level = player.Level,
                 Strength = player.Strength,

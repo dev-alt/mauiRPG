@@ -4,17 +4,16 @@ using System.Text.Json;
 
 namespace mauiRPG.Views
 {
-    [QueryProperty(nameof(PlayerJson), "CurrentPlayer")]
+    [QueryProperty(nameof(PlayerJson), "PlayerJson")]
     public partial class PlayerInfoView : ContentPage
     {
-        private string _playerJson;
+        private string playerJson;
         public string PlayerJson
         {
-            get => _playerJson;
+            get => playerJson;
             set
             {
-                _playerJson = value;
-                OnPropertyChanged();
+                playerJson = Uri.UnescapeDataString(value);
                 LoadPlayer();
             }
         }
@@ -22,17 +21,16 @@ namespace mauiRPG.Views
         public PlayerInfoView()
         {
             InitializeComponent();
-            BindingContext = new PlayerInfoViewModel();
         }
 
         private void LoadPlayer()
         {
-            if (!string.IsNullOrEmpty(PlayerJson))
+            if (!string.IsNullOrEmpty(playerJson))
             {
                 try
                 {
-                    var player = JsonSerializer.Deserialize<Player>(PlayerJson);
-                    (BindingContext as PlayerInfoViewModel).Player = player;
+                    var player = JsonSerializer.Deserialize<Player>(playerJson);
+                    if (player != null) BindingContext = new PlayerInfoViewModel(player);
                 }
                 catch (JsonException ex)
                 {

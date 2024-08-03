@@ -29,50 +29,9 @@
                    Grid.Row="1" />
         </Grid>
     </Shell.FlyoutHeader>
-    <Shell.MenuBarItems>
-        <MenuBarItem Text="File">
-            <MenuFlyoutItem Text="Exit"
-                            Command="{Binding ExitCommand}" />
-        </MenuBarItem>
-        <MenuBarItem Text="Locations">
-            <MenuFlyoutSubItem Text="Change Location">
-                <MenuFlyoutItem Text="Redmond, USA"
-                                Command="{Binding ChangeLocationCommand}"
-                                CommandParameter="Redmond" />
-                <MenuFlyoutItem Text="London, UK"
-                                Command="{Binding ChangeLocationCommand}"
-                                CommandParameter="London" />
-                <MenuFlyoutItem Text="Berlin, DE"
-                                Command="{Binding ChangeLocationCommand}"
-                                CommandParameter="Berlin"/>
-            </MenuFlyoutSubItem>
-            <MenuFlyoutSeparator />
-            <MenuFlyoutItem Text="Add Location"
-                            Command="{Binding AddLocationCommand}" />
-            <MenuFlyoutItem Text="Edit Location"
-                            Command="{Binding EditLocationCommand}" />
-            <MenuFlyoutItem Text="Remove Location"
-                            Command="{Binding RemoveLocationCommand}" />
-        </MenuBarItem>
-        <MenuBarItem Text="Help">
-            <MenuFlyoutItem Text="Refresh"
-                            Command="{Binding RefreshCommand}" />
-            <MenuFlyoutItem Text="Change Theme"
-                            Command="{Binding ChangeThemeCommand}" />
-        </MenuBarItem>
-</Shell.MenuBarItems>
-        <TabBar>
-        <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
     <ShellContent
-        Title="Character Select"
-        ContentTemplate="{DataTemplate views:CharacterSelect}"
-        Route="Character Select" />
-        <ShellContent
-            Title="Level Select"
-            ContentTemplate="{DataTemplate views:LevelSelectView}"
-            Route="level Select" />
-    </TabBar>
+        Title="Home"
+        ContentTemplate="{DataTemplate views:MainMenuView}"
+        Route="MainMenu" />
+
 </Shell>

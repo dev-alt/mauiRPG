@@ -9,16 +9,20 @@ using System.Windows.Input;
 using mauiRPG.Models;
 using mauiRPG.Services;
 using mauiRPG.Views;
+using Microsoft.Extensions.Logging;
 
 namespace mauiRPG.ViewModels
 {
-    internal class CharacterCreationViewModel : INotifyPropertyChanged
+    public class CharacterCreationViewModel : INotifyPropertyChanged
     {
         private readonly CharacterService _characterService;
-        private string _name = "Default Name";
-        private IRace _selectedRace = new Human { RaceName = "Human" };
-        private IClass _selectedClass = new Mage();
         private readonly GameStateService _gameStateService;
+        private readonly ILogger<CharacterCreationViewModel> _logger;
+
+        private string _name = "Default Name";
+        private Race _selectedRace;
+        private Class _selectedClass;
+
         public string Name
         {
             get => _name;
@@ -30,9 +34,9 @@ namespace mauiRPG.ViewModels
         }
 
 
-        public IRace SelectedRace
+        public Race SelectedRace
         {
-            get => _selectedRace;
+            get => (Race)_selectedRace;
             set
             {
                 _selectedRace = value;
@@ -40,7 +44,7 @@ namespace mauiRPG.ViewModels
             }
         }
 
-        public IClass SelectedClass
+        public Class SelectedClass
         {
             get => _selectedClass;
             set
@@ -50,62 +54,74 @@ namespace mauiRPG.ViewModels
             }
         }
 
-        public ObservableCollection<IRace> Races { get; }
-        public ObservableCollection<IClass> Classes { get; }
+        public ObservableCollection<Race> Races { get; }
+        public ObservableCollection<Class> Classes { get; }
 
         public ICommand CreateCharacterCommand { get; }
-        public CharacterCreationViewModel(CharacterService characterService, GameStateService gameStateService)
+        public CharacterCreationViewModel(CharacterService characterService, GameStateService gameStateService, ILogger<CharacterCreationViewModel> logger)
         {
-            _gameStateService = gameStateService;
             _characterService = characterService;
-            Races = new ObservableCollection<IRace>
+            _gameStateService = gameStateService;
+            _logger = logger;
+
+            Races = new ObservableCollection<Race>
             {
-                new Orc { RaceName = "Orc" },
-                new Human { RaceName = "Human" },
-                new Dwarf { RaceName = "Dwarf" },
-                new Elf { RaceName = "Elf" }
+                new Orc { },
+                new Human {},
+                new Dwarf { },
+                new Elf {  }
             };
 
-            Classes = new ObservableCollection<IClass>
+            Classes = new ObservableCollection<Class>
             {
-                new Mage()
-
+                new Class { },
             };
+
 
             CreateCharacterCommand = new Command(CreateCharacter);
+
+            _logger.LogInformation("CharacterCreationViewModel initialized");
         }
         private async void CreateCharacter()
         {
             // Validate the inputs
-            if (string.IsNullOrWhiteSpace(Name))
+            if (string.IsNullOrWhiteSpace(Name) || SelectedRace == null || SelectedClass == null)
             {
                 await Application.Current?.MainPage?.DisplayAlert("Error", "Please enter a valid name, and select a race and class.", "OK")!;
                 return;
             }
 
-
             var player = new Player
             {
                 Name = Name,
                 Race = SelectedRace,
-                RaceName = SelectedRace.RaceName,
                 Class = SelectedClass,
-                ClassName = SelectedClass.ClassName,
                 Level = 1,
                 Health = 100,
-                Strength = 10 + SelectedRace.StrengthBonus,
-                Intelligence = 10 + SelectedRace.IntelligenceBonus,
+                Strength = 10,
+                Intelligence = 10 ,
                 Dexterity = 10,
                 Constitution = 10
             };
 
-            _characterService.SaveCharacter(player);
+            _characterService.SavePlayer(player);
+            _gameStateService.CurrentPlayer = player;
 
-            await Application.Current?.MainPage?.DisplayAlert("Success", "Character successfully created.", "OK")!;
+            // Ensure player.Name is not null
+            if (player.Name != null)
+            {
+                _logger.LogInformation("Character created and set as CurrentPlayer: {PlayerName}", player.Name);
+            }
+            else
+            {
+                _logger.LogWarning("Character created but player name is null.");
+            }
 
-            await Shell.Current.GoToAsync("LevelSelectView");
+            await Application.Current.MainPage.DisplayAlert("Success", "Character successfully created.", "OK");
 
+            await Shell.Current.GoToAsync($"{nameof(LevelSelectView)}");
         }
+
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
