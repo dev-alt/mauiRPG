@@ -11,7 +11,7 @@ namespace mauiRPG.ViewModels
         private readonly CharacterService _characterService;
         private bool _isCharacterListVisible;
         private bool _isSettingsVisible;
-        private Character _selectedCharacter;
+        private Character _selectedCharacter = null!;
 
         public ICommand CreateNewCharacterCommand { get; }
         public ICommand ShowLoadCharacterCommand { get; }
@@ -89,12 +89,6 @@ namespace mauiRPG.ViewModels
 
         private async Task LoadCharacter()
         {
-            if (SelectedCharacter == null)
-            {
-                await Shell.Current.DisplayAlert("Error", "No character selected", "OK");
-                return;
-            }
-
             await Shell.Current.DisplayAlert("Character Loaded", $"Loaded character: {SelectedCharacter.Name}", "OK");
             IsCharacterListVisible = false;
             // TODO: Implement logic to start the game with the loaded character
@@ -109,10 +103,10 @@ namespace mauiRPG.ViewModels
         {
             IsSettingsVisible = false;
         }
-        private async Task OpenSettings()
+        private Task OpenSettings()
         {
             IsSettingsVisible = false;
-
+            return Task.CompletedTask;
         }
 
         private void Exit()
