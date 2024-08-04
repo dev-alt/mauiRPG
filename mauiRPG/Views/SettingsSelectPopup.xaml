@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="mauiRPG.Views.SettingsSelectPopup">
+    <Frame VerticalOptions="Center"
+           HorizontalOptions="Center"
+           WidthRequest="300"
+           HeightRequest="400"
+           CornerRadius="10"
+           Padding="20"
+           BackgroundColor="White">
+        <StackLayout>
+            <Label Text="Settings"
+                   FontSize="20"
+                   TextColor="Black"
+                   HorizontalOptions="Center"
+                   Margin="0,0,0,10"/>
+            <ScrollView HeightRequest="280">
+              
+            </ScrollView>
+
+        </StackLayout>
+    </Frame>
+</ContentView>

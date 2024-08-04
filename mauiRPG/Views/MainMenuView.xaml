@@ -1,45 +1,70 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:mauiRPG.ViewModels"
+             xmlns:views="clr-namespace:mauiRPG.Views"
              x:Class="mauiRPG.Views.MainMenuView"
              Title="mauiRPG">
-    <VerticalStackLayout 
-        Spacing="25" 
-        Padding="30,0" 
-        VerticalOptions="Center">
-        <Image
-            Source="dotnet_bot.png"
-            SemanticProperties.Description="Cute dot net bot waving hi to you!"
-            HeightRequest="200"
-            HorizontalOptions="Center" />
-        <Label 
-            Text="Welcome to mauiRPG"
-            SemanticProperties.HeadingLevel="Level1"
-            FontSize="32"
-            HorizontalOptions="Center" />
-        <Button 
-            x:Name="CreateNewCharacterButton"
-            Text="Create New Character"
-            SemanticProperties.Hint="Creates a new character"
-            Clicked="OnCreateNewCharacterClicked"
-            HorizontalOptions="Center" />
-        <Button 
-            x:Name="LoadCharacterButton"
-            Text="Load Character"
-            SemanticProperties.Hint="Loads an existing character"
-            Clicked="OnLoadCharacterClicked"
-            HorizontalOptions="Center" />
-        <Button 
-            x:Name="SettingsButton"
-            Text="Settings"
-            SemanticProperties.Hint="Opens the settings page"
-            Clicked="OnSettingsClicked"
-            HorizontalOptions="Center" />
-        <Button 
-            x:Name="ExitButton"
-            Text="Exit"
-            SemanticProperties.Hint="Exits the application"
-            Clicked="OnExitClicked"
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+
+    <ContentPage.BindingContext>
+        <viewmodels:MainViewModel />
+    </ContentPage.BindingContext>
+
+    <Grid>
+        <VerticalStackLayout 
+            Spacing="25" 
+            Padding="30,0" 
+            VerticalOptions="Center">
+            <Image
+                Source="dotnet_bot.png"
+                SemanticProperties.Description="Cute dot net bot waving hi to you!"
+                HeightRequest="200"
+                HorizontalOptions="Center" />
+            <Label 
+                Text="Welcome to mauiRPG"
+                SemanticProperties.HeadingLevel="Level1"
+                FontSize="32"
+                HorizontalOptions="Center" />
+            <Button 
+                Text="Create New Character"
+                SemanticProperties.Hint="Creates a new character"
+                Command="{Binding CreateNewCharacterCommand}"
+                HorizontalOptions="Center" />
+            <Button 
+                Text="Load Character"
+                SemanticProperties.Hint="Shows the list of characters to load"
+                Command="{Binding ShowLoadCharacterCommand}"
+                HorizontalOptions="Center" />
+            <Button 
+                Text="Settings"
+                SemanticProperties.Hint="Opens the settings page"
+                Command="{Binding ShowSettingsCommand}"
+                HorizontalOptions="Center" />
+            <Button 
+                Text="Exit"
+                SemanticProperties.Hint="Exits the application"
+                Command="{Binding ExitCommand}"
+                HorizontalOptions="Center" />
+        </VerticalStackLayout>
+
+        <!-- Popup for character list -->
+        <Grid x:Name="CharacterPopupGrid"
+              IsVisible="{Binding IsCharacterListVisible}"
+              BackgroundColor="#80000000">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnBackgroundTapped" />
+            </Grid.GestureRecognizers>
+            <views:CharacterSelectPopup x:Name="CharacterPopup" InputTransparent="False" />
+        </Grid>
+
+        <!-- Popup for setting list -->
+        <Grid x:Name="SettingsPopupGrid"
+              IsVisible="{Binding IsSettingsVisible}"
+              BackgroundColor="#80000000">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnBackgroundTapped" />
+            </Grid.GestureRecognizers>
+            <views:SettingsSelectPopup x:Name="SettingPopup" InputTransparent="False" />
+        </Grid>
+    </Grid>
 </ContentPage>

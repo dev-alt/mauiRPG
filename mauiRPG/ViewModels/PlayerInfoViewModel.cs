@@ -13,18 +13,16 @@ namespace mauiRPG.ViewModels
             get => _player;
             set
             {
-                if (_player != value)
-                {
-                    _player = value;
-                    OnPropertyChanged();
-                    OnPropertyChanged(nameof(Name));
-                    OnPropertyChanged(nameof(Level));
-                    OnPropertyChanged(nameof(Health));
-                    OnPropertyChanged(nameof(Strength));
-                    OnPropertyChanged(nameof(Intelligence));
-                    OnPropertyChanged(nameof(Dexterity));
-                    OnPropertyChanged(nameof(Constitution));
-                }
+                if (_player == value) return;
+                _player = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(Name));
+                OnPropertyChanged(nameof(Level));
+                OnPropertyChanged(nameof(Health));
+                OnPropertyChanged(nameof(Strength));
+                OnPropertyChanged(nameof(Intelligence));
+                OnPropertyChanged(nameof(Dexterity));
+                OnPropertyChanged(nameof(Constitution));
             }
         }
 

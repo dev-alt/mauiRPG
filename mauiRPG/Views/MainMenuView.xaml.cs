@@ -1,57 +1,33 @@
-using mauiRPG.Services;
-using mauiRPG.Views;
+using mauiRPG.ViewModels;
 
 namespace mauiRPG.Views
 {
     public partial class MainMenuView : ContentPage
     {
-        private readonly CharacterService _characterService;
-
         public MainMenuView()
         {
             InitializeComponent();
-            _characterService = new CharacterService();
         }
 
-        private async void OnCreateNewCharacterClicked(object sender, EventArgs e)
+        private void OnBackgroundTapped(object sender, TappedEventArgs e)
         {
-            await Shell.Current.GoToAsync(nameof(CharacterSelect));
-        }
+            var viewModel = (MainViewModel)BindingContext;
 
-        private async void OnLoadCharacterClicked(object sender, EventArgs e)
-        {
-            var characters = _characterService.LoadCharacters();
-            if (characters.Count == 0)
+            if (viewModel.IsCharacterListVisible)
             {
-                await DisplayAlert("No Characters", "No saved characters found. Please create a new character.", "OK");
-                return;
+                viewModel.CancelLoadCharacterCommand.Execute(null);
             }
-
-            var characterNames = characters.Select(c => c.Name).ToArray();
-            var selectedCharacter = await DisplayActionSheet("Select a character", "Cancel", null, characterNames);
-
-            if (selectedCharacter == "Cancel") return;
+            else if (viewModel.IsSettingsVisible)
             {
-                try
-                {
-                    var character = characters.First(c => c.Name == selectedCharacter);
-                    await DisplayAlert("Character Loaded", $"Loaded character: {character.Name}", "OK");
-                }
-                catch(Exception ex)
-                {
-                    throw new Exception($"Error loading character: {ex.Message}");
-                }
+                viewModel.CancelSettingsCommand.Execute(null);
             }
         }
-        private async void OnSettingsClicked(object sender, EventArgs e)
-        {
-            // TODO: Implement settings page navigation
-            await DisplayAlert("Settings", "Settings page not implemented yet.", "OK");
-        }
 
-        private void OnExitClicked(object sender, EventArgs e)
+        protected override void OnAppearing()
         {
-            Application.Current?.Quit();
+            base.OnAppearing();
+            CharacterPopup.InputTransparent = false;
+            SettingPopup.InputTransparent = false;
         }
     }
 }
