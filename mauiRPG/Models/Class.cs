@@ -27,6 +27,11 @@ namespace mauiRPG.Models
         {
         }
     }
-
-
+    public class Rogue : IClass
+    {
+        public string ClassName => "Rogue";
+        public void LevelUp(ICharacter character)
+        {
+        }
+    }
 }

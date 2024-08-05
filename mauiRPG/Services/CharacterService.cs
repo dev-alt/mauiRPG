@@ -23,7 +23,7 @@ namespace mauiRPG.Services
             }
             else
             {
-                characters = new List<Character>();
+                characters = [];
             }
 
             characters.Add(character);

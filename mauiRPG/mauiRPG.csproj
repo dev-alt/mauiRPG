@@ -64,7 +64,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="Views\Levelpage.xaml.cs">
+	  <Compile Update="Views\LevelPage.xaml.cs">
 	    <DependentUpon>LevelPage.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>

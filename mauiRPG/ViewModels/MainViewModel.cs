@@ -20,7 +20,6 @@ namespace mauiRPG.ViewModels
         public ICommand CancelLoadCharacterCommand { get; }
         public ICommand SettingsCommand { get; }
         public ICommand CancelSettingsCommand { get; }
-
         public ICommand ExitCommand { get; }
         public ObservableCollection<Character> Characters { get; }
 
@@ -89,6 +88,12 @@ namespace mauiRPG.ViewModels
 
         private async Task LoadCharacter()
         {
+            if (SelectedCharacter == null)
+            {
+                await Shell.Current.DisplayAlert("Error", "No character selected.", "OK");
+                return;
+            }
+
             await Shell.Current.DisplayAlert("Character Loaded", $"Loaded character: {SelectedCharacter.Name}", "OK");
             IsCharacterListVisible = false;
             // TODO: Implement logic to start the game with the loaded character
@@ -108,7 +113,6 @@ namespace mauiRPG.ViewModels
             IsSettingsVisible = false;
             return Task.CompletedTask;
         }
-
         private void Exit()
         {
             Application.Current?.Quit();

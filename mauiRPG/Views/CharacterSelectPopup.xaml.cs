@@ -1,9 +1,21 @@
-namespace mauiRPG.Views;
+using mauiRPG.Services;
+using mauiRPG.ViewModels;
+using Microsoft.Extensions.Logging;
 
-public partial class CharacterSelectPopup : ContentView
+
+namespace mauiRPG.Views
 {
-	public CharacterSelectPopup()
-	{
-		InitializeComponent();
-	}
+    public partial class CharacterSelectPopup : ContentView
+    {
+        public CharacterSelectPopup()
+        {
+            InitializeComponent();
+        }
+
+        public CharacterSelectPopup(CharacterService characterService, GameStateService gameStateService, ILogger<CharacterCreationViewModel> logger)
+        {
+            InitializeComponent();
+            BindingContext = new CharacterCreationViewModel(characterService, gameStateService, logger);
+        }
+    }
 }

@@ -18,7 +18,7 @@
 
             <Picker Title="Select Class"
                     ItemsSource="{Binding Classes}"
-                    ItemDisplayBinding="{Binding ClassName}"
+                    ItemDisplayBinding="{Binding .}"
                     SelectedItem="{Binding SelectedClass}" />
 
             <Button Text="Create Character"

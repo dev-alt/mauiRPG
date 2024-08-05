@@ -15,7 +15,8 @@ namespace mauiRPG.ViewModels
         private readonly ILogger<StageSelectViewModel> _logger;
         private Player _currentPlayer = null!;
         private ObservableCollection<Level> _levels;
-
+        public ICommand SelectLevelCommand { get; private set; }
+        public ICommand ViewPlayerInfoCommand { get; private set; }
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public ObservableCollection<Level> Levels
@@ -27,7 +28,6 @@ namespace mauiRPG.ViewModels
                 OnPropertyChanged(nameof(Levels));
             }
         }
-
         public Player CurrentPlayer
         {
             get => _currentPlayer;
@@ -37,9 +37,6 @@ namespace mauiRPG.ViewModels
                 OnPropertyChanged(nameof(CurrentPlayer));
             }
         }
-
-        public ICommand SelectLevelCommand { get; private set; }
-        public ICommand ViewPlayerInfoCommand { get; private set; }
 
         public StageSelectViewModel(GameStateService gameStateService, ILogger<StageSelectViewModel> logger)
         {
