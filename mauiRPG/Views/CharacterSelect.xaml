@@ -2,30 +2,100 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="mauiRPG.Views.CharacterSelect"
-             Title="Create Your Character">
+             Title="Create Your Character"
+             BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Gray900}}">
+
+    <!-- Background Image -->
+    <ContentPage.Background>
+       
+    </ContentPage.Background>
 
     <ScrollView>
-        <VerticalStackLayout Spacing="25" Padding="30,0" VerticalOptions="Center">
+        <Grid RowDefinitions="Auto,*,Auto" 
+              ColumnDefinitions="*,Auto,*"
+              RowSpacing="20"
+              Padding="30, 0">
 
-            <Entry x:Name="NameEntry" 
-                   Text="{Binding Name}" 
-                   Placeholder="Enter character name" />
+            <!-- Top Border -->
+            <BoxView Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" 
+                     Color="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray800}}"
+                     HeightRequest="2" 
+                     Margin="0,20,0,0"/>
 
-            <Picker Title="Select Race"
-                    ItemsSource="{Binding Races}"
-                    ItemDisplayBinding="{Binding Name}"
-                    SelectedItem="{Binding SelectedRace}" />
+            <!-- Main Content -->
+            <VerticalStackLayout Grid.Row="1" Grid.Column="1" 
+                                 Spacing="20" 
+                                 VerticalOptions="Center"
+                                 WidthRequest="{OnPlatform Default=300}"
+                                 Margin="20">
 
-            <Picker Title="Select Class"
-                    ItemsSource="{Binding Classes}"
-                    ItemDisplayBinding="{Binding Name}"
-                    SelectedItem="{Binding SelectedClass}" />
+                <!-- Title -->
+                <Label Text="Character Creation" 
+                       FontSize="32" 
+                       FontAttributes="Bold" 
+                       TextColor="White"
+                       HorizontalOptions="Center"
+                       Margin="0,0,0,20"/>
 
-            <Button Text="Create Character"
-                    Command="{Binding CreateCharacterCommand}"
-                    HorizontalOptions="Center" />
+                <!-- Name Entry -->
+                <Frame BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray700}}"
+                       CornerRadius="10" 
+                       Padding="15"
+                       HasShadow="True">
+                    <Entry x:Name="NameEntry" 
+                           Text="{Binding Name}" 
+                           Placeholder="Enter character name"
+                           FontSize="18"
+                           TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
+                           PlaceholderColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
+                </Frame>
 
-        </VerticalStackLayout>
+                <!-- Race Picker -->
+                <Frame BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray700}}"
+                       CornerRadius="10" 
+                       Padding="15"
+                       HasShadow="True">
+                    <Picker Title="Select Race"
+                            ItemsSource="{Binding Races}"
+                            ItemDisplayBinding="{Binding Name}"
+                            SelectedItem="{Binding SelectedRace}"
+                            FontSize="18"
+                            TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
+                            TitleColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
+                </Frame>
+
+                <!-- Class Picker -->
+                <Frame BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray700}}"
+                       CornerRadius="10" 
+                       Padding="15"
+                       HasShadow="True">
+                    <Picker Title="Select Class"
+                            ItemsSource="{Binding Classes}"
+                            ItemDisplayBinding="{Binding Name}"
+                            SelectedItem="{Binding SelectedClass}"
+                            FontSize="18"
+                            TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
+                            TitleColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
+                </Frame>
+
+                <!-- Create Character Button -->
+                <Button Text="Create Character"
+                        Command="{Binding CreateCharacterCommand}"
+                        HorizontalOptions="Center"
+                        BackgroundColor="{StaticResource Primary}"
+                        TextColor="White"
+                        CornerRadius="20"
+                        Padding="20,10"
+                        FontAttributes="Bold"
+                        FontSize="18"
+                        WidthRequest="200"/>
+            </VerticalStackLayout>
+
+            <!-- Bottom Border -->
+            <BoxView Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" 
+                     Color="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray800}}"
+                     HeightRequest="2" 
+                     Margin="0,0,0,20"/>
+        </Grid>
     </ScrollView>
-
 </ContentPage>
