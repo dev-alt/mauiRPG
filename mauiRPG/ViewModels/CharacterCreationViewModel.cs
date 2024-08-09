@@ -25,8 +25,8 @@ namespace mauiRPG.ViewModels
         public event PropertyChangedEventHandler? PropertyChanged;
 
         private string _name = "Name";
-        private Race _selectedRace;
-        private Class _selectedClass;
+        private Race _selectedRace = null!;
+        private Class _selectedClass = null!;
 
 
         public string Name
