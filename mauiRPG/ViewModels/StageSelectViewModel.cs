@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Text.Json;
 using System.Windows.Input;
+using CommunityToolkit.Maui.Views;
 using mauiRPG.Models;
 using mauiRPG.Services;
 using mauiRPG.Views;
@@ -12,7 +13,7 @@ namespace mauiRPG.ViewModels
     public class StageSelectViewModel : INotifyPropertyChanged
     {
         private readonly GameStateService _gameStateService;
-        private readonly ILogger<StageSelectViewModel> _logger;
+        private readonly ILogger<PlayerInfoPopup> _logger;
         private Player _currentPlayer = null!;
         private ObservableCollection<Level> _levels;
         public ICommand SelectLevelCommand { get; private set; }
@@ -38,7 +39,7 @@ namespace mauiRPG.ViewModels
             }
         }
 
-        public StageSelectViewModel(GameStateService gameStateService, ILogger<StageSelectViewModel> logger)
+        public StageSelectViewModel(GameStateService gameStateService, ILogger<PlayerInfoPopup> logger)
         {
             _gameStateService = gameStateService;
             _logger = logger;
@@ -70,21 +71,41 @@ namespace mauiRPG.ViewModels
         private async void OnViewPlayerInfo()
         {
             _logger.LogInformation("OnViewPlayerInfo called");
-            _logger.LogInformation("GameStateService is {GameStateServiceStatus}", "not null");
-            _logger.LogInformation("CurrentPlayer is {CurrentPlayerStatus}", $"set to {_gameStateService.CurrentPlayer.Name}");
 
-            try
+            if (_gameStateService.CurrentPlayer != null)
             {
-                var playerJson = JsonSerializer.Serialize(_gameStateService.CurrentPlayer);
-                var encodedJson = Uri.EscapeDataString(playerJson);
-                await Shell.Current.GoToAsync($"{nameof(PlayerInfoView)}?PlayerJson={encodedJson}");
+                _logger.LogInformation("CurrentPlayer: Name={Name}, Race={Race}, Class={Class}",
+                    _gameStateService.CurrentPlayer.Name,
+                    _gameStateService.CurrentPlayer.Race?.Name,
+                    _gameStateService.CurrentPlayer.Class?.Name);
+
+                try
+                {
+                    var popup = new PlayerInfoPopup(_gameStateService.CurrentPlayer, _logger);
+                    if (Application.Current == null) return;
+                    if (Application.Current.MainPage != null)
+                        await Application.Current.MainPage.ShowPopupAsync(popup);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error creating or showing PlayerInfoPopup");
+                    if (Application.Current != null)
+                        if (Application.Current.MainPage != null)
+                            await Application.Current.MainPage.DisplayAlert("Error",
+                                "Unable to display player information",
+                                "OK");
+                }
             }
-            catch (Exception ex)
+            else
             {
-                _logger.LogError(ex, "Error serializing player");
-                await Application.Current?.MainPage?.DisplayAlert("Error", "Unable to view player information", "OK")!;
+                _logger.LogWarning("CurrentPlayer is null");
+                if (Application.Current == null) return;
+                if (Application.Current.MainPage != null)
+                    await Application.Current.MainPage.DisplayAlert("Error", "No player information available",
+                        "OK");
             }
         }
+
 
         private async void OnLevelSelected(Level level)
         {

@@ -13,12 +13,12 @@
 
             <Picker Title="Select Race"
                     ItemsSource="{Binding Races}"
-                    ItemDisplayBinding="{Binding .}"
+                    ItemDisplayBinding="{Binding Name}"
                     SelectedItem="{Binding SelectedRace}" />
 
             <Picker Title="Select Class"
                     ItemsSource="{Binding Classes}"
-                    ItemDisplayBinding="{Binding .}"
+                    ItemDisplayBinding="{Binding Name}"
                     SelectedItem="{Binding SelectedClass}" />
 
             <Button Text="Create Character"

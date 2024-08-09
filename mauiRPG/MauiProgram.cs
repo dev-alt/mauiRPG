@@ -2,6 +2,7 @@
 using mauiRPG.ViewModels;
 using mauiRPG.Views;
 using Microsoft.Extensions.Logging;
+using CommunityToolkit.Maui;
 
 namespace mauiRPG
 {
@@ -12,6 +13,7 @@ namespace mauiRPG
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+                .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -26,6 +28,7 @@ namespace mauiRPG
             builder.Services.AddTransient<LevelSelectView>();
             builder.Services.AddTransient<LevelPage>();
             builder.Services.AddTransient<StageSelectViewModel>();
+
 
 #if DEBUG
             builder.Logging.AddDebug();

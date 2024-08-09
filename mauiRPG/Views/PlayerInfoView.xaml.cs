@@ -1,43 +1,34 @@
+using CommunityToolkit.Maui.Views;
 using mauiRPG.Models;
 using mauiRPG.ViewModels;
-using System.Text.Json;
+using Microsoft.Extensions.Logging;
 
 namespace mauiRPG.Views
 {
-    [QueryProperty(nameof(PlayerJson), "PlayerJson")]
-    public partial class PlayerInfoView : ContentPage
+    public partial class PlayerInfoPopup : Popup
     {
-        private string playerJson = null!;
-        public string PlayerJson
-        {
-            get => playerJson;
-            set
-            {
-                playerJson = Uri.UnescapeDataString(value);
-                LoadPlayer();
-            }
-        }
+        private readonly ILogger<PlayerInfoPopup> _logger;
 
-        public PlayerInfoView()
+        public PlayerInfoPopup(Player player, ILogger<PlayerInfoPopup> logger)
         {
             InitializeComponent();
+            _logger = logger;
+
+            if (player != null)
+            {
+                _logger.LogInformation("Player info: Name={Name}, Race={Race}, Class={Class}",
+                    player.Name, player.Race?.Name, player.Class?.Name);
+                BindingContext = new PlayerInfoViewModel(player);
+            }
+            else
+            {
+                _logger.LogWarning("Player object is null");
+            }
         }
 
-        private void LoadPlayer()
+        private void OnCloseButtonClicked(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(playerJson))
-            {
-                try
-                {
-                    var player = JsonSerializer.Deserialize<Player>(playerJson);
-                    if (player != null) BindingContext = new PlayerInfoViewModel(player);
-                }
-                catch (JsonException ex)
-                {
-                    Console.WriteLine($"Error deserializing player: {ex.Message}");
-                    // Handle the error, perhaps show an alert to the user
-                }
-            }
+            Close();
         }
     }
 }

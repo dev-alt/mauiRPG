@@ -1,19 +1,24 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="mauiRPG.Views.PlayerInfoView"
-             Title="Player Info">
-
-    <StackLayout Padding="20">
-        <Label Text="{Binding Name, StringFormat='Name: {0}'}" FontSize="Large" />
-        <Label Text="{Binding RaceName, StringFormat='Race: {0}'}" />
-        <Label Text="{Binding ClassName, StringFormat='Class: {0}'}" />
-        <Label Text="{Binding Level, StringFormat='Level: {0}'}" />
-        <Label Text="{Binding Health, StringFormat='Health: {0}'}" />
-        <Label Text="{Binding Strength, StringFormat='Strength: {0}'}" />
-        <Label Text="{Binding Intelligence, StringFormat='Intelligence: {0}'}" />
-        <Label Text="{Binding Dexterity, StringFormat='Dexterity: {0}'}" />
-        <Label Text="{Binding Constitution, StringFormat='Constitution: {0}'}" />
-    </StackLayout>
-
-</ContentPage>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               x:Class="mauiRPG.Views.PlayerInfoPopup"
+               Color="Transparent">
+    <Frame BackgroundColor="White" CornerRadius="10" Padding="20" WidthRequest="300" HeightRequest="400">
+        <ScrollView>
+            <VerticalStackLayout Spacing="10">
+                <Label Text="Player Info" FontSize="Large" HorizontalOptions="Center" />
+                <Label Text="{Binding Name, StringFormat='Name: {0}'}" FontSize="Medium" />
+                <Label Text="{Binding RaceName, StringFormat='Race: {0}'}" />
+                <Label Text="{Binding ClassName, StringFormat='Class: {0}'}" />
+                <Label Text="{Binding Level, StringFormat='Level: {0}'}" />
+                <Label Text="{Binding Health, StringFormat='Health: {0}'}" />
+                <Label Text="{Binding Strength, StringFormat='Strength: {0}'}" />
+                <Label Text="{Binding Intelligence, StringFormat='Intelligence: {0}'}" />
+                <Label Text="{Binding Dexterity, StringFormat='Dexterity: {0}'}" />
+                <Label Text="{Binding Constitution, StringFormat='Constitution: {0}'}" />
+                <Button Text="Close" Clicked="OnCloseButtonClicked" HorizontalOptions="Center" Margin="0,10,0,0" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Frame>
+</toolkit:Popup>

@@ -24,9 +24,10 @@ namespace mauiRPG.ViewModels
         public ICommand CreateCharacterCommand { get; }
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private string _name = "Default Name";
-        private Race _selectedRace = null!;
-        private Class _selectedClass = null!;
+        private string _name = "Name";
+        private Race _selectedRace;
+        private Class _selectedClass;
+
 
         public string Name
         {
@@ -60,7 +61,8 @@ namespace mauiRPG.ViewModels
         }
 
 
-        public CharacterCreationViewModel(CharacterService characterService, GameStateService gameStateService, ILogger<CharacterCreationViewModel> logger)
+        public CharacterCreationViewModel(CharacterService characterService, GameStateService gameStateService,
+            ILogger<CharacterCreationViewModel> logger)
         {
             _characterService = characterService;
             _gameStateService = gameStateService;
@@ -83,6 +85,7 @@ namespace mauiRPG.ViewModels
             };
 
             SelectedRace = Races[0];
+            SelectedClass = Classes[0];
             CreateCharacterCommand = new Command(CreateCharacter);
 
             _logger.LogInformation("CharacterCreationViewModel initialized");

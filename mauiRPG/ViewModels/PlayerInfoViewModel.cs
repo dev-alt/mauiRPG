@@ -6,41 +6,21 @@ namespace mauiRPG.ViewModels
 {
     public class PlayerInfoViewModel : INotifyPropertyChanged
     {
-        private Player _player = null!;
+        private readonly Player _player;
 
-        public Player Player
+        public string Name => _player?.Name ?? "Unknown";
+        public string RaceName => _player?.Race?.Name ?? "Unknown";
+        public string ClassName => _player?.Class?.Name ?? "Unknown";
+        public string Level => _player?.Level.ToString() ?? "0";
+        public string Health => _player?.Health.ToString() ?? "0";
+        public string Strength => _player?.Strength.ToString() ?? "0";
+        public string Intelligence => _player?.Intelligence.ToString() ?? "0";
+        public string Dexterity => _player?.Dexterity.ToString() ?? "0";
+        public string Constitution => _player?.Constitution.ToString() ?? "0";
+
+        public PlayerInfoViewModel(Player player)
         {
-            get => _player;
-            set
-            {
-                if (_player == value) return;
-                _player = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(Name));
-                OnPropertyChanged(nameof(RaceName));
-                OnPropertyChanged(nameof(ClassName));
-                OnPropertyChanged(nameof(Level));
-                OnPropertyChanged(nameof(Health));
-                OnPropertyChanged(nameof(Strength));
-                OnPropertyChanged(nameof(Intelligence));
-                OnPropertyChanged(nameof(Dexterity));
-                OnPropertyChanged(nameof(Constitution));
-            }
-        }
-
-        public string Name => Player?.Name ?? "N/A";
-        public string RaceName => Player?.Race.ToString() ?? "N/A";
-        public string ClassName => Player?.Class.ToString() ?? "N/A";
-        public string Level => Player?.Level.ToString() ?? "N/A";
-        public string Health => Player?.Health.ToString() ?? "N/A";
-        public string Strength => Player?.Strength.ToString() ?? "N/A";
-        public string Intelligence => Player?.Intelligence.ToString() ?? "N/A";
-        public string Dexterity => Player?.Dexterity.ToString() ?? "N/A";
-        public string Constitution => Player?.Constitution.ToString() ?? "N/A";
-
-        public PlayerInfoViewModel(Player player = null!)
-        {
-            Player = player;
+            _player = player ?? throw new ArgumentNullException(nameof(player));
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
