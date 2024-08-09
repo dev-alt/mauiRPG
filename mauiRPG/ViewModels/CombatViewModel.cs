@@ -10,7 +10,7 @@ namespace mauiRPG.ViewModels
         private readonly CombatService _combatService;
         private readonly Player _player;
         private readonly Enemy _enemy;
-        public event EventHandler<CombatResult> CombatEnded;
+        public event EventHandler<CombatResult>? CombatEnded;
 
         public string PlayerName => _player.Name;
         public string EnemyName => _enemy.Name;

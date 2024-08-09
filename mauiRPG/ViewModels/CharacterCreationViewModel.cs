@@ -77,7 +77,9 @@ namespace mauiRPG.ViewModels
 
             Classes = new ObservableCollection<Class>
             {
-                new Class { },
+                new Warrior(),
+                new Mage(),
+                new Rogue()
             };
 
             SelectedRace = Races[0];

@@ -11,40 +11,29 @@ namespace mauiRPG.Services
     public class CharacterService
     {
         private readonly string _filePath = Path.Combine(FileSystem.AppDataDirectory, "characters.json");
+        private readonly JsonSerializerOptions _jsonOptions;
+
+        public CharacterService()
+        {
+            _jsonOptions = new JsonSerializerOptions
+            {
+                Converters = { new RaceConverter(), new ClassConverter() },
+                WriteIndented = true
+            };
+        }
 
         public void SaveCharacter(Character character)
         {
-            List<Character> characters;
-
-            if (File.Exists(_filePath))
-            {
-                var json = File.ReadAllText(_filePath);
-                characters = JsonSerializer.Deserialize<List<Character>>(json) ?? new List<Character>();
-            }
-            else
-            {
-                characters = [];
-            }
-
+            List<Character> characters = LoadCharacters();
             characters.Add(character);
-            var newJson = JsonSerializer.Serialize(characters);
-            File.WriteAllText(_filePath, newJson);
+            SaveCharacters(characters);
         }
 
         public void SavePlayer(Player player)
         {
-            Character character = new Character
-            {
-                Name = player.Name,
-                Health = player.Health,
-                Level = player.Level,
-                Strength = player.Strength,
-                Intelligence = player.Intelligence,
-                Dexterity = player.Dexterity,
-                Constitution = player.Constitution
-            };
-
-            SaveCharacter(character);
+            List<Character> characters = LoadCharacters();
+            characters.Add(player);
+            SaveCharacters(characters);
         }
 
         public List<Character> LoadCharacters()
@@ -52,14 +41,21 @@ namespace mauiRPG.Services
             if (File.Exists(_filePath))
             {
                 var json = File.ReadAllText(_filePath);
-                return JsonSerializer.Deserialize<List<Character>>(json) ?? new List<Character>();
+                return JsonSerializer.Deserialize<List<Character>>(json, _jsonOptions) ?? new List<Character>();
             }
             return new List<Character>();
         }
 
+        public Player LoadPlayer(string playerName)
+        {
+            List<Character> characters = LoadCharacters();
+            var player = characters.FirstOrDefault(c => c is Player p && p.Name == playerName) as Player;
+            return player ?? throw new InvalidOperationException($"Player '{playerName}' not found.");
+        }
+
         private void SaveCharacters(List<Character> characters)
         {
-            var json = JsonSerializer.Serialize(characters);
+            var json = JsonSerializer.Serialize(characters, _jsonOptions);
             File.WriteAllText(_filePath, json);
         }
     }

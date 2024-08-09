@@ -19,6 +19,5 @@ namespace mauiRPG.Models
 
     public interface IClass
     {
-        void LevelUp(ICharacter character);
     }
 }

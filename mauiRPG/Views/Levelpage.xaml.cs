@@ -12,7 +12,7 @@ public partial class LevelPage : ContentPage
     private readonly CombatView _combatView;
     private readonly CombatService _combatService;
     private readonly GameStateService _gameStateService;
-    private Player _player;
+    private Player _player = null!;
 
 
     public int LevelNumber
@@ -79,7 +79,7 @@ public partial class LevelPage : ContentPage
         _combatView.IsVisible = true;
 
         // Subscribe to combat end event
-        combatViewModel.CombatEnded += OnCombatEnded;
+        combatViewModel.CombatEnded += OnCombatEnded!;
     }
 
     private void OnCombatEnded(object sender, CombatViewModel.CombatResult result)
@@ -101,7 +101,7 @@ public partial class LevelPage : ContentPage
         // Unsubscribe from the event
         if (sender is CombatViewModel viewModel)
         {
-            viewModel.CombatEnded -= OnCombatEnded;
+            viewModel.CombatEnded -= OnCombatEnded!;
         }
     }
 }

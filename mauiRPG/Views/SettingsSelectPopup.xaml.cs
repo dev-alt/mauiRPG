@@ -6,8 +6,13 @@ namespace mauiRPG.Views;
 public partial class SettingsSelectPopup : ContentView
 {
 	public SettingsSelectPopup()
-	{
-		InitializeComponent();
-        BindingContext = new SettingsViewModel(Application.Current.Handler.MauiContext.Services.GetService<ISettingsService>());
+    {
+        InitializeComponent();
+        if (Application.Current == null) return;
+        if (Application.Current.Handler != null && Application.Current.Handler.MauiContext != null)
+            BindingContext =
+                new SettingsViewModel(
+                    Application.Current.Handler.MauiContext.Services.GetService<ISettingsService>() ??
+                    throw new InvalidOperationException());
     }
 }

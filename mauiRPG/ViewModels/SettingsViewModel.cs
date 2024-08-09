@@ -44,7 +44,7 @@ namespace mauiRPG.ViewModels
 
     public ObservableCollection<string> DifficultyLevels { get; } = new ObservableCollection<string> { "Easy", "Normal", "Hard" };
 
-    private string _selectedDifficulty;
+    private string _selectedDifficulty = null!;
     public string SelectedDifficulty
     {
         get => _selectedDifficulty;

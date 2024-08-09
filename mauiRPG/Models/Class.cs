@@ -6,32 +6,39 @@ using System.Threading.Tasks;
 
 namespace mauiRPG.Models
 {
-    public class Class : IClass
+    public abstract class Class : IClass
     {
-        public void LevelUp(ICharacter character)
-        {
-        }
+        public abstract string Name { get; }
+        public abstract void LevelUp(ICharacter character);
     }
-    public class Warrior : IClass
+
+    public class Warrior : Class
     {
-        public string ClassName => "Warrior";
-        public void LevelUp(ICharacter character)
+        public override string Name => "Warrior";
+        public override void LevelUp(ICharacter character)
         {
+            // Implement level up logic for Warrior
         }
 
     }
-    public class Mage : IClass
+
+    public class Mage : Class
     {
-        public string ClassName => "Mage";
-        public void LevelUp(ICharacter character)
+        public override string Name => "Mage";
+
+        public override void LevelUp(ICharacter character)
         {
+            // Implement level up logic for Mage
         }
     }
-    public class Rogue : IClass
+
+    public class Rogue : Class
     {
-        public string ClassName => "Rogue";
-        public void LevelUp(ICharacter character)
+        public override string Name => "Rogue";
+
+        public override void LevelUp(ICharacter character)
         {
+
         }
     }
 }
