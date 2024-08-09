@@ -35,18 +35,21 @@ public partial class LevelPage : ContentPage
         Debug.WriteLine($"LevelPage constructor: Player: {_player}, CombatService: {_combatService}");
         MainLayout.Children.Add(_combatView);
     }
-
     private void LoadLevel(int levelNumber)
     {
         _player = _gameStateService.CurrentPlayer;
+        var levelName = $"Level {levelNumber}";
+        var imageSource = $"level{levelNumber}.jpg";
 
-        var level = new Level
+        Level level = new Level(name: levelName, imageSource: imageSource)
         {
             Number = levelNumber,
-            Name = $"Level {levelNumber}",
             IsUnlocked = true,
-            ImageSource = $"level{levelNumber}.jpg"
-        };
+                   Name = levelName,  // Set the required Name property explicitly
+            ImageSource = imageSource  // Set the required ImageSource property explicitly
+
+    };
+
         BindingContext = new LevelDetailsViewModel(level);
 
         // Simulate enemy encounter after a short delay
@@ -62,7 +65,7 @@ public partial class LevelPage : ContentPage
         Debug.WriteLine($"Player: {_player}");
         var enemy = new EnemyWizard($"Evil Wizard {LevelNumber}", LevelNumber)
         {
-            Name = "null",
+            Name = "Dark Wizzard",
             Description = "null",
             Health = 50
         };

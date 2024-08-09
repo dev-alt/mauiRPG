@@ -18,8 +18,6 @@ namespace mauiRPG.Models
             ImageSource = imageSource;
         }
 
-        public Level()
-        {
-        }
+
     }
 }

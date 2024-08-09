@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="mauiRPG.Views.CombatView"
-             >
-
+             x:Class="mauiRPG.Views.CombatView">
+    <ContentView.BindingContext>
+        <viewmodels:CombatViewModel />
+    </ContentView.BindingContext>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -11,26 +12,43 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Player Info -->
-        <StackLayout Grid.Row="0" Padding="10">
-            <Label Text="{Binding PlayerName}" FontSize="Large"/>
-            <ProgressBar Progress="{Binding PlayerHealthPercentage}" />
-            <Label Text="{Binding PlayerHealth, StringFormat='HP: {0}'}" />
-        </StackLayout>
+        <!-- Enemy Info (Top Right) -->
+        <Frame Grid.Row="0" Padding="10" Margin="10" HorizontalOptions="End" VerticalOptions="Start" 
+               BackgroundColor="#80FFFFFF" BorderColor="Black" CornerRadius="10">
+            <StackLayout>
+                <Label Text="{Binding EnemyName}" FontSize="Medium" FontAttributes="Bold"/>
+                <ProgressBar Progress="{Binding EnemyHealthPercentage}" ProgressColor="Green"/>
+                <Label Text="{Binding EnemyHealth, StringFormat='HP: {0}'}" FontSize="Small"/>
+            </StackLayout>
+        </Frame>
 
-        <!-- Enemy Info -->
-        <StackLayout Grid.Row="1" VerticalOptions="Center" Padding="10">
-            <Label Text="{Binding EnemyName}" FontSize="Large"/>
-            <ProgressBar Progress="{Binding EnemyHealthPercentage}" />
-            <Label Text="{Binding EnemyHealth, StringFormat='HP: {0}'}" />
-        </StackLayout>
+        <!-- Player Info (Bottom Left) -->
+        <Frame Grid.Row="2" Padding="10" Margin="10" HorizontalOptions="Start" VerticalOptions="End" 
+               BackgroundColor="#80FFFFFF" BorderColor="Black" CornerRadius="10">
+            <StackLayout>
+                <Label Text="{Binding PlayerName}" FontSize="Medium" FontAttributes="Bold"/>
+                <ProgressBar Progress="{Binding PlayerHealthPercentage}" ProgressColor="Green"/>
+                <Label Text="{Binding PlayerHealth, StringFormat='HP: {0}'}" FontSize="Small"/>
+            </StackLayout>
+        </Frame>
 
         <!-- Action Buttons -->
-        <StackLayout Grid.Row="2" Orientation="Horizontal" HorizontalOptions="Center" Padding="10">
-            <Button Text="Attack" Command="{Binding AttackCommand}" />
-            <Button Text="Defend" Command="{Binding DefendCommand}" />
-            <Button Text="Use Item" Command="{Binding UseItemCommand}" />
-        </StackLayout>
+        <Frame Grid.Row="2" Padding="10" Margin="10" HorizontalOptions="End" VerticalOptions="End" 
+               BackgroundColor="#80FFFFFF" BorderColor="Black" CornerRadius="10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Button Text="Fight" Command="{Binding AttackCommand}" Grid.Column="0" Grid.Row="0"/>
+                <Button Text="Item" Command="{Binding UseItemCommand}" Grid.Column="1" Grid.Row="0"/>
+                <Button Text="Defend" Command="{Binding DefendCommand}" Grid.Column="0" Grid.Row="1"/>
+                <Button Text="Run" Command="{Binding RunCommand}" Grid.Column="1" Grid.Row="1"/>
+            </Grid>
+        </Frame>
     </Grid>
-
 </ContentView>
