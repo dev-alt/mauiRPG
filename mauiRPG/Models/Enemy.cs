@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace mauiRPG.Models
 {
-    internal abstract class Enemy
+    public abstract class Enemy
     {
         public required string Name { get; set; }
         public required string Description { get; set; }

@@ -17,6 +17,8 @@ namespace mauiRPG.ViewModels
                 _player = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(Name));
+                OnPropertyChanged(nameof(RaceName));
+                OnPropertyChanged(nameof(ClassName));
                 OnPropertyChanged(nameof(Level));
                 OnPropertyChanged(nameof(Health));
                 OnPropertyChanged(nameof(Strength));
@@ -27,6 +29,8 @@ namespace mauiRPG.ViewModels
         }
 
         public string Name => Player?.Name ?? "N/A";
+        public string RaceName => Player?.Race.ToString() ?? "N/A";
+        public string ClassName => Player?.Class.ToString() ?? "N/A";
         public string Level => Player?.Level.ToString() ?? "N/A";
         public string Health => Player?.Health.ToString() ?? "N/A";
         public string Strength => Player?.Strength.ToString() ?? "N/A";

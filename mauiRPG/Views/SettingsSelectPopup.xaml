@@ -5,26 +5,53 @@
     <Frame VerticalOptions="Center"
            HorizontalOptions="Center"
            WidthRequest="300"
-           HeightRequest="400"
+           HeightRequest="480"
            CornerRadius="10"
            Padding="20"
-           BackgroundColor="White">
+           BackgroundColor="{AppThemeBinding Light=White, Dark=Black}">
         <StackLayout>
             <Label Text="Settings"
-                   FontSize="20"
-                   TextColor="Black"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   TextColor="{AppThemeBinding Light=Black, Dark=White}"
                    HorizontalOptions="Center"
-                   Margin="0,0,0,10"/>
+                   Margin="0,0,0,20"/>
             <ScrollView HeightRequest="280">
-                           
-                        <StackLayout Orientation="Vertical" Padding="10">
-                            <Label Text="f" TextColor="Black" FontAttributes="Bold"/>
-                            <Label Text="f" TextColor="Black" FontAttributes="Bold"/>
-                            <Label Text="f" TextColor="Black" FontAttributes="Bold"/>
-                        </StackLayout>
-            
-            </ScrollView>
+                <StackLayout Spacing="20">
 
+                    <!-- Sound Settings -->
+                    <StackLayout>
+                        <Label Text="Sound Settings" FontSize="18" FontAttributes="Bold" TextColor="{AppThemeBinding Light=Black, Dark=White}"/>
+                        <Label Text="Music Volume" TextColor="{AppThemeBinding Light=Black, Dark=White}"/>
+                        <Slider x:Name="MusicVolumeSlider" Minimum="0" Maximum="100" Value="{Binding MusicVolume}"/>
+                        <Label Text="SFX Volume" TextColor="{AppThemeBinding Light=Black, Dark=White}"/>
+                        <Slider x:Name="SfxVolumeSlider" Minimum="0" Maximum="100" Value="{Binding SfxVolume}"/>
+                    </StackLayout>
+
+                    <!-- Difficulty Settings -->
+                    <StackLayout>
+                        <Label Text="Difficulty" FontSize="18" FontAttributes="Bold" TextColor="{AppThemeBinding Light=Black, Dark=White}"/>
+                        <Picker x:Name="DifficultyPicker" 
+                                ItemsSource="{Binding DifficultyLevels}"
+                                SelectedItem="{Binding SelectedDifficulty}"/>
+                    </StackLayout>
+
+                    <!-- Theme Settings -->
+                    <StackLayout>
+                        <Label Text="Theme" FontSize="18" FontAttributes="Bold" TextColor="{AppThemeBinding Light=Black, Dark=White}"/>
+                        <Switch x:Name="ThemeSwitch" 
+                                IsToggled="{Binding IsDarkMode}"
+                                OnColor="{AppThemeBinding Light=Black, Dark=White}"/>
+                        <Label Text="{Binding ThemeText}" TextColor="{AppThemeBinding Light=Black, Dark=White}"/>
+                    </StackLayout>
+                </StackLayout>
+            </ScrollView>
+            <Button Text="Save Settings" 
+                    Command="{Binding SaveSettingsCommand}"
+                    BackgroundColor="{AppThemeBinding Light=#007AFF, Dark=#0A84FF}"
+                    TextColor="White"
+                    CornerRadius="5"
+                    Margin="0,10,0,0"/>
         </StackLayout>
     </Frame>
 </ContentView>
