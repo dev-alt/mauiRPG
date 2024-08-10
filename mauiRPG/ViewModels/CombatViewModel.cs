@@ -43,6 +43,7 @@ namespace mauiRPG.ViewModels
         public ICommand AttackCommand { get; }
         public ICommand DefendCommand { get; }
         public ICommand UseItemCommand { get; }
+        public ICommand RunCommand { get; }
 
         public CombatViewModel(Player player, Enemy enemy, CombatService combatService)
         {
@@ -53,6 +54,7 @@ namespace mauiRPG.ViewModels
             AttackCommand = new Command(ExecuteAttack);
             DefendCommand = new Command(ExecuteDefend);
             UseItemCommand = new Command(ExecuteUseItem);
+            RunCommand = new Command(ExecuteRun);
         }
 
         private void ExecuteAttack()
@@ -62,7 +64,10 @@ namespace mauiRPG.ViewModels
             // Check for battle end conditions
             CheckCombatEnd();
         }
+        private void ExecuteRun()
+        {
 
+        }
         private void ExecuteDefend()
         {
             // Implement defend logic
