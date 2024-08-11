@@ -31,7 +31,6 @@ namespace mauiRPG.Views
 
         private void OnPopupClosed(object sender, PopupClosedEventArgs e)
         {
-            // Notify the MainViewModel that the popup has been closed
             WeakReferenceMessenger.Default.Send(new PopupClosedMessage());
         }
     }

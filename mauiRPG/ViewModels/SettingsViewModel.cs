@@ -48,7 +48,6 @@ namespace mauiRPG.ViewModels
             _settingsService.SetSfxVolume(SfxVolume);
             _settingsService.SetDifficulty(SelectedDifficulty);
             _settingsService.SetTheme(IsDarkMode ? "Dark" : "Light");
-            // Optionally close the popup after saving
             CloseRequested?.Invoke(this, EventArgs.Empty);
         }
 

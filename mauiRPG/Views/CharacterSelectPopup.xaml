@@ -5,8 +5,6 @@
                xmlns:viewmodels="clr-namespace:mauiRPG.ViewModels"
                x:Class="mauiRPG.Views.CharacterSelectPopup">
 
-    <!-- Remove the BindingContext from here if it's set in the code-behind -->
-
     <Frame VerticalOptions="Center"
            HorizontalOptions="Center"
            WidthRequest="300"

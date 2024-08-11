@@ -9,6 +9,7 @@ namespace mauiRPG.Views
         private Popup _currentPopup;
         private readonly MainViewModel _viewModel;
         private readonly ISettingsService _settingsService;
+        private CharacterService _characterService;
 
         public MainMenuView(CharacterService characterService, ISettingsService settingsService)
         {
@@ -34,9 +35,15 @@ namespace mauiRPG.Views
 
         private async void OnShowCharacterPopupRequested(object sender, EventArgs e)
         {
-            _currentPopup = new CharacterSelectPopup(_viewModel);
+            if (_characterService == null)
+            {
+                _characterService = new CharacterService(); // Ensure service is instantiated
+            }
+            var characterSelectViewModel = new CharacterSelectViewModel(_characterService);
+            _currentPopup = new CharacterSelectPopup(characterSelectViewModel);
             await this.ShowPopupAsync(_currentPopup);
         }
+
 
         private async void OnShowSettingsPopupRequested(object sender, EventArgs e)
         {
