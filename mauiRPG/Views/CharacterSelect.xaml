@@ -5,10 +5,6 @@
              Title="Create Your Character"
              BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Gray900}}">
 
-    <!-- Background Image -->
-    <ContentPage.Background>
-       
-    </ContentPage.Background>
 
     <ScrollView>
         <Grid RowDefinitions="Auto,*,Auto" 

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="mauiRPG.Views.CombatView"
-             xmlns:viewmodels="clr-namespace:mauiRPG.ViewModels">
+             x:Class="mauiRPG.Views.CombatView">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -20,6 +19,12 @@
                 <Label Text="{Binding EnemyHealth, StringFormat='HP: {0}'}" FontSize="Small"/>
             </StackLayout>
         </Frame>
+
+        <!-- Enemy Image (Center) -->
+        <Image x:Name="EnemyImage" Grid.Row="1" Source="enemy_placeholder.png" 
+               HorizontalOptions="Center" VerticalOptions="Center"
+               WidthRequest="200" HeightRequest="200" 
+               Opacity="0" Scale="0.1" />
 
         <!-- Player Info (Bottom Left) -->
         <Frame Grid.Row="2" Padding="10" Margin="10" HorizontalOptions="Start" VerticalOptions="End" 

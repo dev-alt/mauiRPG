@@ -13,6 +13,7 @@ namespace mauiRPG.ViewModels
         private bool _isSettingsVisible;
         private Character _selectedCharacter = null!;
 
+        #region Commands
         public ICommand CreateNewCharacterCommand { get; }
         public ICommand ShowLoadCharacterCommand { get; }
         public ICommand ShowSettingsCommand { get; }
@@ -21,6 +22,7 @@ namespace mauiRPG.ViewModels
         public ICommand SettingsCommand { get; }
         public ICommand CancelSettingsCommand { get; }
         public ICommand ExitCommand { get; }
+        #endregion
         public ObservableCollection<Character> Characters { get; }
 
         public bool IsCharacterListVisible
@@ -96,7 +98,6 @@ namespace mauiRPG.ViewModels
 
             await Shell.Current.DisplayAlert("Character Loaded", $"Loaded character: {SelectedCharacter.Name}", "OK");
             IsCharacterListVisible = false;
-            // TODO: Implement logic to start the game with the loaded character
         }
 
         private void CancelLoadCharacter()
