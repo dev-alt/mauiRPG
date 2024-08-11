@@ -45,8 +45,8 @@ public partial class LevelPage : ContentPage
         {
             Number = levelNumber,
             IsUnlocked = true,
-                   Name = levelName,  // Set the required Name property explicitly
-            ImageSource = imageSource  // Set the required ImageSource property explicitly
+                   Name = levelName,
+            ImageSource = imageSource  
 
     };
 
@@ -65,8 +65,8 @@ public partial class LevelPage : ContentPage
         Debug.WriteLine($"Player: {_player}");
         var enemy = new EnemyWizard($"Evil Wizard {LevelNumber}", LevelNumber)
         {
-            Name = "Dark Wizzard",
-            Description = "null",
+            Name = "Dark Wizard",
+            Description = "A powerful dark wizard",
             Health = 50
         };
         Debug.WriteLine($"Enemy: {enemy}");

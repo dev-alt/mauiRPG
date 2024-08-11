@@ -6,18 +6,11 @@ using System.Threading.Tasks;
 
 namespace mauiRPG.Models
 {
-    public class Level
+    public class Level(string name, string imageSource)
     {
         public int Number { get; set; }
-        public required string Name { get; set; }
+        public required string Name { get; set; } = name;
         public bool IsUnlocked { get; set; }
-        public required string ImageSource { get; set; }
-        public Level(string name, string imageSource)
-        {
-            Name = name;
-            ImageSource = imageSource;
-        }
-
-
+        public required string ImageSource { get; set; } = imageSource;
     }
 }

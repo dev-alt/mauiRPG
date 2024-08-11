@@ -39,7 +39,7 @@
         <!-- Action Buttons -->
         <Frame Grid.Row="2" Padding="10" Margin="10" HorizontalOptions="End" VerticalOptions="End" 
                BackgroundColor="#80FFFFFF" BorderColor="Black" CornerRadius="10">
-            <Grid>
+            <Grid RowSpacing="15" ColumnSpacing="15">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>

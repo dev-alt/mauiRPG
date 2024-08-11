@@ -73,7 +73,7 @@ namespace mauiRPG.ViewModels
             Number = 2,
             IsUnlocked = true,
             Name = "Dark Forest",
-            ImageSource = "level2.png"
+            ImageSource = "level2.jpg"
         },
         new Level("Mystic Mountains", "level3.png")
         {
