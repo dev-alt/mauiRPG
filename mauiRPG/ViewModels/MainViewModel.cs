@@ -3,16 +3,20 @@ using mauiRPG.Services;
 using mauiRPG.Views;
 using System.Collections.ObjectModel;
 using mauiRPG.Models;
+using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 
 namespace mauiRPG.ViewModels
 {
-    public class MainViewModel : BindableObject
+    public partial class MainViewModel : ObservableObject, IRecipient<PopupClosedMessage>
     {
         private readonly CharacterService _characterService;
         private bool _isCharacterListVisible;
         private bool _isSettingsVisible;
         private Character _selectedCharacter = null!;
-
+        private Popup _currentPopup;
+        private readonly MainViewModel _viewModel;
         #region Commands
         public ICommand CreateNewCharacterCommand { get; }
         public ICommand ShowLoadCharacterCommand { get; }
@@ -22,8 +26,12 @@ namespace mauiRPG.ViewModels
         public ICommand SettingsCommand { get; }
         public ICommand CancelSettingsCommand { get; }
         public ICommand ExitCommand { get; }
+        public ICommand ClosePopupCommand { get; }
+        public event EventHandler? ShowCharacterPopupRequested;
+        public event EventHandler? ShowSettingsPopupRequested;
         #endregion
         public ObservableCollection<Character> Characters { get; }
+
 
         public bool IsCharacterListVisible
         {
@@ -43,6 +51,9 @@ namespace mauiRPG.ViewModels
                 OnPropertyChanged();
             }
         }
+        [ObservableProperty]
+        private bool _isAnyPopupVisible;
+
         public Character SelectedCharacter
         {
             get => _selectedCharacter;
@@ -53,7 +64,7 @@ namespace mauiRPG.ViewModels
             }
         }
 
-        public MainViewModel()
+        public MainViewModel(CharacterService characterService)
         {
             _characterService = new CharacterService();
             Characters = new ObservableCollection<Character>(_characterService.LoadCharacters());
@@ -66,12 +77,10 @@ namespace mauiRPG.ViewModels
             SettingsCommand = new Command(async () => await OpenSettings());
             CancelSettingsCommand = new Command(CancelSettings);
             ExitCommand = new Command(Exit);
+            ClosePopupCommand = new Command(ClosePopups);
+            WeakReferenceMessenger.Default.Register<PopupClosedMessage>(this);
         }
 
-        private void ShowOpenSettings()
-        {
-            IsSettingsVisible = true;
-        }
 
         private async Task CreateNewCharacter()
         {
@@ -86,6 +95,25 @@ namespace mauiRPG.ViewModels
                 return;
             }
             IsCharacterListVisible = true;
+            IsAnyPopupVisible = true;
+            ShowCharacterPopupRequested?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void ShowOpenSettings()
+        {
+            IsSettingsVisible = true;
+            IsAnyPopupVisible = true;
+            ShowSettingsPopupRequested?.Invoke(this, EventArgs.Empty);
+        }
+        public void Receive(PopupClosedMessage message)
+        {
+            IsAnyPopupVisible = false;
+        }
+        public void ClosePopups()
+        {
+            IsCharacterListVisible = false;
+            IsSettingsVisible = false;
+            IsAnyPopupVisible = false;
         }
 
         private async Task LoadCharacter()

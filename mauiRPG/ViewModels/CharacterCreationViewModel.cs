@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using CommunityToolkit.Mvvm.Input;
 using mauiRPG.Models;
 using mauiRPG.Services;
 using mauiRPG.Views;
@@ -13,7 +14,7 @@ using Microsoft.Extensions.Logging;
 
 namespace mauiRPG.ViewModels
 {
-    public class CharacterCreationViewModel : INotifyPropertyChanged
+    public partial class CharacterCreationViewModel : INotifyPropertyChanged
     {
         private readonly CharacterService _characterService;
         private readonly GameStateService _gameStateService;
@@ -22,8 +23,9 @@ namespace mauiRPG.ViewModels
         public ObservableCollection<Race> Races { get; }
         public ObservableCollection<Class> Classes { get; }
         public ICommand CreateCharacterCommand { get; }
+        public ICommand ClosePopupCommand { get; }
         public event PropertyChangedEventHandler? PropertyChanged;
-
+        public event EventHandler CloseRequested;
         private string _name = "Name";
         private Race _selectedRace = null!;
         private Class _selectedClass = null!;
@@ -87,7 +89,6 @@ namespace mauiRPG.ViewModels
             SelectedRace = Races[0];
             SelectedClass = Classes[0];
             CreateCharacterCommand = new Command(CreateCharacter);
-
             _logger.LogInformation("CharacterCreationViewModel initialized");
         }
         private async void CreateCharacter()
@@ -124,7 +125,12 @@ namespace mauiRPG.ViewModels
 
             await Shell.Current.GoToAsync($"{nameof(LevelSelectView)}");
         }
-        
+
+        [RelayCommand]
+        private void Close()
+        {
+            CloseRequested?.Invoke(this, EventArgs.Empty);
+        }
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

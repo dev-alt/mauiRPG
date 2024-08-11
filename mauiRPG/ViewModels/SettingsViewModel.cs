@@ -1,110 +1,61 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using mauiRPG.Services;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace mauiRPG.ViewModels
 {
-    public class SettingsViewModel : INotifyPropertyChanged
+    public partial class SettingsViewModel : ObservableObject
     {
         private readonly ISettingsService _settingsService;
 
-    private int _musicVolume;
-    public int MusicVolume
-    {
-        get => _musicVolume;
-        set
+        [ObservableProperty]
+        private int _musicVolume;
+
+        [ObservableProperty]
+        private int _sfxVolume;
+
+        [ObservableProperty]
+        private string _selectedDifficulty;
+
+        [ObservableProperty]
+        private bool _isDarkMode;
+
+        public List<string> DifficultyLevels { get; } = new List<string> { "Easy", "Normal", "Hard" };
+
+        public string ThemeText => IsDarkMode ? "Dark Mode" : "Light Mode";
+
+        public event EventHandler CloseRequested;
+
+        public SettingsViewModel(ISettingsService settingsService)
         {
-            if (_musicVolume != value)
-            {
-                _musicVolume = value;
-                OnPropertyChanged(nameof(MusicVolume));
-            }
+            _settingsService = settingsService;
+            LoadSettings();
+        }
+
+        private void LoadSettings()
+        {
+            MusicVolume = _settingsService.GetMusicVolume();
+            SfxVolume = _settingsService.GetSfxVolume();
+            SelectedDifficulty = _settingsService.GetDifficulty();
+            IsDarkMode = _settingsService.GetTheme() == "Dark";
+        }
+
+        [RelayCommand]
+        private void SaveSettings()
+        {
+            _settingsService.SetMusicVolume(MusicVolume);
+            _settingsService.SetSfxVolume(SfxVolume);
+            _settingsService.SetDifficulty(SelectedDifficulty);
+            _settingsService.SetTheme(IsDarkMode ? "Dark" : "Light");
+            // Optionally close the popup after saving
+            CloseRequested?.Invoke(this, EventArgs.Empty);
+        }
+
+        [RelayCommand]
+        private void Close()
+        {
+            CloseRequested?.Invoke(this, EventArgs.Empty);
         }
     }
-
-    private int _sfxVolume;
-    public int SfxVolume
-    {
-        get => _sfxVolume;
-        set
-        {
-            if (_sfxVolume != value)
-            {
-                _sfxVolume = value;
-                OnPropertyChanged(nameof(SfxVolume));
-            }
-        }
-    }
-
-    public ObservableCollection<string> DifficultyLevels { get; } = new ObservableCollection<string> { "Easy", "Normal", "Hard" };
-
-    private string _selectedDifficulty = null!;
-    public string SelectedDifficulty
-    {
-        get => _selectedDifficulty;
-        set
-        {
-            if (_selectedDifficulty != value)
-            {
-                _selectedDifficulty = value;
-                OnPropertyChanged(nameof(SelectedDifficulty));
-            }
-        }
-    }
-
-    private bool _isDarkMode;
-    public bool IsDarkMode
-    {
-        get => _isDarkMode;
-        set
-        {
-            if (_isDarkMode != value)
-            {
-                _isDarkMode = value;
-                OnPropertyChanged(nameof(IsDarkMode));
-                OnPropertyChanged(nameof(ThemeText));
-            }
-        }
-    }
-
-    public string ThemeText => IsDarkMode ? "Dark Mode" : "Light Mode";
-
-    public ICommand SaveSettingsCommand { get; }
-
-    public SettingsViewModel(ISettingsService settingsService)
-    {
-        _settingsService = settingsService;
-        LoadSettings();
-        SaveSettingsCommand = new Command(SaveSettings);
-    }
-
-    private void LoadSettings()
-    {
-        MusicVolume = _settingsService.GetMusicVolume();
-        SfxVolume = _settingsService.GetSfxVolume();
-        SelectedDifficulty = _settingsService.GetDifficulty();
-        IsDarkMode = _settingsService.GetTheme() == "Dark";
-    }
-
-    private void SaveSettings()
-    {
-        _settingsService.SetMusicVolume(MusicVolume);
-        _settingsService.SetSfxVolume(SfxVolume);
-        _settingsService.SetDifficulty(SelectedDifficulty);
-        _settingsService.SetTheme(IsDarkMode ? "Dark" : "Light");
-        // Optionally, you can show a confirmation message to the user
-    }
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-    protected virtual void OnPropertyChanged(string propertyName)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-}
 }

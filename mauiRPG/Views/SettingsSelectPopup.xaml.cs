@@ -1,18 +1,40 @@
+using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Mvvm.Messaging;
 using mauiRPG.Services;
 using mauiRPG.ViewModels;
 
-namespace mauiRPG.Views;
-
-public partial class SettingsSelectPopup : ContentView
+namespace mauiRPG.Views
 {
-	public SettingsSelectPopup()
+    public partial class SettingsSelectPopup : Popup
     {
-        InitializeComponent();
-        if (Application.Current == null) return;
-        if (Application.Current.Handler != null && Application.Current.Handler.MauiContext != null)
-            BindingContext =
-                new SettingsViewModel(
-                    Application.Current.Handler.MauiContext.Services.GetService<ISettingsService>() ??
-                    throw new InvalidOperationException());
+        private readonly SettingsViewModel _viewModel;
+
+        public SettingsSelectPopup(ISettingsService settingsService)
+        {
+            InitializeComponent();
+            _viewModel = new SettingsViewModel(settingsService);
+            BindingContext = _viewModel;
+
+            _viewModel.CloseRequested += (sender, args) => Close();
+        }
+
+        protected override void OnHandlerChanged()
+        {
+            base.OnHandlerChanged();
+
+            if (Handler != null)
+            {
+                this.Closed += OnPopupClosed;
+            }
+        }
+
+        private void OnPopupClosed(object sender, PopupClosedEventArgs e)
+        {
+            // Notify the MainViewModel that the popup has been closed
+            WeakReferenceMessenger.Default.Send(new PopupClosedMessage());
+        }
     }
+
+    public class PopupClosedMessage { }
 }

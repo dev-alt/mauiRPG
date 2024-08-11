@@ -2,13 +2,8 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:mauiRPG.ViewModels"
-             xmlns:views="clr-namespace:mauiRPG.Views"
              x:Class="mauiRPG.Views.MainMenuView"
              Title="mauiRPG">
-
-    <ContentPage.BindingContext>
-        <viewmodels:MainViewModel />
-    </ContentPage.BindingContext>
 
     <Grid>
         <VerticalStackLayout 
@@ -47,24 +42,14 @@
                 HorizontalOptions="Center" />
         </VerticalStackLayout>
 
-        <!-- Popup for character list -->
-        <Grid x:Name="CharacterPopupGrid"
-              IsVisible="{Binding IsCharacterListVisible}"
-              BackgroundColor="#80000000">
-            <Grid.GestureRecognizers>
+        <!-- Semi-transparent overlay for popups -->
+        <BoxView 
+            IsVisible="{Binding IsAnyPopupVisible}"
+            Color="#80000000"
+            InputTransparent="False">
+            <BoxView.GestureRecognizers>
                 <TapGestureRecognizer Tapped="OnBackgroundTapped" />
-            </Grid.GestureRecognizers>
-            <views:CharacterSelectPopup x:Name="CharacterPopup" InputTransparent="False" />
-        </Grid>
-
-        <!-- Popup for setting list -->
-        <Grid x:Name="SettingsPopupGrid"
-              IsVisible="{Binding IsSettingsVisible}"
-              BackgroundColor="#80000000">
-            <Grid.GestureRecognizers>
-                <TapGestureRecognizer Tapped="OnBackgroundTapped" />
-            </Grid.GestureRecognizers>
-            <views:SettingsSelectPopup x:Name="SettingPopup" InputTransparent="False" />
-        </Grid>
+            </BoxView.GestureRecognizers>
+        </BoxView>
     </Grid>
 </ContentPage>

@@ -22,6 +22,7 @@ namespace mauiRPG
             builder.Services.AddSingleton<GameStateService>();
             builder.Services.AddSingleton<CharacterService>();
             builder.Services.AddSingleton<ISettingsService, SettingsService>();
+            builder.Services.AddTransient<MainMenuView>();
 
             builder.Services.AddTransient<CharacterSelect>();
             builder.Services.AddTransient<CharacterCreationViewModel>();
