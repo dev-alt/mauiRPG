@@ -3,23 +3,13 @@
 namespace mauiRPG.Services
 {
     public class CombatService
-    {
-        public void ExecutePlayerAttack(Player player, Enemy enemy)
-        {
-            int damage = CalculateDamage(player.Strength, enemy.Defense);
-            enemy.Health -= damage;
-        }
+    {    
+        private readonly Random _random = new Random();
 
-        public void ExecuteEnemyAttack(Enemy enemy, Player player)
+        public int CalculateDamage(int attackStat, int defenseStat)
         {
-            int damage = CalculateDamage(enemy.Attack, player.Constitution);
-            player.Health -= damage;
-        }
-
-        private int CalculateDamage(int attackStat, int defenseStat)
-        {
-            // Simple damage calculation, can be made more complex
-            return Math.Max(0, attackStat - defenseStat);
+            int baseDamage = _random.Next(attackStat / 2, attackStat);
+            return Math.Max(0, baseDamage - defenseStat);
         }
     }
 }
