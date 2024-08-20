@@ -1,102 +1,95 @@
-﻿using System.ComponentModel;
-using System.Windows.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using mauiRPG.Models;
 using mauiRPG.Services;
+using System.Collections.ObjectModel;
 
 namespace mauiRPG.ViewModels
 {
-    public class CombatViewModel : INotifyPropertyChanged
+    public partial class CombatViewModel : ObservableObject
     {
         private readonly CombatService _combatService;
         private readonly Player _player;
         private readonly Enemy _enemy;
-        public event EventHandler<CombatResult>? CombatEnded;
 
-        public string PlayerName => _player.Name;
-        public string EnemyName => _enemy.Name;
+        [ObservableProperty]
+        private string playerName;
 
-        public int PlayerHealth
-        {
-            get => _player.Health;
-            set
-            {
-                _player.Health = value;
-                OnPropertyChanged(nameof(PlayerHealth));
-                OnPropertyChanged(nameof(PlayerHealthPercentage));
-            }
-        }
+        [ObservableProperty]
+        private string enemyName;
 
-        public int EnemyHealth
-        {
-            get => (int)_enemy.Health;
-            set
-            {
-                _enemy.Health = value;
-                OnPropertyChanged(nameof(EnemyHealth));
-                OnPropertyChanged(nameof(EnemyHealthPercentage));
-            }
-        }
+        [ObservableProperty]
+        private int playerHealth;
+
+        [ObservableProperty]
+        private int enemyHealth;
+
+        [ObservableProperty]
+        private string combatLog = string.Empty;
 
         public double PlayerHealthPercentage => (double)PlayerHealth / _player.MaxHealth;
-        public double EnemyHealthPercentage => _enemy.Health / _enemy.MaxHealth;
+        public double EnemyHealthPercentage => (double)EnemyHealth / _enemy.MaxHealth;
 
-        public ICommand AttackCommand { get; }
-        public ICommand DefendCommand { get; }
-        public ICommand UseItemCommand { get; }
-        public ICommand RunCommand { get; }
+        public event EventHandler<CombatOutcome>? CombatEnded;
 
         public CombatViewModel(Player player, Enemy enemy, CombatService combatService)
         {
-            _player = player ?? throw new ArgumentNullException(nameof(player));
-            _enemy = enemy ?? throw new ArgumentNullException(nameof(enemy));
-            _combatService = combatService ?? throw new ArgumentNullException(nameof(combatService));
-
-            AttackCommand = new Command(ExecuteAttack);
-            DefendCommand = new Command(ExecuteDefend);
-            UseItemCommand = new Command(ExecuteUseItem);
-            RunCommand = new Command(ExecuteRun);
+            _player = player;
+            _enemy = enemy;
+            _combatService = combatService;
+            PlayerName = player.Name;
+            EnemyName = enemy.Name;
+            PlayerHealth = player.Health;
+            EnemyHealth = (int)enemy.Health;
         }
 
-        private void ExecuteAttack()
+
+        [RelayCommand]
+        private void Attack()
         {
-            // Implement attack logic
-            // Update health values
-            // Check for battle end conditions
-            CheckCombatEnd();
-        }
-        private void ExecuteRun()
-        {
+            var playerResult = _combatService.ExecutePlayerAttack(_player, _enemy);
+            UpdateCombatLog(playerResult);
+            EnemyHealth = (int)_enemy.Health;
 
+            if (_enemy.Health <= 0)
+            {
+                CombatEnded?.Invoke(this, CombatOutcome.PlayerVictory);
+                return;
+            }
+
+            var enemyResult = _combatService.ExecuteEnemyAttack(_enemy, _player);
+            UpdateCombatLog(enemyResult);
+            PlayerHealth = _player.Health;
+
+            if (_player.Health <= 0)
+            {
+                CombatEnded?.Invoke(this, CombatOutcome.EnemyVictory);
+            }
         }
-        private void ExecuteDefend()
+        [RelayCommand]
+        private void Defend()
         {
             // Implement defend logic
+            CombatLog += "You took a defensive stance.\n";
         }
 
-        private void ExecuteUseItem()
+        [RelayCommand]
+        private void UseItem()
         {
             // Implement item usage logic
+            CombatLog += "You used an item.\n";
         }
-        private void CheckCombatEnd()
+
+        [RelayCommand]
+        private void Run()
         {
-            if (PlayerHealth <= 0)
-            {
-                CombatEnded?.Invoke(this, CombatResult.EnemyVictory);
-            }
-            else if (EnemyHealth <= 0)
-            {
-                CombatEnded?.Invoke(this, CombatResult.PlayerVictory);
-            }
+            // Implement run logic
+            CombatLog += "You attempted to run away.\n";
         }
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected virtual void OnPropertyChanged(string propertyName)
+
+        private void UpdateCombatLog(CombatResult result)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-        public enum CombatResult
-        {
-            PlayerVictory,
-            EnemyVictory
+            CombatLog += $"{result.Attacker} dealt {result.Damage} damage to {result.Defender}. {result.Defender}'s remaining health: {result.RemainingHealth}\n";
         }
     }
 }

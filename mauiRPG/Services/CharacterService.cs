@@ -38,9 +38,9 @@ namespace mauiRPG.Services
 
         public List<Character> LoadCharacters()
         {
-            if (!File.Exists(_filePath)) return new List<Character>();
+            if (!File.Exists(_filePath)) return [];
             var json = File.ReadAllText(_filePath);
-            return JsonSerializer.Deserialize<List<Character>>(json, _jsonOptions) ?? new List<Character>();
+            return JsonSerializer.Deserialize<List<Character>>(json, _jsonOptions) ?? [];
         }
 
         public Player LoadPlayer(string playerName)

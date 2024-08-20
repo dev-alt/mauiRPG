@@ -4,7 +4,6 @@ using mauiRPG.ViewModels;
 using mauiRPG.Services;
 
 namespace mauiRPG.Views;
-
 [QueryProperty(nameof(LevelNumber), "levelNumber")]
 public partial class LevelPage : ContentPage
 {
@@ -13,7 +12,6 @@ public partial class LevelPage : ContentPage
     private readonly CombatService _combatService;
     private readonly GameStateService _gameStateService;
     private Player _player = null!;
-
 
     public int LevelNumber
     {
@@ -25,31 +23,32 @@ public partial class LevelPage : ContentPage
             LoadLevel(_levelNumber);
         }
     }
+
     public LevelPage(GameStateService gameStateService)
     {
         InitializeComponent();
         _gameStateService = gameStateService;
         _combatService = new CombatService();
-        _combatView = new CombatView();
-        _combatView.IsVisible = false;
+        _combatView = new CombatView
+        {
+            IsVisible = false
+        };
         Debug.WriteLine($"LevelPage constructor: Player: {_player}, CombatService: {_combatService}");
         MainLayout.Children.Add(_combatView);
     }
+
     private void LoadLevel(int levelNumber)
     {
         _player = _gameStateService.CurrentPlayer;
         var levelName = $"Level {levelNumber}";
         var imageSource = $"level{levelNumber}.jpg";
-
-        Level level = new Level(name: levelName, imageSource: imageSource)
+        Level level = new(name: levelName, imageSource: imageSource)
         {
             Number = levelNumber,
             IsUnlocked = true,
-                   Name = levelName,
-            ImageSource = imageSource  
-
-    };
-
+            Name = levelName,
+            ImageSource = imageSource
+        };
         BindingContext = new LevelDetailsViewModel(level);
 
         // Simulate enemy encounter after a short delay
@@ -74,22 +73,21 @@ public partial class LevelPage : ContentPage
         InitiateCombat(_player, enemy);
     }
 
-
     private void InitiateCombat(Player player, Enemy enemy)
     {
         var combatViewModel = new CombatViewModel(player, enemy, _combatService);
-        _combatView.SetCombatViewModel(combatViewModel);
+        _combatView.BindingContext = combatViewModel;
         _combatView.IsVisible = true;
 
         // Subscribe to combat end event
-        combatViewModel.CombatEnded += OnCombatEnded!;
+        combatViewModel.CombatEnded += OnCombatEnded;
     }
 
-    private void OnCombatEnded(object sender, CombatViewModel.CombatResult result)
+    private void OnCombatEnded(object sender, CombatOutcome result)
     {
         _combatView.IsVisible = false;
 
-        if (result == CombatViewModel.CombatResult.PlayerVictory)
+        if (result == CombatOutcome.PlayerVictory)
         {
             // Handle player victory (e.g., show rewards, progress to next level)
             DisplayAlert("Victory!", "You've defeated the enemy!", "Continue");
@@ -104,7 +102,7 @@ public partial class LevelPage : ContentPage
         // Unsubscribe from the event
         if (sender is CombatViewModel viewModel)
         {
-            viewModel.CombatEnded -= OnCombatEnded!;
+            viewModel.CombatEnded -= OnCombatEnded;
         }
     }
 }

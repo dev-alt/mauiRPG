@@ -3,18 +3,11 @@ using mauiRPG.Services;
 
 namespace mauiRPG.Controllers
 {
-    public class CombatManager
+    public class CombatManager(Player player, Enemy enemy, CombatService combatService)
     {
-        private readonly Player _player;
-        private readonly Enemy _enemy;
-        private readonly CombatService _combatService;
-
-        public CombatManager(Player player, Enemy enemy, CombatService combatService)
-        {
-            _player = player;
-            _enemy = enemy;
-            _combatService = combatService;
-        }
+        private readonly Player _player = player;
+        private readonly Enemy _enemy = enemy;
+        private readonly CombatService _combatService = combatService;
 
         public string ExecuteTurn()
         {

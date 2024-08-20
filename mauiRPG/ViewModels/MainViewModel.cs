@@ -15,7 +15,7 @@ namespace mauiRPG.ViewModels
         private bool _isCharacterListVisible;
         private bool _isSettingsVisible;
         private Character _selectedCharacter = null!;
-        private Popup _currentPopup;
+        private readonly Popup _currentPopup;
         private readonly MainViewModel _viewModel;
         #region Commands
         public ICommand CreateNewCharacterCommand { get; }
