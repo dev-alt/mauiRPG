@@ -85,6 +85,9 @@
 	  <MauiXaml Update="Views\CombatView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\InventoryView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\LevelPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

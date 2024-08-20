@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="mauiRPG.Views.LevelPage"
              Title="{Binding Name}">
-
     <Grid x:Name="MainLayout">
         <!-- Your existing level content here -->
         <Image Source="{Binding ImageSource}" Aspect="AspectFill" />

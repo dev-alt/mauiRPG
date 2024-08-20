@@ -29,10 +29,8 @@ public partial class LevelPage : ContentPage
         InitializeComponent();
         _gameStateService = gameStateService;
         _combatService = new CombatService();
-        _combatView = new CombatView
-        {
-            IsVisible = false
-        };
+        _combatView = new CombatView();
+        _combatView.IsVisible = false;
         Debug.WriteLine($"LevelPage constructor: Player: {_player}, CombatService: {_combatService}");
         MainLayout.Children.Add(_combatView);
     }
@@ -42,7 +40,7 @@ public partial class LevelPage : ContentPage
         _player = _gameStateService.CurrentPlayer;
         var levelName = $"Level {levelNumber}";
         var imageSource = $"level{levelNumber}.jpg";
-        Level level = new(name: levelName, imageSource: imageSource)
+        Level level = new Level(name: levelName, imageSource: imageSource)
         {
             Number = levelNumber,
             IsUnlocked = true,
