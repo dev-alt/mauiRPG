@@ -11,6 +11,7 @@ namespace mauiRPG.ViewModels
         private readonly CombatService _combatService;
         private readonly Player _player;
         private readonly Enemy _enemy;
+        private readonly InventoryService _inventoryService;
 
         [ObservableProperty]
         private string playerName;
@@ -27,29 +28,47 @@ namespace mauiRPG.ViewModels
         [ObservableProperty]
         private string combatLog = string.Empty;
 
+        [ObservableProperty]
+        private bool isInventoryOpen;
+        public ObservableCollection<Item> InventoryItems { get; } = [];
         public double PlayerHealthPercentage => (double)PlayerHealth / _player.MaxHealth;
         public double EnemyHealthPercentage => (double)EnemyHealth / _enemy.MaxHealth;
 
         public event EventHandler<CombatOutcome>? CombatEnded;
+        public event EventHandler<string>? AnimationRequested;
 
-        public CombatViewModel(Player player, Enemy enemy, CombatService combatService)
+        public CombatViewModel(Player player, Enemy enemy, CombatService combatService, InventoryService inventoryService)
         {
             _player = player;
             _enemy = enemy;
             _combatService = combatService;
+            _inventoryService = inventoryService;
             PlayerName = player.Name;
             EnemyName = enemy.Name;
             PlayerHealth = player.Health;
             EnemyHealth = (int)enemy.Health;
+
+            LoadInventory();
         }
-
-
-        [RelayCommand]
-        private void Attack()
+        private void LoadInventory()
         {
+            var items = _inventoryService.GetPlayerItems(_player.Id);
+            foreach (var item in items)
+            {
+                InventoryItems.Add(item);
+            }
+        }
+        [RelayCommand]
+        private async Task Attack()
+        {
+            // Trigger player attack animation
+            AnimationRequested?.Invoke(this, "PlayerAttack");
+
             var playerResult = _combatService.ExecutePlayerAttack(_player, _enemy);
             UpdateCombatLog(playerResult);
             EnemyHealth = (int)_enemy.Health;
+
+            OnPropertyChanged(nameof(EnemyHealthPercentage));
 
             if (_enemy.Health <= 0)
             {
@@ -57,27 +76,50 @@ namespace mauiRPG.ViewModels
                 return;
             }
 
+            // Delay for animation
+            await Task.Delay(1000);
+
+            // Trigger enemy attack animation
+            AnimationRequested?.Invoke(this, "EnemyAttack");
+
             var enemyResult = _combatService.ExecuteEnemyAttack(_enemy, _player);
             UpdateCombatLog(enemyResult);
             PlayerHealth = _player.Health;
+
+            OnPropertyChanged(nameof(PlayerHealthPercentage));
 
             if (_player.Health <= 0)
             {
                 CombatEnded?.Invoke(this, CombatOutcome.EnemyVictory);
             }
         }
+
         [RelayCommand]
         private void Defend()
         {
             // Implement defend logic
             CombatLog += "You took a defensive stance.\n";
         }
+        [RelayCommand]
+        private void OpenInventory()
+        {
+            IsInventoryOpen = true;
+        }
 
         [RelayCommand]
-        private void UseItem()
+        private void CloseInventory()
         {
-            // Implement item usage logic
-            CombatLog += "You used an item.\n";
+            IsInventoryOpen = false;
+        }
+        [RelayCommand]
+        private void UseItem(Item item)
+        {
+            item.Use(_player);
+            InventoryItems.Remove(item);
+            _inventoryService.RemoveItem(_player.Id, item.Id);
+            PlayerHealth = _player.Health;
+            UpdateCombatLog(new CombatResult { Attacker = _player.Name, Defender = _player.Name, Damage = 0, RemainingHealth = _player.Health });
+            CloseInventory();
         }
 
         [RelayCommand]

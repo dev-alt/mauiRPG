@@ -11,11 +11,11 @@ namespace mauiRPG.ViewModels
         private readonly CharacterService _characterService;
 
         [ObservableProperty]
-        private Character _selectedCharacter;
+        private Character? _selectedCharacter;
 
         public ObservableCollection<Character> Characters { get; }
 
-        public event EventHandler CloseRequested;
+        public event EventHandler? CloseRequested;
 
         public CharacterSelectViewModel(CharacterService characterService)
         {

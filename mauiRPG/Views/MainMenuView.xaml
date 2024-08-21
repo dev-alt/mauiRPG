@@ -4,7 +4,6 @@
              xmlns:viewmodels="clr-namespace:mauiRPG.ViewModels"
              x:Class="mauiRPG.Views.MainMenuView"
              Title="mauiRPG">
-
     <Grid>
         <VerticalStackLayout 
             Spacing="25" 
@@ -33,7 +32,7 @@
             <Button 
                 Text="Settings"
                 SemanticProperties.Hint="Opens the settings page"
-                Command="{Binding ShowSettingsCommand}"
+                Command="{Binding ShowOpenSettingsCommand}"
                 HorizontalOptions="Center" />
             <Button 
                 Text="Exit"
@@ -41,14 +40,13 @@
                 Command="{Binding ExitCommand}"
                 HorizontalOptions="Center" />
         </VerticalStackLayout>
-
         <!-- Semi-transparent overlay for popups -->
         <BoxView 
             IsVisible="{Binding IsAnyPopupVisible}"
             Color="#80000000"
             InputTransparent="False">
             <BoxView.GestureRecognizers>
-                <TapGestureRecognizer Tapped="OnBackgroundTapped" />
+                <TapGestureRecognizer Command="{Binding ClosePopupsCommand}" />
             </BoxView.GestureRecognizers>
         </BoxView>
     </Grid>

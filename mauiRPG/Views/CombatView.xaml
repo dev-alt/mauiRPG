@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="mauiRPG.Views.CombatView">
+             x:Class="mauiRPG.Views.CombatView"
+             xmlns:viewmodels="clr-namespace:mauiRPG.ViewModels">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -19,12 +20,17 @@
             </StackLayout>
         </Frame>
 
-        <!-- Enemy Image (Center) -->
-        <Image x:Name="EnemyImage" Grid.Row="1" Source="enemy_placeholder.png" 
-               HorizontalOptions="Center" VerticalOptions="Center"
-               WidthRequest="200" HeightRequest="200" 
-               Opacity="0" Scale="0.1">
-        </Image>
+        <!-- Combat Area -->
+        <Grid Grid.Row="1" x:Name="CombatArea">
+            <!-- Player placeholder -->
+            <Rectangle x:Name="PlayerPlaceholder" Fill="Blue" WidthRequest="50" HeightRequest="100"
+                       HorizontalOptions="Start" VerticalOptions="Center" Margin="50,0,0,0"/>
+            <!-- Enemy placeholder -->
+            <Rectangle x:Name="EnemyPlaceholder" Fill="Red" WidthRequest="50" HeightRequest="100"
+                       HorizontalOptions="End" VerticalOptions="Center" Margin="0,0,50,0"/>
+            <!-- Animation layer -->
+            <Grid x:Name="AnimationLayer" InputTransparent="True"/>
+        </Grid>
 
         <!-- Player Info (Bottom Left) -->
         <Frame Grid.Row="2" Padding="10" Margin="10" HorizontalOptions="Start" VerticalOptions="End" 
@@ -39,7 +45,7 @@
         <!-- Action Buttons -->
         <Frame Grid.Row="2" Padding="10" Margin="10" HorizontalOptions="End" VerticalOptions="End" 
                BackgroundColor="#80FFFFFF" BorderColor="Black" CornerRadius="10">
-            <Grid RowSpacing="15" ColumnSpacing="15">
+            <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
@@ -49,10 +55,39 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Button Text="Fight" Command="{Binding AttackCommand}" Grid.Column="0" Grid.Row="0"/>
-                <Button Text="Item" Command="{Binding UseItemCommand}" Grid.Column="1" Grid.Row="0"/>
+                <Button Text="Inventory" Command="{Binding OpenInventoryCommand}" Grid.Column="1" Grid.Row="0"/>
                 <Button Text="Defend" Command="{Binding DefendCommand}" Grid.Column="0" Grid.Row="1"/>
                 <Button Text="Run" Command="{Binding RunCommand}" Grid.Column="1" Grid.Row="1"/>
             </Grid>
         </Frame>
+
+        <!-- Inventory Overlay -->
+        <Grid x:Name="InventoryOverlay" Grid.RowSpan="3" IsVisible="{Binding IsInventoryOpen}"
+              BackgroundColor="#80000000">
+            <Frame BackgroundColor="White" VerticalOptions="Center" HorizontalOptions="Center"
+                   WidthRequest="300" HeightRequest="400" Padding="20">
+                <StackLayout>
+                    <Label Text="Inventory" FontSize="Large" HorizontalOptions="Center"/>
+                    <CollectionView ItemsSource="{Binding InventoryItems}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Padding="10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Text="{Binding Name}" VerticalOptions="Center"/>
+                                    <Button Text="Use" 
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CombatViewModel}}, Path=UseItemCommand}"
+                                            CommandParameter="{Binding .}"
+                                            Grid.Column="1"/>
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                    <Button Text="Close" Command="{Binding CloseInventoryCommand}" Margin="0,10,0,0"/>
+                </StackLayout>
+            </Frame>
+        </Grid>
     </Grid>
 </ContentView>

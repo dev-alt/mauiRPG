@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using mauiRPG.Models;
 using mauiRPG.Services;
@@ -14,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace mauiRPG.ViewModels
 {
-    public partial class CharacterCreationViewModel : INotifyPropertyChanged
+    public partial class CharacterCreationViewModel : ObservableObject
     {
         private readonly CharacterService _characterService;
         private readonly GameStateService _gameStateService;
@@ -22,46 +16,17 @@ namespace mauiRPG.ViewModels
 
         public ObservableCollection<Race> Races { get; }
         public ObservableCollection<Class> Classes { get; }
-        public ICommand CreateCharacterCommand { get; }
-        public ICommand ClosePopupCommand { get; }
-        public event PropertyChangedEventHandler? PropertyChanged;
-        public event EventHandler CloseRequested;
+
+        public event EventHandler? CloseRequested;
+
+        [ObservableProperty]
         private string _name = "Name";
-        private Race _selectedRace = null!;
-        private Class _selectedClass = null!;
 
+        [ObservableProperty]
+        private Race _selectedRace;
 
-        public string Name
-        {
-            get => _name;
-            set
-            {
-                _name = value;
-                OnPropertyChanged(nameof(Name));
-            }
-        }
-
-
-        public Race SelectedRace
-        {
-            get => _selectedRace;
-            set
-            {
-                _selectedRace = value;
-                OnPropertyChanged(nameof(SelectedRace));
-            }
-        }
-
-        public Class SelectedClass
-        {
-            get => _selectedClass;
-            set
-            {
-                _selectedClass = value;
-                OnPropertyChanged(nameof(SelectedClass));
-            }
-        }
-
+        [ObservableProperty]
+        private Class _selectedClass;
 
         public CharacterCreationViewModel(CharacterService characterService, GameStateService gameStateService,
             ILogger<CharacterCreationViewModel> logger)
@@ -70,30 +35,30 @@ namespace mauiRPG.ViewModels
             _gameStateService = gameStateService;
             _logger = logger;
 
-            Races = new ObservableCollection<Race>
-            {
+            Races =
+            [
                 new Orc(),
                 new Human(),
                 new Dwarf(),
                 new Elf()
-            };
+            ];
 
-
-            Classes = new ObservableCollection<Class>
-            {
+            Classes =
+            [
                 new Warrior(),
                 new Mage(),
                 new Rogue()
-            };
+            ];
 
             SelectedRace = Races[0];
             SelectedClass = Classes[0];
-            CreateCharacterCommand = new Command(CreateCharacter);
+
             _logger.LogInformation("CharacterCreationViewModel initialized");
         }
-        private async void CreateCharacter()
+
+        [RelayCommand]
+        private async Task CreateCharacter()
         {
-            // Validate the inputs
             if (string.IsNullOrWhiteSpace(Name))
             {
                 await Application.Current?.MainPage?.DisplayAlert("Error", "Please enter a valid name, and select a race and class.", "OK")!;
@@ -108,7 +73,7 @@ namespace mauiRPG.ViewModels
                 Level = 1,
                 Health = 100,
                 Strength = 10,
-                Intelligence = 10 ,
+                Intelligence = 10,
                 Dexterity = 10,
                 Constitution = 10
             };
@@ -116,12 +81,12 @@ namespace mauiRPG.ViewModels
             _characterService.SavePlayer(player);
             _gameStateService.CurrentPlayer = player;
 
-            // Ensure player.Name is not null
             _logger.LogInformation("Character created and set as CurrentPlayer: {PlayerName}", player.Name);
 
-            if (Application.Current != null)
-                if (Application.Current.MainPage != null)
-                    await Application.Current.MainPage.DisplayAlert("Success", "Character successfully created.", "OK");
+            if (Application.Current?.MainPage != null)
+            {
+                await Application.Current.MainPage.DisplayAlert("Success", "Character successfully created.", "OK");
+            }
 
             await Shell.Current.GoToAsync($"{nameof(LevelSelectView)}");
         }
@@ -130,10 +95,6 @@ namespace mauiRPG.ViewModels
         private void Close()
         {
             CloseRequested?.Invoke(this, EventArgs.Empty);
-        }
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

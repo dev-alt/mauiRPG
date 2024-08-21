@@ -1,21 +1,24 @@
-﻿namespace mauiRPG.Models
+﻿using mauiRPG.Models;
+
+namespace mauiRPG.Models
 {
     public class HealthPotion : Item
     {
-        public int HealAmount { get; set; }
+        public int HealAmount { get; set; } = 50;
 
         public HealthPotion()
         {
-            Name = "Health Potion";
-            Description = "Restores health when consumed";
             Type = ItemType.Consumable;
-            Value = 50;
-            HealAmount = 50;
         }
 
         public override void Use(Player player)
         {
-            player.Health = Math.Min(player.Health + HealAmount, player.MaxHealth);
+            player.Health += HealAmount;
+            // Ensure health doesn't exceed max health
+            if (player.Health > player.MaxHealth)
+            {
+                player.Health = player.MaxHealth;
+            }
         }
     }
 }

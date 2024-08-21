@@ -4,10 +4,8 @@
              x:Class="mauiRPG.Views.LevelPage"
              Title="{Binding Name}">
     <Grid x:Name="MainLayout">
-        <!-- Your existing level content here -->
         <Image Source="{Binding ImageSource}" Aspect="AspectFill" />
         <Label Text="{Binding Name}" FontSize="Large" />
-        <!-- The CombatView will be added here programmatically -->
     </Grid>
 
 </ContentPage>

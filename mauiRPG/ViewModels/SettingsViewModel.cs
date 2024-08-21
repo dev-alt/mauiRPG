@@ -16,16 +16,16 @@ namespace mauiRPG.ViewModels
         private int _sfxVolume;
 
         [ObservableProperty]
-        private string _selectedDifficulty;
+        private string _selectedDifficulty = "Normal";  // Default value
 
         [ObservableProperty]
         private bool _isDarkMode;
 
-        public List<string> DifficultyLevels { get; } = new List<string> { "Easy", "Normal", "Hard" };
+        public List<string> DifficultyLevels { get; } = ["Easy", "Normal", "Hard"];
 
         public string ThemeText => IsDarkMode ? "Dark Mode" : "Light Mode";
 
-        public event EventHandler CloseRequested;
+        public event EventHandler? CloseRequested;  // Made nullable
 
         public SettingsViewModel(ISettingsService settingsService)
         {

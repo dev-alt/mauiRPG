@@ -50,7 +50,7 @@ namespace mauiRPG.ViewModels
             CurrentPlayer = _gameStateService.CurrentPlayer;
             _logger.LogInformation("CurrentPlayer is {CurrentPlayerStatus}", $"set to {CurrentPlayer.Name}");
 
-            _levels = new ObservableCollection<Level>();
+            _levels = [];
             InitializeLevels();
             SelectLevelCommand = new Command<Level>(OnLevelSelected);
             ViewPlayerInfoCommand = new Command(OnViewPlayerInfo);
@@ -59,8 +59,8 @@ namespace mauiRPG.ViewModels
         private void InitializeLevels()
         {
             _logger.LogInformation("InitializeLevels called");
-            Levels = new ObservableCollection<Level>
-    {
+            Levels =
+    [
         new Level("The Beginning", "level1.jpg")
         {
             Number = 1,
@@ -82,7 +82,7 @@ namespace mauiRPG.ViewModels
             Name = "Mystic Mountains",
             ImageSource = "level3.png"
         }
-    };
+    ];
             _logger.LogInformation("Levels initialized with {LevelCount} levels", Levels.Count);
         }
 
@@ -90,37 +90,26 @@ namespace mauiRPG.ViewModels
         {
             _logger.LogInformation("OnViewPlayerInfo called");
 
-            if (_gameStateService.CurrentPlayer != null)
-            {
-                _logger.LogInformation("CurrentPlayer: Name={Name}, Race={Race}, Class={Class}",
-                    _gameStateService.CurrentPlayer.Name,
-                    _gameStateService.CurrentPlayer.Race?.Name,
-                    _gameStateService.CurrentPlayer.Class?.Name);
+            _logger.LogInformation("CurrentPlayer: Name={Name}, Race={Race}, Class={Class}",
+                _gameStateService.CurrentPlayer.Name,
+                _gameStateService.CurrentPlayer.Race?.Name,
+                _gameStateService.CurrentPlayer.Class?.Name);
 
-                try
-                {
-                    var popup = new PlayerInfoPopup(_gameStateService.CurrentPlayer, _logger);
-                    if (Application.Current == null) return;
-                    if (Application.Current.MainPage != null)
-                        await Application.Current.MainPage.ShowPopupAsync(popup);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error creating or showing PlayerInfoPopup");
-                    if (Application.Current != null)
-                        if (Application.Current.MainPage != null)
-                            await Application.Current.MainPage.DisplayAlert("Error",
-                                "Unable to display player information",
-                                "OK");
-                }
-            }
-            else
+            try
             {
-                _logger.LogWarning("CurrentPlayer is null");
+                var popup = new PlayerInfoPopup(_gameStateService.CurrentPlayer, _logger);
                 if (Application.Current == null) return;
                 if (Application.Current.MainPage != null)
-                    await Application.Current.MainPage.DisplayAlert("Error", "No player information available",
-                        "OK");
+                    await Application.Current.MainPage.ShowPopupAsync(popup);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating or showing PlayerInfoPopup");
+                if (Application.Current != null)
+                    if (Application.Current.MainPage != null)
+                        await Application.Current.MainPage.DisplayAlert("Error",
+                            "Unable to display player information",
+                            "OK");
             }
         }
 

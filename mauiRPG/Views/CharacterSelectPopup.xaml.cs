@@ -14,24 +14,21 @@ namespace mauiRPG.Views
             InitializeComponent();
             _viewModel = viewModel;
             BindingContext = _viewModel;
-
             _viewModel.CloseRequested += (sender, args) => Close();
         }
 
         protected override void OnHandlerChanged()
         {
             base.OnHandlerChanged();
-
             if (Handler != null)
             {
                 this.Closed += OnPopupClosed;
             }
         }
 
-        private void OnPopupClosed(object sender, PopupClosedEventArgs e)
+        private void OnPopupClosed(object? sender, PopupClosedEventArgs e)
         {
             WeakReferenceMessenger.Default.Send(new PopupClosedMessage());
         }
     }
-
 }

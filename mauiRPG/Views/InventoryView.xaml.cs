@@ -1,13 +1,17 @@
-
-
 using mauiRPG.ViewModels;
-namespace mauiRPG.Views;
+using mauiRPG.Services;
 
-public partial class InventoryView : ContentView
+namespace mauiRPG.Views
 {
-	public InventoryView()
-	{
-        InitializeComponent();
-        BindingContext = new InventoryViewModel();
+    public partial class InventoryView : ContentView
+    {
+        private readonly InventoryViewModel _viewModel;
+
+        public InventoryView(GameStateService gameStateService)
+        {
+            InitializeComponent();
+            _viewModel = new InventoryViewModel(gameStateService);
+            BindingContext = _viewModel;
+        }
     }
 }
