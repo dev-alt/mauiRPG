@@ -3,12 +3,14 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using mauiRPG.Models;
 using mauiRPG.Services;
+using mauiRPG.Views;
 
 namespace mauiRPG.ViewModels
 {
     public partial class CharacterSelectViewModel : ObservableObject
     {
         private readonly CharacterService _characterService;
+        private readonly GameStateService _gameStateService;
 
         [ObservableProperty]
         private Character? _selectedCharacter;
@@ -17,9 +19,10 @@ namespace mauiRPG.ViewModels
 
         public event EventHandler? CloseRequested;
 
-        public CharacterSelectViewModel(CharacterService characterService)
+        public CharacterSelectViewModel(CharacterService characterService, GameStateService gameStateService)
         {
             _characterService = characterService;
+            _gameStateService = gameStateService;
             Characters = new ObservableCollection<Character>(_characterService.LoadCharacters());
         }
 
@@ -32,8 +35,9 @@ namespace mauiRPG.ViewModels
                 return;
             }
 
-            await Shell.Current.DisplayAlert("Character Loaded", $"Loaded character: {SelectedCharacter.Name}", "OK");
+            _gameStateService.CurrentPlayer = (Player)SelectedCharacter;
             CloseRequested?.Invoke(this, EventArgs.Empty);
+            await Shell.Current.GoToAsync($"{nameof(LevelSelectView)}");
         }
 
         [RelayCommand]

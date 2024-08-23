@@ -24,6 +24,7 @@ namespace mauiRPG
             builder.Services.AddSingleton<CombatService>();
             builder.Services.AddSingleton<ISettingsService, SettingsService>();
             builder.Services.AddSingleton<InventoryService>();
+            builder.Services.AddSingleton<LevelUpService>();
 
             builder.Services.AddTransient<MainMenuView>();
             builder.Services.AddTransient<CharacterSelect>();

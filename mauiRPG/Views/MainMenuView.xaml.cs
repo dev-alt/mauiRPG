@@ -8,15 +8,17 @@ namespace mauiRPG.Views
     {
         private Popup? _currentPopup;
         private readonly MainViewModel _viewModel;
-        private readonly ISettingsService _settingsService;
         private readonly CharacterService _characterService;
+        private readonly ISettingsService _settingsService;
+        private readonly GameStateService _gameStateService;
 
-        public MainMenuView(CharacterService characterService, ISettingsService settingsService)
+        public MainMenuView(CharacterService characterService, ISettingsService settingsService, GameStateService gameStateService)
         {
             InitializeComponent();
             _characterService = characterService;
             _settingsService = settingsService;
-            _viewModel = new MainViewModel(_characterService);
+            _gameStateService = gameStateService;
+            _viewModel = new MainViewModel(characterService, settingsService);
             BindingContext = _viewModel;
         }
 
@@ -36,7 +38,7 @@ namespace mauiRPG.Views
 
         private async void OnShowCharacterPopupRequested(object? sender, EventArgs e)
         {
-            var characterSelectViewModel = new CharacterSelectViewModel(_characterService);
+            var characterSelectViewModel = new CharacterSelectViewModel(_characterService, _gameStateService);
             _currentPopup = new CharacterSelectPopup(characterSelectViewModel);
             await this.ShowPopupAsync(_currentPopup);
         }

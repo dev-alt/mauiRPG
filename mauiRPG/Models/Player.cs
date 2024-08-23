@@ -16,10 +16,10 @@ namespace mauiRPG.Models
         [JsonConverter(typeof(ClassConverter))]
         public required Class Class { get; set; }
 
+        public int Experience { get; set; } = 0;
         public void UpdateStats()
         {
-            // Reset stats to base values
-            Strength = 10; // Example base value
+            Strength = 10;
             Intelligence = 10;
             Dexterity = 10;
             Constitution = 10;

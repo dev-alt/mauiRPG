@@ -2,60 +2,35 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="mauiRPG.Views.InventoryView">
-    <Frame BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}"
-           Margin="20"
-           Padding="10"
-           CornerRadius="10">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
-            <Label Text="Inventory" 
-                   FontSize="Large" 
-                   HorizontalOptions="Center"
-                   Margin="0,0,0,10"/>
+        <Label Text="Inventory" FontSize="Large" HorizontalOptions="Center" Margin="0,10,0,10"/>
 
-            <CollectionView Grid.Row="1" 
-                            ItemsSource="{Binding Items}"
-                            SelectedItem="{Binding SelectedItem}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Frame Margin="5" Padding="10" BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray800}}">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <Label Text="{Binding Name}" 
-                                       FontSize="Medium"
-                                       TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"/>
-                                <Label Grid.Column="1" 
-                                       Text="{Binding Value, StringFormat='Value: {0}'}"
-                                       FontSize="Small"
-                                       TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"/>
-                            </Grid>
-                        </Frame>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Items}" SelectionMode="Single" SelectedItem="{Binding SelectedItem}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Margin="5" Padding="10">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Text="{Binding Name}" FontSize="Medium"/>
+                            <Button Grid.Column="1" Text="Equip" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentView}}, Path=BindingContext.EquipItemCommand}" CommandParameter="{Binding .}" IsVisible="{Binding IsEquippable}"/>
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
 
-            <StackLayout Grid.Row="2" 
-                         Orientation="Horizontal" 
-                         HorizontalOptions="Center" 
-                         Spacing="20"
-                         Margin="0,10,0,0">
-                <Button Text="Use" 
-                        Command="{Binding UseItemCommand}"
-                        BackgroundColor="{StaticResource Primary}"
-                        TextColor="White"/>
-                <Button Text="Drop" 
-                        Command="{Binding DropItemCommand}"
-                        BackgroundColor="{StaticResource Secondary}"
-                        TextColor="White"/>
-            </StackLayout>
-        </Grid>
-    </Frame>
+        <StackLayout Grid.Row="2" Orientation="Horizontal" HorizontalOptions="Center" Margin="0,10,0,10">
+            <Button Text="Use" Command="{Binding UseItemCommand}"/>
+            <Button Text="Drop" Command="{Binding DropItemCommand}"/>
+        </StackLayout>
+    </Grid>
 </ContentView>
