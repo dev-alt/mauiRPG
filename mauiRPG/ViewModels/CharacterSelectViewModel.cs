@@ -42,21 +42,19 @@ namespace mauiRPG.ViewModels
         [RelayCommand]
         private void LoadCharacter()
         {
-            if (SelectedCharacter == null)
+            switch (SelectedCharacter)
             {
-                Debug.WriteLine("No character selected");
-                return;
-            }
-
-            if (SelectedCharacter is Player player)
-            {
-                _gameStateService.CurrentPlayer = player;
-                Debug.WriteLine($"Current player set to: {player.Name}");
-                CharacterSelected?.Invoke(this, player);
-            }
-            else
-            {
-                Debug.WriteLine("Selected character is not a valid player");
+                case null:
+                    Debug.WriteLine("No character selected");
+                    return;
+                case Player player:
+                    _gameStateService.CurrentPlayer = player;
+                    Debug.WriteLine($"Current player set to: {player.Name}");
+                    CharacterSelected?.Invoke(this, player);
+                    break;
+                default:
+                    Debug.WriteLine("Selected character is not a valid player");
+                    break;
             }
         }
 
