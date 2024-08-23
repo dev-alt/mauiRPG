@@ -30,7 +30,9 @@ namespace mauiRPG.ViewModels
 
         [ObservableProperty]
         private bool isInventoryOpen;
+
         public ObservableCollection<Item> InventoryItems { get; } = [];
+
         public double PlayerHealthPercentage => (double)PlayerHealth / _player.MaxHealth;
         public double EnemyHealthPercentage => (double)EnemyHealth / _enemy.MaxHealth;
 
@@ -50,6 +52,7 @@ namespace mauiRPG.ViewModels
 
             LoadInventory();
         }
+
         private void LoadInventory()
         {
             var items = _inventoryService.GetPlayerItems(_player.Id);
@@ -58,10 +61,10 @@ namespace mauiRPG.ViewModels
                 InventoryItems.Add(item);
             }
         }
+
         [RelayCommand]
         private async Task Attack()
         {
-            // Trigger player attack animation
             AnimationRequested?.Invoke(this, "PlayerAttack");
 
             var playerResult = _combatService.ExecutePlayerAttack(_player, _enemy);
@@ -76,10 +79,8 @@ namespace mauiRPG.ViewModels
                 return;
             }
 
-            // Delay for animation
             await Task.Delay(1000);
 
-            // Trigger enemy attack animation
             AnimationRequested?.Invoke(this, "EnemyAttack");
 
             var enemyResult = _combatService.ExecuteEnemyAttack(_enemy, _player);
@@ -97,9 +98,9 @@ namespace mauiRPG.ViewModels
         [RelayCommand]
         private void Defend()
         {
-            // Implement defend logic
             CombatLog += "You took a defensive stance.\n";
         }
+
         [RelayCommand]
         private void OpenInventory()
         {
@@ -111,6 +112,7 @@ namespace mauiRPG.ViewModels
         {
             IsInventoryOpen = false;
         }
+
         [RelayCommand]
         private void UseItem(Item item)
         {
@@ -125,7 +127,6 @@ namespace mauiRPG.ViewModels
         [RelayCommand]
         private void Run()
         {
-            // Implement run logic
             CombatLog += "You attempted to run away.\n";
         }
 

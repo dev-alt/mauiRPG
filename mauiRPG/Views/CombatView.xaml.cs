@@ -1,4 +1,6 @@
 using mauiRPG.ViewModels;
+using System.ComponentModel;
+using System.Diagnostics;
 
 namespace mauiRPG.Views
 {
@@ -8,13 +10,33 @@ namespace mauiRPG.Views
         {
             InitializeComponent();
         }
-
-        public void SetCombatViewModel(CombatViewModel viewModel)
+        public static readonly BindableProperty ViewModelProperty =
+            BindableProperty.Create(nameof(ViewModel), typeof(CombatViewModel), typeof(CombatView), null,
+                propertyChanged: OnViewModelChanged);
+        public CombatViewModel ViewModel
         {
-            BindingContext = viewModel;
-            viewModel.AnimationRequested += OnAnimationRequested;
+            get => (CombatViewModel)GetValue(ViewModelProperty);
+            set => SetValue(ViewModelProperty, value);
         }
-
+        private static void OnViewModelChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            var combatView = (CombatView)bindable;
+            if (newValue is CombatViewModel viewModel)
+            {
+                combatView.BindingContext = viewModel;
+                viewModel.PropertyChanged += combatView.OnViewModelPropertyChanged;
+                viewModel.AnimationRequested += combatView.OnAnimationRequested;
+            }
+        }
+        private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            Debug.WriteLine($"CombatViewModel property changed: {e.PropertyName}");
+        }
+        protected override void OnParentSet()
+        {
+            base.OnParentSet();
+            Debug.WriteLine($"CombatView ParentSet. IsVisible: {IsVisible}, BindingContext: {BindingContext}");
+        }
         private async void OnAnimationRequested(object? sender, string animationType)
         {
             switch (animationType)
@@ -27,7 +49,13 @@ namespace mauiRPG.Views
                     break;
             }
         }
-
+       
+        public void SetCombatViewModel(CombatViewModel viewModel)
+        {
+            Debug.WriteLine("SetCombatViewModel called");
+            BindingContext = viewModel;
+        }
+        
         private async Task AnimateAttack(VisualElement attacker, VisualElement target)
         {
             // Create a projectile

@@ -19,27 +19,7 @@
                 <Label Text="{Binding EnemyHealth, StringFormat='HP: {0}'}" FontSize="Small"/>
             </StackLayout>
         </Frame>
-        <ScrollView Grid.Row="1" Margin="10">
-            <Label Text="{Binding CombatLog}" FontSize="Small" />
-        </ScrollView>
-        <!-- Action Buttons -->
-        <Frame Grid.Row="2" Padding="10" Margin="10" HorizontalOptions="End" VerticalOptions="End" 
-               BackgroundColor="#80FFFFFF" BorderColor="Black" CornerRadius="10">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <Button Text="Attack" Command="{Binding AttackCommand}" Grid.Column="0" Grid.Row="0"/>
-                <Button Text="Inventory" Command="{Binding OpenInventoryCommand}" Grid.Column="1" Grid.Row="0"/>
-                <Button Text="Defend" Command="{Binding DefendCommand}" Grid.Column="0" Grid.Row="1"/>
-                <Button Text="Run" Command="{Binding RunCommand}" Grid.Column="1" Grid.Row="1"/>
-            </Grid>
-        </Frame>
+
         <!-- Combat Area -->
         <Grid Grid.Row="1" x:Name="CombatArea">
             <!-- Player placeholder -->
@@ -51,6 +31,11 @@
             <!-- Animation layer -->
             <Grid x:Name="AnimationLayer" InputTransparent="True"/>
         </Grid>
+
+        <!-- Combat Log -->
+        <ScrollView Grid.Row="1" Margin="10,120,10,10">
+            <Label Text="{Binding CombatLog}" FontSize="Small" />
+        </ScrollView>
 
         <!-- Player Info (Bottom Left) -->
         <Frame Grid.Row="2" Padding="10" Margin="10" HorizontalOptions="Start" VerticalOptions="End" 
@@ -74,7 +59,7 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <Button Text="Fight" Command="{Binding AttackCommand}" Grid.Column="0" Grid.Row="0"/>
+                <Button Text="Attack" Command="{Binding AttackCommand}" Grid.Column="0" Grid.Row="0"/>
                 <Button Text="Inventory" Command="{Binding OpenInventoryCommand}" Grid.Column="1" Grid.Row="0"/>
                 <Button Text="Defend" Command="{Binding DefendCommand}" Grid.Column="0" Grid.Row="1"/>
                 <Button Text="Run" Command="{Binding RunCommand}" Grid.Column="1" Grid.Row="1"/>

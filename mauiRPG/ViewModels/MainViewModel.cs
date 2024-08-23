@@ -11,7 +11,6 @@ namespace mauiRPG.ViewModels
     public partial class MainViewModel : ObservableObject, IRecipient<PopupClosedMessage>
     {
         private readonly CharacterService _characterService;
-        private readonly GameStateService _gameStateService;
         private readonly ISettingsService _settingsService;
 
         [ObservableProperty]
@@ -26,7 +25,7 @@ namespace mauiRPG.ViewModels
         [ObservableProperty]
         private Character? _selectedCharacter;
 
-        public ObservableCollection<Character> Characters { get; }
+        public ObservableCollection<Character> Characters { get; } = [];
 
         public event EventHandler? ShowCharacterPopupRequested;
         public event EventHandler? ShowSettingsPopupRequested;
@@ -36,6 +35,16 @@ namespace mauiRPG.ViewModels
             _characterService = characterService;
             _settingsService = settingsService;
             WeakReferenceMessenger.Default.Register<PopupClosedMessage>(this);
+            LoadCharacters();
+        }
+        private void LoadCharacters()
+        {
+            var loadedCharacters = _characterService.LoadCharacters();
+            Characters.Clear();
+            foreach (var character in loadedCharacters)
+            {
+                Characters.Add(character);
+            }
         }
 
         [RelayCommand]

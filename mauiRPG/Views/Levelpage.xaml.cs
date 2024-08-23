@@ -37,12 +37,22 @@ public partial class LevelPage : ContentPage
         {
             IsVisible = false
         };
-        Debug.WriteLine($"LevelPage constructor: Player: {_player}, CombatService: {_combatService}");
         MainLayout.Children.Add(_combatView);
+    }
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        Debug.WriteLine("LevelPage OnAppearing");
+        if (_player == null)
+        {
+            _player = _gameStateService.CurrentPlayer;
+            Debug.WriteLine($"Player loaded: {_player?.Name}");
+        }
     }
 
     private void LoadLevel(int levelNumber)
     {
+        Debug.WriteLine($"LoadLevel called with level number: {levelNumber}");
         _player = _gameStateService.CurrentPlayer;
         var levelName = $"Level {levelNumber}";
         var imageSource = $"level{levelNumber}.jpg";
@@ -64,6 +74,7 @@ public partial class LevelPage : ContentPage
 
     private void SimulateEnemyEncounter()
     {
+        Debug.WriteLine("SimulateEnemyEncounter called");
         Debug.WriteLine($"Player: {_player}");
         var enemy = new EnemyWizard($"Evil Wizard {LevelNumber}", LevelNumber)
         {
@@ -78,16 +89,21 @@ public partial class LevelPage : ContentPage
 
     private void InitiateCombat(Player player, Enemy enemy)
     {
+        Debug.WriteLine("InitiateCombat called");
         var combatViewModel = new CombatViewModel(player, enemy, _combatService, _inventoryService);
         _combatView.SetCombatViewModel(combatViewModel);
-        _combatView.IsVisible = true;
-        // Subscribe to combat end event
+        Dispatcher.Dispatch(() =>
+        {
+            _combatView.IsVisible = true;
+            Debug.WriteLine($"CombatView made visible. BindingContext: {_combatView.BindingContext}");
+        });
+
         combatViewModel.CombatEnded += OnCombatEnded;
     }
 
-
     private void OnCombatEnded(object? sender, CombatOutcome result)
     {
+        Debug.WriteLine($"Combat ended with result: {result}");
         _combatView.IsVisible = false;
         if (result == CombatOutcome.PlayerVictory)
         {
