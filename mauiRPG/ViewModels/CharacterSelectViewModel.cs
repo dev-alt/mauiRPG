@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using mauiRPG.Models;
 using mauiRPG.Services;
 using mauiRPG.Views;
+using System.Diagnostics;
 
 namespace mauiRPG.ViewModels
 {
@@ -15,29 +16,48 @@ namespace mauiRPG.ViewModels
         [ObservableProperty]
         private Character? _selectedCharacter;
 
-        public ObservableCollection<Character> Characters { get; }
+        public ObservableCollection<Character> Characters { get; } = [];
 
         public event EventHandler? CloseRequested;
+        public event EventHandler<Character>? CharacterSelected;
 
         public CharacterSelectViewModel(CharacterService characterService, GameStateService gameStateService)
         {
             _characterService = characterService;
             _gameStateService = gameStateService;
-            Characters = new ObservableCollection<Character>(_characterService.LoadCharacters());
+            LoadCharacters();
+        }
+
+        private void LoadCharacters()
+        {
+            var loadedCharacters = _characterService.LoadCharacters();
+            Characters.Clear();
+            foreach (var character in loadedCharacters)
+            {
+                Characters.Add(character);
+            }
+            Debug.WriteLine($"Loaded {Characters.Count} characters in CharacterSelectViewModel");
         }
 
         [RelayCommand]
-        private async Task LoadCharacter()
+        private void LoadCharacter()
         {
             if (SelectedCharacter == null)
             {
-                await Shell.Current.DisplayAlert("Error", "No character selected.", "OK");
+                Debug.WriteLine("No character selected");
                 return;
             }
 
-            _gameStateService.CurrentPlayer = (Player)SelectedCharacter;
-            CloseRequested?.Invoke(this, EventArgs.Empty);
-            await Shell.Current.GoToAsync($"{nameof(LevelSelectView)}");
+            if (SelectedCharacter is Player player)
+            {
+                _gameStateService.CurrentPlayer = player;
+                Debug.WriteLine($"Current player set to: {player.Name}");
+                CharacterSelected?.Invoke(this, player);
+            }
+            else
+            {
+                Debug.WriteLine("Selected character is not a valid player");
+            }
         }
 
         [RelayCommand]

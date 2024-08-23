@@ -1,6 +1,8 @@
 using CommunityToolkit.Maui.Views;
 using mauiRPG.ViewModels;
 using mauiRPG.Services;
+using System.Diagnostics;
+using mauiRPG.Models;
 
 namespace mauiRPG.Views
 {
@@ -18,7 +20,7 @@ namespace mauiRPG.Views
             _characterService = characterService;
             _settingsService = settingsService;
             _gameStateService = gameStateService;
-            _viewModel = new MainViewModel(characterService, settingsService);
+            _viewModel = new MainViewModel(characterService, settingsService, gameStateService);
             BindingContext = _viewModel;
         }
 
@@ -40,7 +42,13 @@ namespace mauiRPG.Views
         {
             var characterSelectViewModel = new CharacterSelectViewModel(_characterService, _gameStateService);
             _currentPopup = new CharacterSelectPopup(characterSelectViewModel);
-            await this.ShowPopupAsync(_currentPopup);
+            var result = await this.ShowPopupAsync(_currentPopup);
+
+            if (result is Character selectedCharacter)
+            {
+                Debug.WriteLine($"Character selected from popup: {selectedCharacter.Name}");
+                await _viewModel.LoadSelectedCharacterCommand.ExecuteAsync(selectedCharacter);
+            }
         }
 
         private async void OnShowSettingsPopupRequested(object? sender, EventArgs e)
