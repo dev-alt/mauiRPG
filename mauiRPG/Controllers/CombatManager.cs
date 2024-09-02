@@ -36,5 +36,29 @@ namespace mauiRPG.Controllers
 
             return result;
         }
+
+        public bool IsCombatOver()
+        {
+            return _player.Health <= 0 || _enemy.Health <= 0;
+        }
+
+        public string GetCombatResult()
+        {
+            if (_player.Health <= 0)
+            {
+                return $"{_player.Name} has been defeated. Game Over!";
+            }
+            else if (_enemy.Health <= 0)
+            {
+                return $"{_enemy.Name} has been defeated. {_player.Name} is victorious!";
+            }
+            return "Combat is still ongoing.";
+        }
+
+        public void ResetCombat()
+        {
+            _player.Health = _player.MaxHealth;
+            _enemy.Health = _enemy.MaxHealth;
+        }
     }
 }
