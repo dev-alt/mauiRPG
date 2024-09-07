@@ -4,42 +4,68 @@
              xmlns:viewmodels="clr-namespace:mauiRPG.ViewModels"
              x:Class="mauiRPG.Views.MainMenuView"
              Title="mauiRPG">
+
+    <ContentPage.Resources>
+        <Style x:Key="MenuButtonStyle" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="#4a4a4a"/>
+            <Setter Property="TextColor" Value="White"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="20,10"/>
+            <Setter Property="Margin" Value="0,10"/>
+            <Setter Property="WidthRequest" Value="250"/>
+        </Style>
+    </ContentPage.Resources>
+
     <Grid>
+        <Image Source="fantasy_background.jpg" Aspect="AspectFill" />
+
+        <BoxView Color="#80000000" />
+
         <VerticalStackLayout 
-            Spacing="25" 
+            Spacing="30" 
             Padding="30,0" 
             VerticalOptions="Center">
+
             <Image
-                Source="dotnet_bot.png"
-                SemanticProperties.Description="Cute dot net bot waving hi to you!"
-                HeightRequest="200"
+                Source="game_logo.png"
+                SemanticProperties.Description="mauiRPG game logo"
+                HeightRequest="150"
                 HorizontalOptions="Center" />
+
             <Label 
-                Text="Welcome to mauiRPG"
+                Text="mauiRPG"
                 SemanticProperties.HeadingLevel="Level1"
-                FontSize="32"
+                FontSize="48"
+                FontAttributes="Bold"
+                TextColor="White"
                 HorizontalOptions="Center" />
+
             <Button 
                 Text="Create New Character"
-                SemanticProperties.Hint="Creates a new character"
+                Style="{StaticResource MenuButtonStyle}"
                 Command="{Binding CreateNewCharacterCommand}"
                 HorizontalOptions="Center" />
+
             <Button 
                 Text="Load Character"
-                SemanticProperties.Hint="Shows the list of characters to load"
+                Style="{StaticResource MenuButtonStyle}"
                 Command="{Binding ShowLoadCharacterCommand}"
                 HorizontalOptions="Center" />
+
             <Button 
                 Text="Settings"
-                SemanticProperties.Hint="Opens the settings page"
+                Style="{StaticResource MenuButtonStyle}"
                 Command="{Binding ShowOpenSettingsCommand}"
                 HorizontalOptions="Center" />
+
             <Button 
                 Text="Exit"
-                SemanticProperties.Hint="Exits the application"
+                Style="{StaticResource MenuButtonStyle}"
                 Command="{Binding ExitCommand}"
                 HorizontalOptions="Center" />
         </VerticalStackLayout>
+
         <!-- Semi-transparent overlay for popups -->
         <BoxView 
             IsVisible="{Binding IsAnyPopupVisible}"
