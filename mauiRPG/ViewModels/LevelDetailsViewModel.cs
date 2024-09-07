@@ -47,6 +47,31 @@ namespace mauiRPG.ViewModels
             // Implement use item logic
         }
 
+
+        [ObservableProperty]
+        private string _levelDescription = string.Empty;
+
+        [ObservableProperty]
+        private int _enemyCount;
+
+        [ObservableProperty]
+        private string _difficultyRating = string.Empty;
+
+        public void UpdateLevelDetails(string description, int enemyCount, string difficulty)
+        {
+            LevelDescription = description;
+            EnemyCount = enemyCount;
+            DifficultyRating = difficulty;
+        }
+
+        [RelayCommand]
+        private void ExploreLevel()
+        {
+            // Implement logic to start exploring the level
+            // This could involve navigating to a new view or updating the current view
+            // to show more details about the level
+        }
+
         [RelayCommand]
         private static void Defend()
         {
