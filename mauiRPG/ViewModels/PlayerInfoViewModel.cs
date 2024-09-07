@@ -1,33 +1,56 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using mauiRPG.Models;
 
 namespace mauiRPG.ViewModels
 {
-    public class PlayerInfoViewModel : INotifyPropertyChanged
+    public partial class PlayerInfoViewModel : ObservableObject
     {
         private readonly Player _player;
 
-        public string Name => _player?.Name ?? "Unknown";
-        public string RaceName => _player?.Race?.Name ?? "Unknown";
-        public string ClassName => _player?.Class?.Name ?? "Unknown";
-        public string Level => _player?.Level.ToString() ?? "0";
-        public string Health => _player?.Health.ToString() ?? "0";
-        public string Strength => _player?.Strength.ToString() ?? "0";
-        public string Intelligence => _player?.Intelligence.ToString() ?? "0";
-        public string Dexterity => _player?.Dexterity.ToString() ?? "0";
-        public string Constitution => _player?.Constitution.ToString() ?? "0";
+        [ObservableProperty]
+        private string name;
+
+        [ObservableProperty]
+        private string raceName;
+
+        [ObservableProperty]
+        private string className;
+
+        [ObservableProperty]
+        private string level;
+
+        [ObservableProperty]
+        private string health;
+
+        [ObservableProperty]
+        private string strength;
+
+        [ObservableProperty]
+        private string intelligence;
+
+        [ObservableProperty]
+        private string dexterity;
+
+        [ObservableProperty]
+        private string constitution;
 
         public PlayerInfoViewModel(Player player)
         {
             _player = player ?? throw new ArgumentNullException(nameof(player));
+            UpdateProperties();
         }
 
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null!)
+        private void UpdateProperties()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            Name = _player.Name ?? "Unknown";
+            RaceName = _player.Race?.Name ?? "Unknown";
+            ClassName = _player.Class?.Name ?? "Unknown";
+            Level = _player.Level.ToString();
+            Health = _player.Health.ToString();
+            Strength = _player.Strength.ToString();
+            Intelligence = _player.Intelligence.ToString();
+            Dexterity = _player.Dexterity.ToString();
+            Constitution = _player.Constitution.ToString();
         }
     }
 }
