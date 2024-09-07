@@ -7,7 +7,7 @@ using SQLite;
 
 namespace mauiRPG.Models
 {
-    public class Character : ICharacter
+    public class Character
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }

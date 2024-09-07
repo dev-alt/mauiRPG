@@ -1,8 +1,7 @@
 ﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Text.Json;
-using System.Windows.Input;
 using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using mauiRPG.Models;
 using mauiRPG.Services;
 using mauiRPG.Views;
@@ -10,34 +9,16 @@ using Microsoft.Extensions.Logging;
 
 namespace mauiRPG.ViewModels
 {
-    public class StageSelectViewModel : INotifyPropertyChanged
+    public partial class StageSelectViewModel : ObservableObject
     {
         private readonly GameStateService _gameStateService;
         private readonly ILogger<PlayerInfoPopup> _logger;
-        private Player _currentPlayer = null!;
-        private ObservableCollection<Level> _levels;
-        public ICommand SelectLevelCommand { get; private set; }
-        public ICommand ViewPlayerInfoCommand { get; private set; }
-        public event PropertyChangedEventHandler? PropertyChanged;
 
-        public ObservableCollection<Level> Levels
-        {
-            get => _levels;
-            set
-            {
-                _levels = value;
-                OnPropertyChanged(nameof(Levels));
-            }
-        }
-        public Player CurrentPlayer
-        {
-            get => _currentPlayer;
-            set
-            {
-                _currentPlayer = value;
-                OnPropertyChanged(nameof(CurrentPlayer));
-            }
-        }
+        [ObservableProperty]
+        private Player _currentPlayer = null!;
+
+        [ObservableProperty]
+        private ObservableCollection<Level> _levels = [];
 
         public StageSelectViewModel(GameStateService gameStateService, ILogger<PlayerInfoPopup> logger)
         {
@@ -47,89 +28,92 @@ namespace mauiRPG.ViewModels
             _logger.LogInformation("StageSelectViewModel constructor called");
             _logger.LogInformation("GameStateService is {GameStateServiceStatus}", "not null");
 
+            LoadData();
+        }
+
+        [RelayCommand]
+        public void LoadData()
+        {
             CurrentPlayer = _gameStateService.CurrentPlayer;
             _logger.LogInformation("CurrentPlayer is {CurrentPlayerStatus}", $"set to {CurrentPlayer.Name}");
-
-            _levels = [];
             InitializeLevels();
-            SelectLevelCommand = new Command<Level>(OnLevelSelected);
-            ViewPlayerInfoCommand = new Command(OnViewPlayerInfo);
         }
 
         private void InitializeLevels()
         {
             _logger.LogInformation("InitializeLevels called");
             Levels =
-    [
-        new Level("The Beginning", "level1.jpg")
-        {
-            Number = 1,
-            IsUnlocked = true,
-            Name = "The Beginning",
-            ImageSource = "level1.jpg"
-        },
-        new Level("Dark Forest", "level2.png")
-        {
-            Number = 2,
-            IsUnlocked = true,
-            Name = "Dark Forest",
-            ImageSource = "level2.jpg"
-        },
-        new Level("Mystic Mountains", "level3.png")
-        {
-            Number = 3,
-            IsUnlocked = false,
-            Name = "Mystic Mountains",
-            ImageSource = "level3.png"
-        }
-    ];
+            [
+                new Level("The Beginning", "level1.jpg")
+                {
+                    Number = 1,
+                    IsUnlocked = true,
+                    Name = "The Beginning",
+                    ImageSource = "level1.jpg"
+                },
+                new Level("Dark Forest", "level2.png")
+                {
+                    Number = 2,
+                    IsUnlocked = true,
+                    Name = "Dark Forest",
+                    ImageSource = "level2.jpg"
+                },
+                new Level("Mystic Mountains", "level3.png")
+                {
+                    Number = 3,
+                    IsUnlocked = false,
+                    Name = "Mystic Mountains",
+                    ImageSource = "level3.png"
+                }
+            ];
             _logger.LogInformation("Levels initialized with {LevelCount} levels", Levels.Count);
         }
 
-        private async void OnViewPlayerInfo()
+        [RelayCommand]
+        private async Task ViewPlayerInfo()
         {
-            _logger.LogInformation("OnViewPlayerInfo called");
+            _logger.LogInformation("ViewPlayerInfo called");
 
             _logger.LogInformation("CurrentPlayer: Name={Name}, Race={Race}, Class={Class}",
-                _gameStateService.CurrentPlayer.Name,
-                _gameStateService.CurrentPlayer.Race?.Name,
-                _gameStateService.CurrentPlayer.Class?.Name);
+                CurrentPlayer.Name,
+                CurrentPlayer.Race?.Name,
+                CurrentPlayer.Class?.Name);
 
             try
             {
-                var popup = new PlayerInfoPopup(_gameStateService.CurrentPlayer, _logger);
-                if (Application.Current == null) return;
-                if (Application.Current.MainPage != null)
+                var popup = new PlayerInfoPopup(CurrentPlayer, _logger);
+                if (Application.Current?.MainPage != null)
+                {
                     await Application.Current.MainPage.ShowPopupAsync(popup);
+                }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error creating or showing PlayerInfoPopup");
-                if (Application.Current != null)
-                    if (Application.Current.MainPage != null)
-                        await Application.Current.MainPage.DisplayAlert("Error",
-                            "Unable to display player information",
-                            "OK");
+                if (Application.Current?.MainPage != null)
+                {
+                    await Application.Current.MainPage.DisplayAlert("Error",
+                        "Unable to display player information",
+                        "OK");
+                }
             }
         }
 
-
-        private async void OnLevelSelected(Level level)
+        [RelayCommand]
+        private async Task SelectLevel(Level level)
         {
-            _logger.LogInformation("OnLevelSelected called with level: {LevelName}", level.Name);
+            _logger.LogInformation("SelectLevel called with level: {LevelName}", level.Name);
             if (level.IsUnlocked)
             {
                 await Shell.Current.GoToAsync($"{nameof(LevelPage)}?levelNumber={level.Number}");
             }
             else
             {
-                await Application.Current?.MainPage?.DisplayAlert("Locked", $"Level {level.Number} is locked!", "OK")!;
+                if (Application.Current?.MainPage != null)
+                {
+                    await Application.Current.MainPage.DisplayAlert("Locked", $"Level {level.Number} is locked!", "OK");
+                }
             }
-        }
-
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

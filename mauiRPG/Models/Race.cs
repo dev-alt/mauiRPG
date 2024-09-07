@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace mauiRPG.Models
 {
-    public abstract class Race : IRace
+    public abstract class Race
     {
         public abstract string Name { get; }
     }

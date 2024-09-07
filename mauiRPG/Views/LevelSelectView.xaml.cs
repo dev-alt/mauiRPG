@@ -1,44 +1,21 @@
 using mauiRPG.ViewModels;
-using mauiRPG.Services;
 
-namespace mauiRPG.Views
+namespace mauiRPG.Views;
+
+public partial class LevelSelectView : ContentPage
 {
-    public partial class LevelSelectView : ContentPage
+    public LevelSelectView(StageSelectViewModel viewModel)
     {
-        public LevelSelectView(GameStateService gameStateService, StageSelectViewModel viewModel)
+        InitializeComponent();
+        BindingContext = viewModel;
+    }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        if (BindingContext is StageSelectViewModel viewModel)
         {
-            InitializeComponent();
-            Console.WriteLine("LevelSelectView constructor called");
-
-            if (gameStateService.CurrentPlayer == null)
-            {
-                Console.WriteLine("CurrentPlayer is null in GameStateService");
-            }
-            else
-            {
-                Console.WriteLine($"CurrentPlayer in GameStateService: {gameStateService.CurrentPlayer.Name}");
-            }
-
-            if (gameStateService.CurrentPlayer != null) viewModel.CurrentPlayer = gameStateService.CurrentPlayer;
-            BindingContext = viewModel;
-
-            Console.WriteLine($"BindingContext set to: {BindingContext}");
-        }
-
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
-            Console.WriteLine("LevelSelectView OnAppearing called");
-
-            if (BindingContext is StageSelectViewModel viewModel)
-            {
-                Console.WriteLine($"CurrentPlayer in ViewModel: {viewModel.CurrentPlayer?.Name ?? "null"}");
-                Console.WriteLine($"Number of Levels: {viewModel.Levels?.Count ?? 0}");
-            }
-            else
-            {
-                Console.WriteLine("BindingContext is not StageSelectViewModel");
-            }
+            viewModel.LoadData();
         }
     }
 }
