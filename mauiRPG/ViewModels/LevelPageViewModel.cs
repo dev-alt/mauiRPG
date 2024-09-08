@@ -8,7 +8,7 @@ namespace mauiRPG.ViewModels
 {
     public partial class LevelPageViewModel(
         GameStateService gameStateService,
-        ICombatService combatService,
+        ICombatService combatService, CombatManagerService combatManagerService,
         InventoryService inventoryService)
         : ObservableObject
     {
@@ -30,12 +30,11 @@ namespace mauiRPG.ViewModels
                 Number = levelNumber,
                 IsUnlocked = true,
                 Name = $"Level {levelNumber}",
-                ImageSource = $"level{levelNumber}.jpg"  // Add this line
+                ImageSource = $"level{levelNumber}.jpg" 
             };
 
-    // Simulate enemy encounter
-    SimulateEnemyEncounter();
-}
+            SimulateEnemyEncounter();
+        }
         private void SimulateEnemyEncounter()
         {
             if (CurrentLevel == null) return;
@@ -51,7 +50,7 @@ namespace mauiRPG.ViewModels
 
         private void InitiateCombat(Player player, CombatantModel enemy)
         {
-            CombatViewModel = new CombatViewModel(combatService, inventoryService, player, enemy, gameStateService);
+            CombatViewModel = new CombatViewModel(combatManagerService, inventoryService, player, enemy, gameStateService);
             CombatViewModel.CombatEnded += OnCombatEnded;
             IsCombatViewVisible = true;
         }

@@ -24,17 +24,18 @@ namespace mauiRPG
             builder.Services.AddSingleton<GameStateService>();
             builder.Services.AddSingleton<CharacterService>();
             builder.Services.AddTransient<ICombatService, CombatService>();
-            builder.Services.AddTransient<LevelPageViewModel>();
-            builder.Services.AddTransient<ViewModels.CombatViewModel>();
             builder.Services.AddSingleton<InventoryService>();
             builder.Services.AddSingleton<ISettingsService, SettingsService>();
+
+            // Add CombatManagerService
+            builder.Services.AddTransient<CombatManagerService>();
 
             // Register ViewModels
             builder.Services.AddTransient<MainViewModel>();
             builder.Services.AddTransient<CharacterCreationViewModel>();
             builder.Services.AddTransient<StageSelectViewModel>();
             builder.Services.AddTransient<LevelPageViewModel>();
-            builder.Services.AddTransient<ViewModels.CombatViewModel>();
+            builder.Services.AddTransient<CombatViewModel>();
             builder.Services.AddTransient<InventoryViewModel>();
 
             // Register Views
@@ -43,10 +44,7 @@ namespace mauiRPG
             builder.Services.AddTransient<LevelSelectView>();
             builder.Services.AddTransient<LevelPage>();
 
-
-#if DEBUG
             builder.Logging.AddDebug();
-        #endif
 
             return builder.Build();
         }
