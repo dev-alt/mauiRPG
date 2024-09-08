@@ -6,7 +6,17 @@ using System.Threading.Tasks;
 
 namespace mauiRPG.Services
 {
-    internal class NavigationService
+    public interface INavigationService
     {
+        Task NavigateToAsync(string pageKey, object parameter = null);
     }
+
+    public class NavigationService: INavigationService
+    {
+        public Task NavigateToAsync(string pageKey, object parameter = null)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
 }

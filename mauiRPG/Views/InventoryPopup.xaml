@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="mauiRPG.Views.InventoryView">
+<views:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2021/maui/toolkit"
+               xmlns:views="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               x:Class="mauiRPG.Views.InventoryPopup">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -33,4 +35,4 @@
             <Button Text="Drop" Command="{Binding DropItemCommand}"/>
         </StackLayout>
     </Grid>
-</ContentView>
+</views:Popup>

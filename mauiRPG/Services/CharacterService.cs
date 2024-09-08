@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using mauiRPG.Converters;
 using mauiRPG.Models;
 
 namespace mauiRPG.Services
@@ -17,7 +18,7 @@ namespace mauiRPG.Services
         {
             _jsonOptions = new JsonSerializerOptions
             {
-                Converters = { new RaceConverter(), new ClassConverter() },
+                Converters = { new RaceConverter() },
                 WriteIndented = true
             };
         }

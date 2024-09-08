@@ -70,6 +70,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Views\InventoryPopup.xaml.cs">
+	    <DependentUpon>InventoryPopup.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\LevelPage.xaml.cs">
 	    <DependentUpon>LevelPage.xaml</DependentUpon>
 	  </Compile>
@@ -85,7 +88,7 @@
 	  <MauiXaml Update="Views\CombatView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\InventoryView.xaml">
+	  <MauiXaml Update="Views\InventoryPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\LevelPage.xaml">

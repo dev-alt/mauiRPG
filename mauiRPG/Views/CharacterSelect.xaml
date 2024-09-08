@@ -59,21 +59,7 @@
                             TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
                             TitleColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
                 </Frame>
-
-                <!-- Class Picker -->
-                <Frame BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray700}}"
-                       CornerRadius="10" 
-                       Padding="15"
-                       HasShadow="True">
-                    <Picker Title="Select Class"
-                            ItemsSource="{Binding Classes}"
-                            ItemDisplayBinding="{Binding Name}"
-                            SelectedItem="{Binding SelectedClass}"
-                            FontSize="18"
-                            TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
-                            TitleColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
-                </Frame>
-
+                
                 <!-- Create Character Button -->
                 <Button Text="Create Character"
                         Command="{Binding CreateCharacterCommand}"

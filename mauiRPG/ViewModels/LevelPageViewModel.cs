@@ -2,15 +2,17 @@
 using CommunityToolkit.Mvvm.Input;
 using mauiRPG.Models;
 using mauiRPG.Services;
+using mauiRPG.Views;
 
 namespace mauiRPG.ViewModels
 {
-    public partial class LevelPageViewModel(
-        GameStateService gameStateService,
-        CombatService combatService,
-        InventoryService inventoryService)
-        : ObservableObject
+    public partial class LevelPageViewModel : ObservableObject
     {
+        private readonly GameStateService _gameStateService;
+        private readonly ICombatService _combatService;
+        private readonly InventoryService _inventoryService;
+        private readonly INavigationService _navigationService;
+
         [ObservableProperty]
         private Level? _currentLevel;
 
@@ -20,47 +22,39 @@ namespace mauiRPG.ViewModels
         [ObservableProperty]
         private CombatViewModel? _combatViewModel;
 
-        [RelayCommand]
-        private void LoadLevel(int levelNumber)
+        public LevelPageViewModel(GameStateService gameStateService, ICombatService combatService,
+            InventoryService inventoryService, INavigationService navigationService)
         {
-            var levelName = $"Level {levelNumber}";
-            var imageSource = $"level{levelNumber}.jpg";
-            CurrentLevel = new Level(name: levelName, imageSource: imageSource)
-            {
-                Number = levelNumber,
-                IsUnlocked = true,
-                Name = levelName,
-                ImageSource = imageSource
-            };
-
-            SimulateEnemyEncounter();
+            _gameStateService = gameStateService;
+            _combatService = combatService;
+            _inventoryService = inventoryService;
+            _navigationService = navigationService;
         }
 
         private void SimulateEnemyEncounter()
         {
             if (CurrentLevel == null) return;
 
-            var enemy = new EnemyWizard($"Evil Wizard {CurrentLevel.Number}", CurrentLevel.Number)
+            var enemy = new CombatantModel
             {
-                Name = "Dark Wizard",
-                Description = "A powerful dark wizard",
-                Health = 50
+                Name = $"Dark Wizard {CurrentLevel.Number}",
+                MaxHealth = 50,
             };
 
-            InitiateCombat(gameStateService.CurrentPlayer, enemy);
+            InitiateCombat(_gameStateService.CurrentPlayer, enemy);
         }
 
-        private void InitiateCombat(Player player, Enemy enemy)
+        private void InitiateCombat(Player player, CombatantModel enemy)
         {
-            CombatViewModel = new CombatViewModel(player, enemy, combatService, inventoryService);
+            CombatViewModel = new CombatViewModel(_combatService, _inventoryService, _navigationService, player, enemy);
             CombatViewModel.CombatEnded += OnCombatEnded;
             IsCombatViewVisible = true;
         }
 
-        private void OnCombatEnded(object? sender, CombatOutcome result)
+        private void OnCombatEnded(object? sender, CombatViewModel.CombatOutcome result)
         {
             IsCombatViewVisible = false;
-            // Handle combat result (e.g., show alert, update player stats, etc.)
+
             if (CombatViewModel != null)
             {
                 CombatViewModel.CombatEnded -= OnCombatEnded;

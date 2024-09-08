@@ -1,8 +1,8 @@
-﻿using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using mauiRPG.Models;
 using mauiRPG.Services;
+using System.Collections.ObjectModel;
 
 namespace mauiRPG.ViewModels
 {
@@ -11,14 +11,15 @@ namespace mauiRPG.ViewModels
         private readonly GameStateService _gameStateService;
 
         [ObservableProperty]
-        private ObservableCollection<Item> items;
+        private ObservableCollection<Item> _items;
 
         [ObservableProperty]
-        private Item? selectedItem;
+        private Item? _selectedItem;
+
         public InventoryViewModel(GameStateService gameStateService)
         {
             _gameStateService = gameStateService;
-            Items =
+            _items =
             [
                 new HealthPotion
                 {
@@ -28,6 +29,7 @@ namespace mauiRPG.ViewModels
                 }
             ];
         }
+
         [RelayCommand]
         private void UseItem()
         {
@@ -41,28 +43,24 @@ namespace mauiRPG.ViewModels
             switch (SelectedItem)
             {
                 case HealthPotion healthPotion:
-                    InventoryViewModel.UseHealthPotion(player, healthPotion);
+                    UseHealthPotion(player, healthPotion);
                     break;
                 case Equipment equipment:
                     EquipItem(player, equipment);
                     break;
                 default:
-                    // For other item types or quest items
                     SelectedItem.Use(player);
                     break;
             }
 
-            // Remove the item from inventory after use
             Items.Remove(SelectedItem);
-
-            // Notify of changes
-            OnPropertyChanged(nameof(Items));
             SelectedItem = null;
         }
+
         private static void UseHealthPotion(Player player, HealthPotion potion)
         {
-            int healAmount = Math.Min(potion.HealAmount, player.MaxHealth - player.Health);
-            player.Health += healAmount;
+            int healAmount = Math.Min(potion.HealAmount, player.MaxHealth - player.CurrentHealth);
+            player.CurrentHealth += healAmount;
         }
 
         private void EquipItem(Player player, Equipment equipment)
@@ -73,7 +71,6 @@ namespace mauiRPG.ViewModels
             }
 
             player.EquippedItems[equipment.Slot] = equipment;
-
             player.UpdateStats();
         }
 

@@ -9,7 +9,11 @@ namespace mauiRPG.Views
 
         public int LevelNumber
         {
-            set => _viewModel.LoadLevelCommand.Execute(value);
+            set
+            {
+                // Ensure that the ViewModel is set before calling the command
+          
+            }
         }
 
         public LevelPage(LevelPageViewModel viewModel)

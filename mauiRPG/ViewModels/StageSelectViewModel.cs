@@ -90,10 +90,9 @@ namespace mauiRPG.ViewModels
         {
             _logger.LogInformation("OnViewPlayerInfo called");
 
-            _logger.LogInformation("CurrentPlayer: Name={Name}, Race={Race}, Class={Class}",
+            _logger.LogInformation("CurrentPlayer: Name={Name}, Race={Race}",
                 _gameStateService.CurrentPlayer.Name,
-                _gameStateService.CurrentPlayer.Race?.Name,
-                _gameStateService.CurrentPlayer.Class?.Name);
+                _gameStateService.CurrentPlayer.Race?.Name);
 
             try
             {

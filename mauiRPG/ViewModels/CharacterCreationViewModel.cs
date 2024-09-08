@@ -15,7 +15,6 @@ namespace mauiRPG.ViewModels
         private readonly ILogger<CharacterCreationViewModel> _logger;
 
         public ObservableCollection<Race> Races { get; }
-        public ObservableCollection<Class> Classes { get; }
 
         public event EventHandler? CloseRequested;
 
@@ -25,8 +24,6 @@ namespace mauiRPG.ViewModels
         [ObservableProperty]
         private Race _selectedRace;
 
-        [ObservableProperty]
-        private Class _selectedClass;
 
         public CharacterCreationViewModel(CharacterService characterService, GameStateService gameStateService,
             ILogger<CharacterCreationViewModel> logger)
@@ -43,15 +40,8 @@ namespace mauiRPG.ViewModels
                 new Elf()
             ];
 
-            Classes =
-            [
-                new Warrior(),
-                new Mage(),
-                new Rogue()
-            ];
 
             SelectedRace = Races[0];
-            SelectedClass = Classes[0];
 
             _logger.LogInformation("CharacterCreationViewModel initialized");
         }
@@ -69,7 +59,6 @@ namespace mauiRPG.ViewModels
             {
                 Name = Name,
                 Race = SelectedRace,
-                Class = SelectedClass,
                 Level = 1,
                 Health = 100,
                 Strength = 10,

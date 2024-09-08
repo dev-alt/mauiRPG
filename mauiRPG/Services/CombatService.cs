@@ -1,41 +1,51 @@
 ﻿using mauiRPG.Models;
 
-namespace mauiRPG.Services
+namespace mauiRPG.Services;
+
+public interface ICombatService
 {
-    public class CombatService
+    CombatResult ExecutePlayerAttack(Player player, CombatantModel enemy);
+    CombatResult ExecuteEnemyAttack(CombatantModel enemy, Player player);
+    bool AttemptEscape();
+}
+public class CombatService : ICombatService
+{
+    private readonly Random _random = new();
+
+    public CombatResult ExecutePlayerAttack(Player player, CombatantModel enemy)
     {
-        private readonly Random _random = new();
-
-        public int CalculateDamage(int attackStat, int defenseStat)
+        int damage = CalculateDamage(player.Attack, enemy.Defense);
+        enemy.CurrentHealth -= damage;
+        return new CombatResult
         {
-            int baseDamage = _random.Next(attackStat / 2, attackStat);
-            return Math.Max(0, baseDamage - defenseStat);
-        }
+            Attacker = player.Name,
+            Defender = enemy.Name,
+            Damage = damage,
+            RemainingHealth = enemy.CurrentHealth
+        };
+    }
 
-        public CombatResult ExecutePlayerAttack(Player player, Enemy enemy)
+    public CombatResult ExecuteEnemyAttack(CombatantModel enemy, Player player)
+    {
+        int damage = CalculateDamage(enemy.Attack, player.Defense);
+        if (player.IsDefending) damage /= 2;  // Reduce damage if player is defending
+        player.CurrentHealth -= damage;
+        return new CombatResult
         {
-            int damage = CalculateDamage(player.Strength, enemy.Defense);
-            enemy.Health -= damage;
-            return new CombatResult
-            {
-                Attacker = player.Name,
-                Defender = enemy.Name,
-                Damage = damage,
-                RemainingHealth = enemy.Health
-            };
-        }
+            Attacker = enemy.Name,
+            Defender = player.Name,
+            Damage = damage,
+            RemainingHealth = player.CurrentHealth
+        };
+    }
 
-        public CombatResult ExecuteEnemyAttack(Enemy enemy, Player player)
-        {
-            int damage = CalculateDamage(enemy.Attack, player.Constitution);
-            player.Health -= damage;
-            return new CombatResult
-            {
-                Attacker = enemy.Name,
-                Defender = player.Name,
-                Damage = damage,
-                RemainingHealth = player.Health
-            };
-        }
+    public bool AttemptEscape()
+    {
+        return _random.Next(100) < 50;  // 50% chance of escape
+    }
+
+    private int CalculateDamage(int attack, int defense)
+    {
+        return Math.Max(0, attack - defense + _random.Next(-2, 3));
     }
 }

@@ -1,23 +1,57 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SQLite;
+﻿using SQLite;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace mauiRPG.Models
 {
-    public class Character : ICharacter
+    public partial class Character : ObservableObject
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
-        public required string Name { get; set; }
-        public int MaxHealth { get; set; }
-        public int Health { get; set; }
-        public int Level { get; set; }
-        public int Strength { get; set; }
-        public int Intelligence { get; set; }
-        public int Dexterity { get; set; }
-        public int Constitution { get; set; }
+
+        [ObservableProperty]
+        private string _name = string.Empty;
+
+        [ObservableProperty]
+        private int _maxHealth;
+
+        [ObservableProperty]
+        private int _currentHealth;
+
+        [ObservableProperty]
+        private int _attack;
+
+        [ObservableProperty]
+        private int _defense;
+
+        [ObservableProperty]
+        private double _healthPercentage;
+
+        // Add missing properties
+        [ObservableProperty]
+        private int _strength;
+
+        [ObservableProperty]
+        private int _intelligence;
+
+        [ObservableProperty]
+        private int _dexterity;
+
+        [ObservableProperty]
+        private int _constitution;
+
+        partial void OnCurrentHealthChanged(int value)
+        {
+            HealthPercentage = (double)value / MaxHealth;
+        }
+
+        public void TakeDamage(int amount)
+        {
+            CurrentHealth = Math.Max(0, CurrentHealth - amount);
+        }
+
+        public void Heal(int amount)
+        {
+            CurrentHealth = Math.Min(MaxHealth, CurrentHealth + amount);
+        }
     }
 }

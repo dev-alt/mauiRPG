@@ -23,16 +23,19 @@ namespace mauiRPG
             // Register services
             builder.Services.AddSingleton<GameStateService>();
             builder.Services.AddSingleton<CharacterService>();
-            builder.Services.AddSingleton<CombatService>();
+            builder.Services.AddTransient<ICombatService, CombatService>();
+            builder.Services.AddTransient<LevelPageViewModel>();
+            builder.Services.AddTransient<ViewModels.CombatViewModel>();
             builder.Services.AddSingleton<InventoryService>();
             builder.Services.AddSingleton<ISettingsService, SettingsService>();
+            builder.Services.AddSingleton<INavigationService, NavigationService>();
 
             // Register ViewModels
             builder.Services.AddTransient<MainViewModel>();
             builder.Services.AddTransient<CharacterCreationViewModel>();
             builder.Services.AddTransient<StageSelectViewModel>();
             builder.Services.AddTransient<LevelPageViewModel>();
-            builder.Services.AddTransient<CombatViewModel>();
+            builder.Services.AddTransient<ViewModels.CombatViewModel>();
             builder.Services.AddTransient<InventoryViewModel>();
 
             // Register Views

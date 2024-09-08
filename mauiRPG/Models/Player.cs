@@ -1,22 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
+using mauiRPG.Converters;
+
 
 namespace mauiRPG.Models
 {
     public class Player : Character
     {
-        public Dictionary<EquipmentSlot, Equipment> EquippedItems { get; set; } = [];
+        public Dictionary<EquipmentSlot, Equipment> EquippedItems { get; init; } = [];
 
-        [JsonConverter(typeof(RaceConverter))] public required Race Race { get; set; }
+        [JsonConverter(typeof(RaceConverter))] public required Race Race { get; init; }
 
-        [JsonConverter(typeof(ClassConverter))]
-        public required Class Class { get; set; }
-
+        public int Level { get; set; } 
+        public int Health { get; set; } 
         public int Experience { get; set; } = 0;
+        public bool IsDefending { get; set; }
+
         public void UpdateStats()
         {
             Strength = 10;

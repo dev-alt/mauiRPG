@@ -10,7 +10,6 @@
                 <Label Text="Player Info" FontSize="Large" HorizontalOptions="Center" />
                 <Label Text="{Binding Name, StringFormat='Name: {0}'}" FontSize="Medium" />
                 <Label Text="{Binding RaceName, StringFormat='Race: {0}'}" />
-                <Label Text="{Binding ClassName, StringFormat='Class: {0}'}" />
                 <Label Text="{Binding Level, StringFormat='Level: {0}'}" />
                 <Label Text="{Binding Health, StringFormat='Health: {0}'}" />
                 <Label Text="{Binding Strength, StringFormat='Strength: {0}'}" />

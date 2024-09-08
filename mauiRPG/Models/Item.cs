@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace mauiRPG.Models
 {
-    public class Item
+    public abstract class Item
     {
         public required string Name { get; set; }
         public required string Description { get; set; }
@@ -14,7 +10,7 @@ namespace mauiRPG.Models
         public int Value { get; set; }
         public int Id { get; set; }
 
-        public virtual void Use(Player player) { }
+        public abstract void Use(Player player);
     }
 
     public enum ItemType

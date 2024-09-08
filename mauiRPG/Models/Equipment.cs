@@ -1,6 +1,6 @@
 ﻿namespace mauiRPG.Models
 {
-    public class Equipment : Item
+    public abstract class Equipment : Item
     {
         public EquipmentSlot Slot { get; set; }
         public int StrengthBonus { get; set; }
