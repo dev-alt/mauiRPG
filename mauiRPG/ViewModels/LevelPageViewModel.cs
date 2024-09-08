@@ -20,7 +20,22 @@ namespace mauiRPG.ViewModels
 
         [ObservableProperty]
         private CombatViewModel? _combatViewModel;
+        
+        [RelayCommand]
+        private void LoadLevel(int levelNumber)
+        {
+            // Load the level data based on the level number
+            CurrentLevel = new Level($"Level {levelNumber}", $"level{levelNumber}.jpg")
+            {
+                Number = levelNumber,
+                IsUnlocked = true,
+                Name = $"Level {levelNumber}",
+                ImageSource = $"level{levelNumber}.jpg"  // Add this line
+            };
 
+    // Simulate enemy encounter
+    SimulateEnemyEncounter();
+}
         private void SimulateEnemyEncounter()
         {
             if (CurrentLevel == null) return;

@@ -6,13 +6,15 @@ namespace mauiRPG.Views
     public partial class LevelPage : ContentPage
     {
         private readonly LevelPageViewModel _viewModel;
-
+        
         public int LevelNumber
         {
             set
             {
-                // Ensure that the ViewModel is set before calling the command
-          
+                if (_viewModel != null)
+                {
+                    _viewModel.LoadLevelCommand.Execute(value);
+                }
             }
         }
 
