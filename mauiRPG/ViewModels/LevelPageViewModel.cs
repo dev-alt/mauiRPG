@@ -6,13 +6,12 @@ using mauiRPG.Views;
 
 namespace mauiRPG.ViewModels
 {
-    public partial class LevelPageViewModel : ObservableObject
+    public partial class LevelPageViewModel(
+        GameStateService gameStateService,
+        ICombatService combatService,
+        InventoryService inventoryService)
+        : ObservableObject
     {
-        private readonly GameStateService _gameStateService;
-        private readonly ICombatService _combatService;
-        private readonly InventoryService _inventoryService;
-        private readonly INavigationService _navigationService;
-
         [ObservableProperty]
         private Level? _currentLevel;
 
@@ -21,15 +20,6 @@ namespace mauiRPG.ViewModels
 
         [ObservableProperty]
         private CombatViewModel? _combatViewModel;
-
-        public LevelPageViewModel(GameStateService gameStateService, ICombatService combatService,
-            InventoryService inventoryService, INavigationService navigationService)
-        {
-            _gameStateService = gameStateService;
-            _combatService = combatService;
-            _inventoryService = inventoryService;
-            _navigationService = navigationService;
-        }
 
         private void SimulateEnemyEncounter()
         {
@@ -41,12 +31,12 @@ namespace mauiRPG.ViewModels
                 MaxHealth = 50,
             };
 
-            InitiateCombat(_gameStateService.CurrentPlayer, enemy);
+            InitiateCombat(gameStateService.CurrentPlayer, enemy);
         }
 
         private void InitiateCombat(Player player, CombatantModel enemy)
         {
-            CombatViewModel = new CombatViewModel(_combatService, _inventoryService, _navigationService, player, enemy);
+            CombatViewModel = new CombatViewModel(combatService, inventoryService, player, enemy, gameStateService);
             CombatViewModel.CombatEnded += OnCombatEnded;
             IsCombatViewVisible = true;
         }

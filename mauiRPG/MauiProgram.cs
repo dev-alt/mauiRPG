@@ -28,7 +28,6 @@ namespace mauiRPG
             builder.Services.AddTransient<ViewModels.CombatViewModel>();
             builder.Services.AddSingleton<InventoryService>();
             builder.Services.AddSingleton<ISettingsService, SettingsService>();
-            builder.Services.AddSingleton<INavigationService, NavigationService>();
 
             // Register ViewModels
             builder.Services.AddTransient<MainViewModel>();

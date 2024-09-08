@@ -12,7 +12,7 @@ public partial class CombatViewModel : ObservableObject
     private readonly ICombatService _combatService;
     private readonly GameStateService _gameStateService;
     private readonly InventoryService _inventoryService;
-    private readonly INavigationService _navigation;
+
 
     [ObservableProperty]
     private Player _player;
@@ -31,12 +31,11 @@ public partial class CombatViewModel : ObservableObject
 
     public event EventHandler<CombatOutcome>? CombatEnded;
 
-    public CombatViewModel(ICombatService combatService, InventoryService inventoryService,
-        INavigationService _navigation, Player player, CombatantModel enemy)
+    public CombatViewModel(ICombatService combatService, InventoryService inventoryService, Player player, CombatantModel enemy, GameStateService gameStateService)
     {
         _combatService = combatService;
         _inventoryService = inventoryService;
-        _navigation = _navigation;
+        _gameStateService = gameStateService;
         Player = player;
         Enemy = enemy;
         CombatLog = new ReadOnlyObservableCollection<CombatLogEntryModel>(_combatLog);
@@ -57,11 +56,11 @@ public partial class CombatViewModel : ObservableObject
 
 
     [RelayCommand]
-    private async Task OpenInventoryAsync()
+    private Task OpenInventoryAsync()
     {
         var inventoryViewModel = new InventoryViewModel(_gameStateService);
         var inventoryPopup = new InventoryPopup(inventoryViewModel);
-
+        return Task.CompletedTask;
     }
 
 
