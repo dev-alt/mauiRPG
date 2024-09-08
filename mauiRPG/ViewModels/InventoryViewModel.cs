@@ -11,77 +11,46 @@ namespace mauiRPG.ViewModels
         private readonly GameStateService _gameStateService;
 
         [ObservableProperty]
-        private ObservableCollection<Item> _items;
+        private  ObservableCollection<Item> _inventoryItems;
 
         [ObservableProperty]
         private Item? _selectedItem;
 
+        public event EventHandler? CloseRequested;
+
         public InventoryViewModel(GameStateService gameStateService)
         {
             _gameStateService = gameStateService;
-            _items =
-            [
-                new HealthPotion
-                {
-                    Name = "Health Potion",
-                    Description = "Restores 50 HP",
-                    Value = 30
-                }
-            ];
+            _inventoryItems = _gameStateService.CurrentPlayer.Inventory;
         }
 
         [RelayCommand]
-        private void UseItem()
+        private void UseItem(Item item)
         {
-            if (SelectedItem == null || _gameStateService.CurrentPlayer == null)
+            if (_gameStateService.CurrentPlayer == null || item == null) return;
+
+            item.Use(_gameStateService.CurrentPlayer);
+            if (item.Type == ItemType.Consumable)
             {
-                return;
+                InventoryItems.Remove(item);
             }
-
-            Player player = _gameStateService.CurrentPlayer;
-
-            switch (SelectedItem)
-            {
-                case HealthPotion healthPotion:
-                    UseHealthPotion(player, healthPotion);
-                    break;
-                case Equipment equipment:
-                    EquipItem(player, equipment);
-                    break;
-                default:
-                    SelectedItem.Use(player);
-                    break;
-            }
-
-            Items.Remove(SelectedItem);
-            SelectedItem = null;
         }
 
-        private static void UseHealthPotion(Player player, HealthPotion potion)
-        {
-            int healAmount = Math.Min(potion.HealAmount, player.MaxHealth - player.CurrentHealth);
-            player.CurrentHealth += healAmount;
-        }
-
-        private void EquipItem(Player player, Equipment equipment)
-        {
-            if (player.EquippedItems.Remove(equipment.Slot, out var existingItem))
-            {
-                Items.Add(existingItem);
-            }
-
-            player.EquippedItems[equipment.Slot] = equipment;
-            player.UpdateStats();
-        }
 
         [RelayCommand]
         private void DropItem()
         {
             if (SelectedItem != null)
             {
-                Items.Remove(SelectedItem);
+                InventoryItems.Remove(SelectedItem);
                 SelectedItem = null;
             }
+        }
+
+        [RelayCommand]
+        private void Close()
+        {
+            CloseRequested?.Invoke(this, EventArgs.Empty);
         }
     }
 }

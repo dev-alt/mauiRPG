@@ -5,42 +5,95 @@
     <ContentView.Resources>
         <ResourceDictionary>
             <converters:BoolToColorConverter x:Key="BoolToColorConverter"/>
+            <Style x:Key="CombatantNameStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="22"/>
+                <Setter Property="FontAttributes" Value="Bold"/>
+                <Setter Property="TextColor" Value="#FFD700"/>
+                <Setter Property="HorizontalOptions" Value="Center"/>
+            </Style>
+            <Style x:Key="HealthLabelStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="16"/>
+                <Setter Property="TextColor" Value="#E0E0E0"/>
+                <Setter Property="HorizontalOptions" Value="Center"/>
+            </Style>
+            <Style x:Key="ActionButtonStyle" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="#4B0082"/>
+                <Setter Property="TextColor" Value="#FFD700"/>
+                <Setter Property="CornerRadius" Value="20"/>
+                <Setter Property="Margin" Value="5"/>
+                <Setter Property="HeightRequest" Value="60"/>
+                <Setter Property="FontAttributes" Value="Bold"/>
+            </Style>
         </ResourceDictionary>
     </ContentView.Resources>
-    <Grid>
+
+    <Grid RowDefinitions="Auto,*,Auto" Padding="10">
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="#1A1A2E" Offset="0.0" />
+                <GradientStop Color="#16213E" Offset="1.0" />
+            </LinearGradientBrush>
+        </Grid.Background>
+
         <!-- Enemy Info -->
-        <Frame Grid.Row="0">
+        <Frame Grid.Row="0" BorderColor="#8B0000" BackgroundColor="#400000" Margin="10" Padding="15" CornerRadius="15">
             <StackLayout>
-                <Label Text="{Binding Enemy.Name}" />
-                <ProgressBar Progress="{Binding Enemy.HealthPercentage}" />
-                <Label Text="{Binding Enemy.CurrentHealth, StringFormat='HP: {0}'}" />
+                <Label Text="{Binding Enemy.Name}" Style="{StaticResource CombatantNameStyle}"/>
+                <Frame Padding="0" CornerRadius="7" IsClippedToBounds="True" BackgroundColor="#8B0000">
+                    <ProgressBar Progress="{Binding Enemy.HealthPercentage}" ProgressColor="#FF4500" BackgroundColor="#8B0000" HeightRequest="15" />
+                </Frame>
+                <Label Text="{Binding Enemy.CurrentHealth, StringFormat='HP: {0}'}" Style="{StaticResource HealthLabelStyle}"/>
             </StackLayout>
         </Frame>
-        <!-- Combat Log -->
-        <ScrollView Grid.Row="1">
-            <CollectionView ItemsSource="{Binding CombatLog}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Label Text="{Binding Message}"
-                               TextColor="{Binding IsPlayerAction, Converter={StaticResource BoolToColorConverter}}"/>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-        </ScrollView>
-        <!-- Player Info and Actions -->
-        <Grid Grid.Row="2">
-            <Frame Grid.Column="0">
+
+        <!-- Main Combat Area -->
+        <Grid Grid.Row="1" RowDefinitions="2*,*" ColumnDefinitions="*,*" Margin="5">
+            <!-- Player Info -->
+            <Frame Grid.Row="0" Grid.Column="0" BorderColor="#006400" BackgroundColor="#004000" Margin="5" Padding="15" CornerRadius="15">
                 <StackLayout>
-                    <Label Text="{Binding Player.Name}" />
-                    <ProgressBar Progress="{Binding Player.HealthPercentage}" />
-                    <Label Text="{Binding Player.CurrentHealth, StringFormat='HP: {0}'}" />
+                    <Label Text="{Binding Player.Name}" Style="{StaticResource CombatantNameStyle}"/>
+                    <Frame Padding="0" CornerRadius="7" IsClippedToBounds="True" BackgroundColor="#006400">
+                        <ProgressBar Progress="{Binding Player.HealthPercentage}" ProgressColor="#32CD32" BackgroundColor="#006400" HeightRequest="15" />
+                    </Frame>
+                    <Label Text="{Binding Player.CurrentHealth, StringFormat='HP: {0}'}" Style="{StaticResource HealthLabelStyle}"/>
                 </StackLayout>
             </Frame>
-            <StackLayout Grid.Column="1">
-                <Button Text="Attack" Command="{Binding AttackCommand}" />
-                <Button Text="Defend" Command="{Binding DefendCommand}" />
-                <Button Text="Inventory" Command="{Binding OpenInventoryCommand}" />
-                <Button Text="Run" Command="{Binding RunCommand}" />
+
+            <!-- Combat Visualization (placeholder) -->
+            <Frame Grid.Row="0" Grid.Column="1" BorderColor="#4B0082" BackgroundColor="#2E0854" Margin="5" Padding="15" CornerRadius="15">
+                <Label Text="Combat Visualization" TextColor="#FFD700" HorizontalOptions="Center" VerticalOptions="Center"/>
+            </Frame>
+
+            <!-- Combat Log -->
+            <Frame Grid.Row="1" Grid.ColumnSpan="2" BorderColor="#DAA520" BackgroundColor="#3D3D3D" Margin="5" Padding="10" CornerRadius="15">
+                <ScrollView>
+                    <CollectionView ItemsSource="{Binding CombatLog}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Label Text="{Binding Message}"
+                                       TextColor="{Binding IsPlayerAction, Converter={StaticResource BoolToColorConverter}}"
+                                       FontSize="14"
+                                       Margin="0,2"/>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </ScrollView>
+            </Frame>
+        </Grid>
+
+        <!-- Action Buttons -->
+        <Grid Grid.Row="2" ColumnDefinitions="*,*,*,*" Margin="5">
+            <Button Grid.Column="0" Text="Attack" Command="{Binding AttackCommand}" Style="{StaticResource ActionButtonStyle}"/>
+            <Button Grid.Column="1" Text="Defend" Command="{Binding DefendCommand}" Style="{StaticResource ActionButtonStyle}"/>
+            <Button Grid.Column="2" Text="Inventory" Command="{Binding OpenInventoryCommand}" Style="{StaticResource ActionButtonStyle}"/>
+            <Button Grid.Column="3" Text="Run" Command="{Binding RunCommand}" Style="{StaticResource ActionButtonStyle}"/>
+        </Grid>
+
+        <!-- Loading Overlay -->
+        <Grid Grid.RowSpan="3" IsVisible="{Binding IsLoading}" BackgroundColor="#80000000">
+            <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                <ActivityIndicator IsRunning="{Binding IsLoading}" Color="#FFD700" HeightRequest="50" WidthRequest="50"/>
+                <Label Text="Preparing for next battle..." TextColor="#FFD700" FontSize="18" Margin="0,10,0,0"/>
             </StackLayout>
         </Grid>
     </Grid>

@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Collections.ObjectModel;
+using System.Text.Json.Serialization;
 using mauiRPG.Converters;
 
 
@@ -9,6 +10,8 @@ namespace mauiRPG.Models
         public Dictionary<EquipmentSlot, Equipment> EquippedItems { get; init; } = [];
 
         [JsonConverter(typeof(RaceConverter))] public required Race Race { get; init; }
+
+        public ObservableCollection<Item> Inventory { get; set; } = [];
 
         public int Level { get; set; } 
         public int Health { get; set; } 

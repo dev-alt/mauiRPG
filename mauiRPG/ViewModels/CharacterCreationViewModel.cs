@@ -64,7 +64,12 @@ namespace mauiRPG.ViewModels
                 Strength = 10,
                 Intelligence = 10,
                 Dexterity = 10,
-                Constitution = 10
+                Constitution = 10,
+
+                Inventory =
+                [
+                new HealthPotion { Name = "Health Potion", Description = "Restores 50 HP", IconSource = "health_potion.png" },
+            ]
             };
 
             _characterService.SavePlayer(player);

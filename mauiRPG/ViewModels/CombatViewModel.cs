@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using mauiRPG.Models;
@@ -12,7 +14,10 @@ public partial class CombatViewModel : ObservableObject
     private readonly ICombatService _combatService;
     private readonly GameStateService _gameStateService;
     private readonly InventoryService _inventoryService;
+    private readonly Random _random = new();
 
+    [ObservableProperty]
+    private int _battleCount;
 
     [ObservableProperty]
     private Player _player;
@@ -21,13 +26,16 @@ public partial class CombatViewModel : ObservableObject
     private CombatantModel _enemy;
 
     [ObservableProperty]
+    private bool _isLoading;
+
+    [ObservableProperty]
     private string _combatResult = string.Empty;
 
-    private readonly ObservableCollection<CombatLogEntryModel> _combatLog = [];
-    public ReadOnlyObservableCollection<CombatLogEntryModel> CombatLog { get; }
+    [ObservableProperty]
+    private ObservableCollection<CombatLogEntryModel> _combatLog;
 
-    private readonly ObservableCollection<Item> _inventoryItems = [];
-    public ReadOnlyObservableCollection<Item> InventoryItems { get; }
+    [ObservableProperty]
+    private ObservableCollection<Item> _inventoryItems;
 
     public event EventHandler<CombatOutcome>? CombatEnded;
 
@@ -38,29 +46,29 @@ public partial class CombatViewModel : ObservableObject
         _gameStateService = gameStateService;
         Player = player;
         Enemy = enemy;
-        CombatLog = new ReadOnlyObservableCollection<CombatLogEntryModel>(_combatLog);
-        InventoryItems = new ReadOnlyObservableCollection<Item>(_inventoryItems);
-
+        CombatLog = [];
+        InventoryItems = [];
+        BattleCount = 1;
         LoadPlayerInventory();
     }
 
 
     private void LoadPlayerInventory()
     {
-        var items = _inventoryService.GetPlayerItems(Player.Id);  // Use InventoryService
+        var items = _inventoryService.GetPlayerItems(Player.Id);
         foreach (var item in items)
         {
-            _inventoryItems.Add(item);
+            InventoryItems.Add(item);
         }
     }
 
-
     [RelayCommand]
-    private Task OpenInventoryAsync()
+    private async Task OpenInventoryAsync()
     {
         var inventoryViewModel = new InventoryViewModel(_gameStateService);
         var inventoryPopup = new InventoryPopup(inventoryViewModel);
-        return Task.CompletedTask;
+
+        await Shell.Current.ShowPopupAsync(inventoryPopup);
     }
 
 
@@ -74,7 +82,7 @@ public partial class CombatViewModel : ObservableObject
     private void UseItem(Item item)
     {
         item.Use(Player);
-        _combatLog.Add(new CombatLogEntryModel
+        CombatLog.Add(new CombatLogEntryModel
         {
             Message = $"{Player.Name} used {item.Name}.",
             IsPlayerAction = true
@@ -82,7 +90,7 @@ public partial class CombatViewModel : ObservableObject
 
         if (item.Type == ItemType.Consumable)
         {
-            _inventoryItems.Remove(item);
+            InventoryItems.Remove(item);
         }
 
         CheckCombatEnd();
@@ -157,20 +165,81 @@ public partial class CombatViewModel : ObservableObject
 
     private void UpdateCombatLog(CombatResult result)
     {
-        _combatLog.Add(new CombatLogEntryModel
+        CombatLog.Add(new CombatLogEntryModel
         {
             Message = result.Message ?? $"{result.Attacker} dealt {result.Damage} damage to {result.Defender}. {result.Defender}'s remaining health: {result.RemainingHealth}",
             IsPlayerAction = result.Attacker == Player.Name
         });
     }
+    private async Task PrepareNextBattle()
+    {
+        IsLoading = true;
+        await Task.Delay(3000); // Simulating preparation time
 
+        BattleCount++;
+
+        // Generate a new enemy with increasing difficulty
+        Enemy = GenerateNewEnemy();
+
+        // Reset combat log
+        CombatLog.Clear();
+        CombatLog.Add(new CombatLogEntryModel
+        {
+            Message = $"A new enemy appears: {Enemy.Name}!",
+            IsPlayerAction = false
+        });
+
+        // Heal the player a bit between battles
+        int healAmount = (int)(Player.MaxHealth * 0.2); // Heal 20% of max health
+        Player.Heal(healAmount);
+        CombatLog.Add(new CombatLogEntryModel
+        {
+            Message = $"{Player.Name} recovers {healAmount} HP!",
+            IsPlayerAction = true
+        });
+
+        // Reset player's defending state
+        Player.IsDefending = false;
+
+        IsLoading = false;
+    }
+    private CombatantModel GenerateNewEnemy()
+    {
+        string[] enemyTypes = ["Goblin", "Orc", "Troll", "Dark Elf", "Dragon"];
+        string enemyName = enemyTypes[_random.Next(enemyTypes.Length)];
+
+        int baseHealth = 50 + (BattleCount * 10); // Health increases with each battle
+        int healthVariation = _random.Next(-10, 11); // Add some randomness
+
+        return new CombatantModel
+        {
+            Name = $"{enemyName} Lvl {BattleCount}",
+            MaxHealth = baseHealth + healthVariation,
+            CurrentHealth = baseHealth + healthVariation,
+            Attack = 5 + (BattleCount * 2), // Attack increases with each battle
+            Defense = 3 + BattleCount // Defense increases with each battle
+        };
+    }
     private bool IsCombatOver() => Player.CurrentHealth <= 0 || Enemy.CurrentHealth <= 0;
 
-    private void CheckCombatEnd()
+    private async void CheckCombatEnd()
     {
         if (IsCombatOver())
         {
             CombatResult = GetCombatResult();
+            if (Player.CurrentHealth > 0)
+            {
+                await PrepareNextBattle();
+            }
+            else
+            {
+                // Game over logic here
+                CombatLog.Add(new CombatLogEntryModel
+                {
+                    Message = "Game Over! You have been defeated.",
+                    IsPlayerAction = false
+                });
+            }
             CombatEnded?.Invoke(this, Player.CurrentHealth > 0 ? CombatOutcome.PlayerVictory : CombatOutcome.EnemyVictory);
         }
     }
@@ -189,7 +258,7 @@ public partial class CombatViewModel : ObservableObject
     {
         Player.CurrentHealth = Player.MaxHealth;
         Enemy.CurrentHealth = Enemy.MaxHealth;
-        _combatLog.Clear();
+        CombatLog.Clear();
         CombatResult = string.Empty;
     }
 
