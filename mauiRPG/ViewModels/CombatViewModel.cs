@@ -1,138 +1,104 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Maui.Views;
 using mauiRPG.Models;
-using mauiRPG.Services;
-using System.Collections.ObjectModel;
+using mauiRPG.ViewModels;
+using Microsoft.Extensions.Logging;
 
-namespace mauiRPG.ViewModels
+public class CombatViewModel : BaseViewModel
 {
-    public partial class CombatViewModel : ObservableObject
+    private readonly ICombatService _combatService;
+    private readonly IGameStateService _gameStateService;
+    private readonly ILogger<CombatViewModel> _logger;
+
+    public Player Player => _gameStateService.CurrentPlayer;
+    public Enemy CurrentEnemy { get; private set; }
+
+    private string _combatLog;
+    public string CombatLog
     {
-        private readonly CombatService _combatService;
-        private readonly Player _player;
-        private readonly Enemy _enemy;
-        private readonly InventoryService _inventoryService;
+        get => _combatLog;
+        set => SetProperty(ref _combatLog, value);
+    }
 
-        [ObservableProperty]
-        private string playerName;
+    public Command AttackCommand { get; }
+    public Command DefendCommand { get; }
+    public Command RunCommand { get; }
 
-        [ObservableProperty]
-        private string enemyName;
+    public CombatViewModel(ICombatService combatService, IGameStateService gameStateService, ILogger<CombatViewModel> logger)
+    {
+        _combatService = combatService;
+        _gameStateService = gameStateService;
+        _logger = logger;
 
-        [ObservableProperty]
-        private int playerHealth;
+        AttackCommand = new Command(ExecuteAttack);
+        DefendCommand = new Command(ExecuteDefend);
+        RunCommand = new Command(ExecuteRun);
 
-        [ObservableProperty]
-        private int enemyHealth;
+        InitializeCombat();
+    }
 
-        [ObservableProperty]
-        private string combatLog = string.Empty;
+    private void InitializeCombat()
+    {
+        CurrentEnemy = _combatService.GenerateEnemy(Player.Level);
+        CombatLog = $"A wild {CurrentEnemy.Name} appears!";
+    }
 
-        [ObservableProperty]
-        private bool isInventoryOpen;
-
-        public ObservableCollection<Item> InventoryItems { get; } = [];
-
-        public double PlayerHealthPercentage => (double)PlayerHealth / _player.MaxHealth;
-        public double EnemyHealthPercentage => (double)EnemyHealth / _enemy.MaxHealth;
-
-        public event EventHandler<CombatOutcome>? CombatEnded;
-        public event EventHandler<string>? AnimationRequested;
-
-        public CombatViewModel(Player player, Enemy enemy, CombatService combatService, InventoryService inventoryService)
+    private void ExecuteAttack()
+    {
+        try
         {
-            _player = player;
-            _enemy = enemy;
-            _combatService = combatService;
-            _inventoryService = inventoryService;
-            PlayerName = player.Name;
-            EnemyName = enemy.Name;
-            PlayerHealth = player.Health;
-            EnemyHealth = (int)enemy.Health;
-
-            LoadInventory();
-        }
-
-        private void LoadInventory()
-        {
-            var items = _inventoryService.GetPlayerItems(_player.Id);
-            foreach (var item in items)
+            var (playerDamage, enemyDamage) = _combatService.ExecutePlayerAttack(Player, CurrentEnemy);
+            
+            UpdateCombatLog($"You attack {CurrentEnemy.Name} for {playerDamage} damage!");
+            
+            if (CurrentEnemy.CurrentHP <= 0)
             {
-                InventoryItems.Add(item);
+                HandleEnemyDefeat();
             }
-        }
-
-        [RelayCommand]
-        private async Task Attack()
-        {
-            AnimationRequested?.Invoke(this, "PlayerAttack");
-
-            var playerResult = _combatService.ExecutePlayerAttack(_player, _enemy);
-            UpdateCombatLog(playerResult);
-            EnemyHealth = (int)_enemy.Health;
-
-            OnPropertyChanged(nameof(EnemyHealthPercentage));
-
-            if (_enemy.Health <= 0)
+            else
             {
-                CombatEnded?.Invoke(this, CombatOutcome.PlayerVictory);
-                return;
+                UpdateCombatLog($"{CurrentEnemy.Name} counterattacks for {enemyDamage} damage!");
+                
+                if (Player.CurrentHP <= 0)
+                {
+                    HandlePlayerDefeat();
+                }
             }
 
-            await Task.Delay(1000);
-
-            AnimationRequested?.Invoke(this, "EnemyAttack");
-
-            var enemyResult = _combatService.ExecuteEnemyAttack(_enemy, _player);
-            UpdateCombatLog(enemyResult);
-            PlayerHealth = _player.Health;
-
-            OnPropertyChanged(nameof(PlayerHealthPercentage));
-
-            if (_player.Health <= 0)
-            {
-                CombatEnded?.Invoke(this, CombatOutcome.EnemyVictory);
-            }
+            OnPropertyChanged(nameof(Player));
+            OnPropertyChanged(nameof(CurrentEnemy));
         }
-
-        [RelayCommand]
-        private void Defend()
+        catch (Exception ex)
         {
-            CombatLog += "You took a defensive stance.\n";
+            _logger.LogError(ex, "Error during attack execution");
+            UpdateCombatLog("An error occurred during the attack.");
         }
+    }
 
-        [RelayCommand]
-        private void OpenInventory()
-        {
-            IsInventoryOpen = true;
-        }
+    private void ExecuteDefend()
+    {
+        // TODO: Implement defend logic
+    }
 
-        [RelayCommand]
-        private void CloseInventory()
-        {
-            IsInventoryOpen = false;
-        }
+    private void ExecuteRun()
+    {
+        // TODO: Implement run logic
+    }
 
-        [RelayCommand]
-        private void UseItem(Item item)
-        {
-            item.Use(_player);
-            InventoryItems.Remove(item);
-            _inventoryService.RemoveItem(_player.Id, item.Id);
-            PlayerHealth = _player.Health;
-            UpdateCombatLog(new CombatResult { Attacker = _player.Name, Defender = _player.Name, Damage = 0, RemainingHealth = _player.Health });
-            CloseInventory();
-        }
+    private void HandleEnemyDefeat()
+    {
+        UpdateCombatLog($"You defeated {CurrentEnemy.Name}!");
+        // TODO: Award experience and loot
+        // TODO: End combat or generate new enemy
+    }
 
-        [RelayCommand]
-        private void Run()
-        {
-            CombatLog += "You attempted to run away.\n";
-        }
+    private void HandlePlayerDefeat()
+    {
+        UpdateCombatLog("You have been defeated!");
+        // TODO: Handle player defeat (game over, respawn, etc.)
+    }
 
-        private void UpdateCombatLog(CombatResult result)
-        {
-            CombatLog += $"{result.Attacker} dealt {result.Damage} damage to {result.Defender}. {result.Defender}'s remaining health: {result.RemainingHealth}\n";
-        }
+    private void UpdateCombatLog(string message)
+    {
+        CombatLog += $"\n{message}";
     }
 }

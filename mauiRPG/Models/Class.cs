@@ -6,18 +6,17 @@ using System.Threading.Tasks;
 
 namespace mauiRPG.Models
 {
-    public abstract class Class : IClass
+    public abstract class Class
     {
         public abstract string Name { get; }
-        public abstract void LevelUp(ICharacter character);
+        public abstract void LevelUp(Character character);
     }
 
     public class Warrior : Class
     {
         public override string Name => "Warrior";
-        public override void LevelUp(ICharacter character)
+        public override void LevelUp(Character character)
         {
-            // Implement level up logic for Warrior
         }
 
     }
@@ -26,7 +25,7 @@ namespace mauiRPG.Models
     {
         public override string Name => "Mage";
 
-        public override void LevelUp(ICharacter character)
+        public override void LevelUp(Character character)
         {
             // Implement level up logic for Mage
         }
@@ -36,7 +35,7 @@ namespace mauiRPG.Models
     {
         public override string Name => "Rogue";
 
-        public override void LevelUp(ICharacter character)
+        public override void LevelUp(Character character)
         {
 
         }

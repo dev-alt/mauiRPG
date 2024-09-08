@@ -1,133 +1,87 @@
-﻿using System;
-using System.ComponentModel;
-using System.Windows.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using mauiRPG.Models;
 
 namespace mauiRPG.ViewModels
 {
-    public class LevelDetailsViewModel : INotifyPropertyChanged
+    public partial class LevelDetailsViewModel : ObservableObject
     {
+        [ObservableProperty]
         private Level _level = null!;
-        private string _enemyName = string.Empty;
-        private double _enemyHealthPercentage;
-        private string _enemyHealth = string.Empty;
-        private string _playerName = string.Empty;
-        private double _playerHealthPercentage;
-        private string _playerHealth = string.Empty;
 
-        public Level Level
-        {
-            get => _level;
-            set
-            {
-                _level = value;
-                OnPropertyChanged(nameof(Level));
-            }
-        }
+        [ObservableProperty]
+        private string _enemyName = string.Empty;
+
+        [ObservableProperty]
+        private double _enemyHealthPercentage;
+
+        [ObservableProperty]
+        private string _enemyHealth = string.Empty;
+
+        [ObservableProperty]
+        private string _playerName = string.Empty;
+
+        [ObservableProperty]
+        private double _playerHealthPercentage;
+
+        [ObservableProperty]
+        private string _playerHealth = string.Empty;
 
         public string Name => Level?.Name ?? string.Empty;
         public string ImageSource => Level?.ImageSource ?? string.Empty;
 
-        public string EnemyName
-        {
-            get => _enemyName;
-            set
-            {
-                _enemyName = value;
-                OnPropertyChanged(nameof(EnemyName));
-            }
-        }
-
-        public double EnemyHealthPercentage
-        {
-            get => _enemyHealthPercentage;
-            set
-            {
-                _enemyHealthPercentage = value;
-                OnPropertyChanged(nameof(EnemyHealthPercentage));
-            }
-        }
-
-        public string EnemyHealth
-        {
-            get => _enemyHealth;
-            set
-            {
-                _enemyHealth = value;
-                OnPropertyChanged(nameof(EnemyHealth));
-            }
-        }
-
-        public string PlayerName
-        {
-            get => _playerName;
-            set
-            {
-                _playerName = value;
-                OnPropertyChanged(nameof(PlayerName));
-            }
-        }
-
-        public double PlayerHealthPercentage
-        {
-            get => _playerHealthPercentage;
-            set
-            {
-                _playerHealthPercentage = value;
-                OnPropertyChanged(nameof(PlayerHealthPercentage));
-            }
-        }
-
-        public string PlayerHealth
-        {
-            get => _playerHealth;
-            set
-            {
-                _playerHealth = value;
-                OnPropertyChanged(nameof(PlayerHealth));
-            }
-        }
-
-        public ICommand AttackCommand { get; }
-        public ICommand UseItemCommand { get; }
-        public ICommand DefendCommand { get; }
-        public ICommand RunCommand { get; }
-
         public LevelDetailsViewModel(Level level)
         {
             Level = level;
-
-            // Initialize commands
-            AttackCommand = new Command(Attack);
-            UseItemCommand = new Command(UseItem);
-            DefendCommand = new Command(Defend);
-            RunCommand = new Command(Run);
         }
 
-        private void Attack()
+        [RelayCommand]
+        private static void Attack()
         {
             // Implement attack logic
         }
 
-        private void UseItem()
+        [RelayCommand]
+        private static void UseItem()
         {
             // Implement use item logic
         }
 
-        private void Defend()
+
+        [ObservableProperty]
+        private string _levelDescription = string.Empty;
+
+        [ObservableProperty]
+        private int _enemyCount;
+
+        [ObservableProperty]
+        private string _difficultyRating = string.Empty;
+
+        public void UpdateLevelDetails(string description, int enemyCount, string difficulty)
+        {
+            LevelDescription = description;
+            EnemyCount = enemyCount;
+            DifficultyRating = difficulty;
+        }
+
+        [RelayCommand]
+        private void ExploreLevel()
+        {
+            // Implement logic to start exploring the level
+            // This could involve navigating to a new view or updating the current view
+            // to show more details about the level
+        }
+
+        [RelayCommand]
+        private static void Defend()
         {
             // Implement defend logic
         }
 
-        private void Run()
+        [RelayCommand]
+        private static void Run()
         {
             // Implement run logic
-        }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
