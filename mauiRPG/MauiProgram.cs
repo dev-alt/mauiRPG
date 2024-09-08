@@ -19,21 +19,27 @@ namespace mauiRPG
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
+
+            // Register services
             builder.Services.AddSingleton<GameStateService>();
             builder.Services.AddSingleton<CharacterService>();
             builder.Services.AddSingleton<CombatService>();
-            builder.Services.AddSingleton<ISettingsService, SettingsService>();
             builder.Services.AddSingleton<InventoryService>();
-            builder.Services.AddSingleton<LevelUpService>();
+            builder.Services.AddSingleton<ISettingsService, SettingsService>();
 
+            // Register ViewModels
+            builder.Services.AddTransient<MainViewModel>();
+            builder.Services.AddTransient<CharacterCreationViewModel>();
+            builder.Services.AddTransient<StageSelectViewModel>();
+            builder.Services.AddTransient<LevelPageViewModel>();
+            builder.Services.AddTransient<CombatViewModel>();
+            builder.Services.AddTransient<InventoryViewModel>();
+
+            // Register Views
             builder.Services.AddTransient<MainMenuView>();
             builder.Services.AddTransient<CharacterSelect>();
-            builder.Services.AddTransient<CharacterCreationViewModel>();
             builder.Services.AddTransient<LevelSelectView>();
             builder.Services.AddTransient<LevelPage>();
-            builder.Services.AddTransient<StageSelectViewModel>();
-            builder.Services.AddTransient<InventoryView>();
-            builder.Services.AddTransient<InventoryViewModel>();
 
 
 #if DEBUG
