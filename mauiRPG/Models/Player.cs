@@ -35,7 +35,7 @@ namespace mauiRPG.Models
             }
 
             // Recalculate max health based on new Constitution
-            MaxHealth = 100 + (Constitution * 10); // Example calculation
+            MaxHealth = 100 + (Constitution * 10); 
         }
     }
 }

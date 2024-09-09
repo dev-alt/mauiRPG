@@ -1,51 +1,51 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:mauiRPG.ViewModels" 
+             xmlns:models="clr-namespace:mauiRPG.Models"
              x:Class="mauiRPG.Views.LevelSelectView"
+             x:DataType="viewmodels:StageSelectViewModel"
              Title="Select Level">
 
-    <StackLayout>
-        <Label Text="Level Select View" 
+    <Grid RowDefinitions="Auto,Auto,*" Padding="20">
+        <Label Text="Level Select" 
                FontSize="Large" 
                HorizontalOptions="Center" 
-               Margin="0,20,0,0"/>
+               Margin="0,0,0,20"/>
 
-        <Label Text="{Binding CurrentPlayer.Name, StringFormat='Current Player: {0}'}"
-               FontSize="Medium"
-               HorizontalOptions="Center"
-               Margin="0,10,0,0"/>
+        <VerticalStackLayout Grid.Row="1" Spacing="10">
+            <Label Text="{Binding CurrentPlayer.Name, StringFormat='Current Player: {0}'}"
+                   FontSize="Medium"
+                   HorizontalOptions="Center"/>
+            <Button Text="View Player Info"
+                    Command="{Binding ViewPlayerInfoCommand}"
+                    HorizontalOptions="Center"/>
+        </VerticalStackLayout>
 
-        <Button Text="View Player Info"
-                Command="{Binding ViewPlayerInfoCommand}"
-                Margin="10" />
-
-        <CollectionView ItemsSource="{Binding Levels}"
-                        SelectionMode="Single">
+        <CollectionView Grid.Row="2" 
+                        ItemsSource="{Binding Levels}"
+                        SelectionMode="None"
+                        Margin="0,20,0,0">
             <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Grid Padding="10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
-                        <Image Source="{Binding ImageSource}"
-                               HeightRequest="100"
-                               WidthRequest="100"
-                               Aspect="AspectFill" />
-
-                        <StackLayout Grid.Column="1" Padding="10">
-                            <Label Text="{Binding Name}" FontSize="Large" />
-                            <Label Text="{Binding Number, StringFormat='Level {0}'}" />
-                            <Button Text="Play"
-                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectLevelCommand}"
-                                    CommandParameter="{Binding}"
-                                    IsEnabled="{Binding IsUnlocked}" />
-                        </StackLayout>
-                    </Grid>
+                <DataTemplate x:DataType="models:Level">
+                    <Frame Margin="0,0,0,10" Padding="10">
+                        <Grid ColumnDefinitions="Auto,*">
+                            <Image Source="{Binding ImageSource}"
+                                   HeightRequest="100"
+                                   WidthRequest="100"
+                                   Aspect="AspectFill" />
+                            <VerticalStackLayout Grid.Column="1" Spacing="5" Padding="10,0,0,0">
+                                <Label Text="{Binding Name}" FontSize="Large" />
+                                <Label Text="{Binding Number, StringFormat='Level {0}'}" />
+                                <Button Text="Play"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:StageSelectViewModel}}, Path=SelectLevelCommand}"
+                                        CommandParameter="{Binding}"
+                                        IsEnabled="{Binding IsUnlocked}" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Frame>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-    </StackLayout>
-
+    </Grid>
 </ContentPage>

@@ -48,7 +48,13 @@ public partial class CombatViewModel : ObservableObject
         CombatLog = [];
         InventoryItems = [];
         BattleCount = 1;
+
+        // Ensure initial health values are set
+        Player.CurrentHealth = Player.MaxHealth;
+        Enemy.CurrentHealth = Enemy.MaxHealth;
+
         LoadPlayerInventory();
+        InitializeCombatLog();
     }
 
     private void LoadPlayerInventory()
@@ -60,6 +66,13 @@ public partial class CombatViewModel : ObservableObject
         }
     }
 
+    private void InitializeCombatLog()
+    {
+        CombatLog.Add(new CombatLogEntryModel { Message = $"Combat begins! {Player.Name} vs {Enemy.Name}", IsPlayerAction = false });
+        CombatLog.Add(new CombatLogEntryModel { Message = $"{Player.Name} HP: {Player.CurrentHealth}/{Player.MaxHealth}", IsPlayerAction = true });
+        CombatLog.Add(new CombatLogEntryModel { Message = $"{Enemy.Name} HP: {Enemy.CurrentHealth}/{Enemy.MaxHealth}", IsPlayerAction = false });
+    }
+
     [RelayCommand]
     private async Task OpenInventoryAsync()
     {
@@ -69,84 +82,95 @@ public partial class CombatViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void Attack() => ExecuteTurn();
+    private void Attack()
+    {
+        if (!IsCombatOver())
+        {
+            var playerResult = _combatManager.ExecutePlayerTurn(Player, Enemy);
+            UpdateCombatLog(playerResult);
+
+            if (!IsCombatOver())
+            {
+                var enemyResult = _combatManager.ExecuteEnemyTurn(Enemy, Player);
+                UpdateCombatLog(enemyResult);
+            }
+
+            CheckCombatEnd();
+        }
+    }
 
     [RelayCommand]
-    private void Defend() => ExecuteDefend();
+    private void Defend()
+    {
+        if (!IsCombatOver())
+        {
+            var result = CombatManagerService.ExecutePlayerDefend(Player, Enemy);
+            UpdateCombatLog(result);
+            CheckCombatEnd();
+        }
+    }
 
     [RelayCommand]
     private void UseItem(Item item)
     {
-        item.Use(Player);
-        UpdateCombatLog(new CombatResult
+        if (!IsCombatOver())
         {
-            Attacker = Player.Name,
-            Defender = Player.Name,
-            Message = $"{Player.Name} used {item.Name}.",
-            Damage = 0,
-            RemainingHealth = Player.CurrentHealth
-        });
+            int previousHealth = Player.CurrentHealth;
+            item.Use(Player);
+            int healthRestored = Player.CurrentHealth - previousHealth;
 
-        if (item.Type == ItemType.Consumable)
-        {
-            InventoryItems.Remove(item);
-        }
-
-        CheckCombatEnd();
-    }
-
-    [RelayCommand]
-    private void Run() => ExecuteRun();
-
-    private void ExecuteTurn()
-    {
-        var playerResult = _combatManager.ExecutePlayerTurn(Player, Enemy);
-        UpdateCombatLog(playerResult);
-
-        if (!CombatManagerService.IsCombatOver(Player, Enemy))
-        {
-            var enemyResult = _combatManager.ExecuteEnemyTurn(Enemy, Player);
-            UpdateCombatLog(enemyResult);
-        }
-
-        CheckCombatEnd();
-    }
-
-    private void ExecuteDefend()
-    {
-        var result = _combatManager.ExecutePlayerDefend(Player, Enemy);
-        UpdateCombatLog(result);
-        CheckCombatEnd();
-    }
-
-    private void ExecuteRun()
-    {
-        bool escaped = _combatManager.AttemptEscape();
-        if (escaped)
-        {
             UpdateCombatLog(new CombatResult
             {
                 Attacker = Player.Name,
-                Defender = Enemy.Name,
-                Message = $"{Player.Name} successfully escaped from the battle!",
-                Damage = 0,
+                Defender = Player.Name,
+                Message = $"{Player.Name} used {item.Name} and restored {healthRestored} HP.",
+                Damage = -healthRestored,
                 RemainingHealth = Player.CurrentHealth
             });
-            CombatEnded?.Invoke(this, CombatOutcome.PlayerEscaped);
-        }
-        else
-        {
-            UpdateCombatLog(new CombatResult
+
+            if (item.Type == ItemType.Consumable)
             {
-                Attacker = Player.Name,
-                Defender = Enemy.Name,
-                Message = $"{Player.Name} failed to escape!",
-                Damage = 0,
-                RemainingHealth = Player.CurrentHealth
-            });
+                InventoryItems.Remove(item);
+            }
+
             var enemyResult = _combatManager.ExecuteEnemyTurn(Enemy, Player);
             UpdateCombatLog(enemyResult);
             CheckCombatEnd();
+        }
+    }
+
+    [RelayCommand]
+    private void Run()
+    {
+        if (!IsCombatOver())
+        {
+            bool escaped = _combatManager.AttemptEscape();
+            if (escaped)
+            {
+                UpdateCombatLog(new CombatResult
+                {
+                    Attacker = Player.Name,
+                    Defender = Enemy.Name,
+                    Message = $"{Player.Name} successfully escaped from the battle!",
+                    Damage = 0,
+                    RemainingHealth = Player.CurrentHealth
+                });
+                CombatEnded?.Invoke(this, CombatOutcome.PlayerEscaped);
+            }
+            else
+            {
+                UpdateCombatLog(new CombatResult
+                {
+                    Attacker = Player.Name,
+                    Defender = Enemy.Name,
+                    Message = $"{Player.Name} failed to escape!",
+                    Damage = 0,
+                    RemainingHealth = Player.CurrentHealth
+                });
+                var enemyResult = _combatManager.ExecuteEnemyTurn(Enemy, Player);
+                UpdateCombatLog(enemyResult);
+                CheckCombatEnd();
+            }
         }
     }
 
@@ -157,6 +181,8 @@ public partial class CombatViewModel : ObservableObject
             Message = result.Message ?? $"{result.Attacker} dealt {result.Damage} damage to {result.Defender}. {result.Defender}'s remaining health: {result.RemainingHealth}",
             IsPlayerAction = result.Attacker == Player.Name
         });
+        OnPropertyChanged(nameof(Player));
+        OnPropertyChanged(nameof(Enemy));
     }
 
     private async Task PrepareNextBattle()
@@ -166,18 +192,23 @@ public partial class CombatViewModel : ObservableObject
         Enemy = await _combatManager.PrepareNextBattle(Player, BattleCount);
 
         CombatLog.Clear();
-        CombatLog.Add(new CombatLogEntryModel
-        {
-            Message = $"A new enemy appears: {Enemy.Name}!",
-            IsPlayerAction = false
-        });
-        CombatLog.Add(new CombatLogEntryModel
-        {
-            Message = $"{Player.Name} recovers some HP!",
-            IsPlayerAction = true
-        });
+        InitializeCombatLog();
 
         IsLoading = false;
+
+        // Add a message to indicate the start of a new battle
+        CombatLog.Add(new CombatLogEntryModel { Message = $"Preparing for battle {BattleCount}!", IsPlayerAction = false });
+
+        // Notify that the player won the previous battle and is continuing
+        CombatEnded?.Invoke(this, CombatOutcome.PlayerVictory);
+
+        // Reset combat result for the new battle
+        CombatResult = string.Empty;
+    }
+
+    private bool IsCombatOver()
+    {
+        return CombatManagerService.IsCombatOver(Player, Enemy);
     }
 
     private async void CheckCombatEnd()
@@ -185,21 +216,20 @@ public partial class CombatViewModel : ObservableObject
         if (CombatManagerService.IsCombatOver(Player, Enemy))
         {
             CombatResult = CombatManagerService.GetCombatResult(Player, Enemy);
+            CombatLog.Add(new CombatLogEntryModel { Message = CombatResult, IsPlayerAction = false });
+
             if (Player.CurrentHealth > 0)
             {
                 await PrepareNextBattle();
             }
             else
             {
-                CombatLog.Add(new CombatLogEntryModel
-                {
-                    Message = "Game Over! You have been defeated.",
-                    IsPlayerAction = false
-                });
+                // Player lost, end the combat
+                CombatEnded?.Invoke(this, CombatOutcome.ContinueToNextBattle);
             }
-            CombatEnded?.Invoke(this, Player.CurrentHealth > 0 ? CombatOutcome.PlayerVictory : CombatOutcome.EnemyVictory);
         }
     }
+
 
     [RelayCommand]
     private void ResetCombat()
@@ -207,6 +237,7 @@ public partial class CombatViewModel : ObservableObject
         Player.CurrentHealth = Player.MaxHealth;
         Enemy.CurrentHealth = Enemy.MaxHealth;
         CombatLog.Clear();
+        InitializeCombatLog();
         CombatResult = string.Empty;
     }
 
@@ -214,6 +245,8 @@ public partial class CombatViewModel : ObservableObject
     {
         PlayerVictory,
         EnemyVictory,
-        PlayerEscaped
+        PlayerEscaped,
+        ContinueToNextBattle
     }
+
 }

@@ -7,8 +7,7 @@ using mauiRPG.Views;
 namespace mauiRPG.ViewModels
 {
     public partial class LevelPageViewModel(
-        GameStateService gameStateService,
-        ICombatService combatService, CombatManagerService combatManagerService,
+        GameStateService gameStateService, CombatManagerService combatManagerService,
         InventoryService inventoryService)
         : ObservableObject
     {
