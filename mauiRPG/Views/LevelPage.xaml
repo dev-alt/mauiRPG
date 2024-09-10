@@ -5,7 +5,6 @@
              xmlns:views="clr-namespace:mauiRPG.Views"
              x:Class="mauiRPG.Views.LevelPage"
              x:DataType="viewmodels:LevelPageViewModel"
-             Title="{Binding CurrentLevel.Name}"
              BackgroundColor="#2C2416">
 
     <ContentPage.Resources>

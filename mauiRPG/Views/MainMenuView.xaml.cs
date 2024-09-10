@@ -107,7 +107,7 @@ namespace mauiRPG.Views
         {
             if (Window == null)
             {
-                await Task.Delay(100); // Wait for the Window to be available
+                await Task.Delay(100); 
             }
 
             if (Window != null)
@@ -117,7 +117,6 @@ namespace mauiRPG.Views
             else
             {
                 Debug.WriteLine("Failed to show popup: Window is null");
-                // Consider showing an alert to the user
             }
         }
     }

@@ -5,7 +5,6 @@
              xmlns:models="clr-namespace:mauiRPG.Models"
              x:Class="mauiRPG.Views.LevelSelectView"
              x:DataType="viewmodels:StageSelectViewModel"
-             Title="Choose Thy Quest"
              BackgroundColor="#2C2416">
 
     <ContentPage.Resources>

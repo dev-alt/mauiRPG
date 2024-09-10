@@ -7,7 +7,7 @@
     xmlns:models="clr-namespace:mauiRPG.Models"
     xmlns:views="clr-namespace:mauiRPG.Views"
     Shell.FlyoutBehavior="Flyout"
-    Title="Realm of mauiRPG"
+    Title="Realm of the Forgotten Crown"
     FlyoutBackgroundColor="#2C2416"
     FlyoutHeaderBehavior="Fixed">
 

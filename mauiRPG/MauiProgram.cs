@@ -38,6 +38,7 @@ namespace mauiRPG
             builder.Services.AddTransient<LevelPageViewModel>();
             builder.Services.AddTransient<CombatViewModel>();
             builder.Services.AddTransient<InventoryViewModel>();
+            builder.Services.AddTransient<QuestBoardViewModel>();
 
             // Register Views
             builder.Services.AddTransient<MainMenuView>();
@@ -45,6 +46,7 @@ namespace mauiRPG
             builder.Services.AddTransient<LevelSelectView>();
             builder.Services.AddTransient<LevelPage>();
             builder.Services.AddTransient<QuestBoardView>();
+
 
             builder.Logging.AddDebug();
 

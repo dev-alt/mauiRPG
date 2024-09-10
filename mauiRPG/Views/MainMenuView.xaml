@@ -21,7 +21,7 @@
     </ContentPage.Resources>
 
     <Grid>
-        <Image Source="fantasy_background.jpg" Aspect="AspectFill" />
+        <Image Source="fantasy_background.png" Aspect="AspectFill" />
 
         <BoxView x:Name="OverlayBox" Color="#000000" Opacity="0.8" />
 
@@ -45,7 +45,7 @@
 
                 <Label 
                     x:Name="GameTitle"
-                    Text="Realm of mauiRPG"
+                    Text="Realm of the Forgotten Crown"
                     FontFamily="MedievalSharp"
                     FontSize="48"
                     FontAttributes="Bold"

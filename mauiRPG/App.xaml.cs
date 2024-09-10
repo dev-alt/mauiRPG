@@ -19,8 +19,8 @@ namespace mauiRPG
 #if WINDOWS
             if (DeviceInfo.Idiom == DeviceIdiom.Desktop)
             {
-                window.Width = 600;
-                window.Height = 800;
+                window.Width = 800;
+                window.Height = 1200;
             }
 #endif
 
