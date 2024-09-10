@@ -8,12 +8,10 @@ public partial class QuestBoardView : ContentPage
     {
         InitializeComponent();
         BindingContext = viewModel;
-        Console.WriteLine("QuestBoardView constructor called");
     }
 
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        Console.WriteLine("QuestBoardView OnAppearing called");
     }
 }

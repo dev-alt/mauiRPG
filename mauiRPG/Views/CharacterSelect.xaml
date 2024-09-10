@@ -8,12 +8,14 @@
         <Style x:Key="MedievalLabelStyle" TargetType="Label">
             <Setter Property="FontFamily" Value="MedievalSharp"/>
             <Setter Property="TextColor" Value="#FFD700"/>
+            <Setter Property="HorizontalTextAlignment" Value="Center"/>
         </Style>
         <Style x:Key="MedievalEntryStyle" TargetType="Entry">
             <Setter Property="FontFamily" Value="MedievalSharp"/>
             <Setter Property="TextColor" Value="#FFD700"/>
             <Setter Property="PlaceholderColor" Value="#8B4513"/>
             <Setter Property="BackgroundColor" Value="#3A2F0B"/>
+            <Setter Property="HorizontalTextAlignment" Value="Center"/>
         </Style>
         <Style x:Key="MedievalButtonStyle" TargetType="Button">
             <Setter Property="FontFamily" Value="MedievalSharp"/>
@@ -26,98 +28,68 @@
             <Setter Property="BorderColor" Value="#8B4513"/>
             <Setter Property="CornerRadius" Value="10"/>
             <Setter Property="Padding" Value="10"/>
-            <Setter Property="WidthRequest" Value="100"/>
-            <Setter Property="HeightRequest" Value="120"/>
+            <Setter Property="WidthRequest" Value="80"/>
+            <Setter Property="HeightRequest" Value="100"/>
         </Style>
     </ContentPage.Resources>
 
     <Grid RowDefinitions="Auto,*,Auto" RowSpacing="0">
-        <!-- Top Decorative Border -->
         <Image Source="scroll_top.png" Aspect="Fill" HeightRequest="50"/>
 
         <ScrollView Grid.Row="1">
-            <Grid RowDefinitions="Auto,*,Auto" 
-                  ColumnDefinitions="*,Auto,*"
-                  RowSpacing="20"
-                  Padding="30,20"
-                  BackgroundColor="#3A2F0B">
+            <VerticalStackLayout Spacing="20" Padding="20" BackgroundColor="#3A2F0B">
+                <Label Text="Forge Your Legend" 
+                       Style="{StaticResource MedievalLabelStyle}"
+                       FontSize="32" 
+                       FontAttributes="Bold"/>
 
-                <!-- Main Content -->
-                <VerticalStackLayout Grid.Row="1" Grid.Column="1" 
-                                     Spacing="30" 
-                                     VerticalOptions="Center"
-                                     WidthRequest="{OnPlatform Default=300}"
-                                     Margin="20">
-                    <!-- Title -->
-                    <Label Text="Forge Your Legend" 
-                           Style="{StaticResource MedievalLabelStyle}"
-                           FontSize="36" 
-                           FontAttributes="Bold" 
-                           HorizontalOptions="Center"
-                           Margin="0,0,0,20"/>
-
-                    <!-- Name Entry -->
+                <Frame BorderColor="#8B4513" Padding="10" BackgroundColor="Transparent" HasShadow="False">
                     <VerticalStackLayout Spacing="10">
                         <Label Text="Hero's Name" Style="{StaticResource MedievalLabelStyle}" FontSize="18"/>
-                        <Frame BorderColor="#8B4513" Padding="5" BackgroundColor="Transparent" HasShadow="False">
-                            <Entry x:Name="NameEntry" 
-                                   Text="{Binding Name}" 
-                                   Placeholder="Enter your name"
-                                   Style="{StaticResource MedievalEntryStyle}"
-                                   FontSize="18"/>
-                        </Frame>
+                        <Entry x:Name="NameEntry" 
+                               Text="{Binding Name}" 
+                               Placeholder="Enter your name"
+                               Style="{StaticResource MedievalEntryStyle}"
+                               FontSize="18"/>
                     </VerticalStackLayout>
+                </Frame>
 
-                    <!-- Race Selection -->
-                    <VerticalStackLayout Spacing="10">
-                        <Label Text="Choose your Race" Style="{StaticResource MedievalLabelStyle}" FontSize="18"/>
-                        <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
-                            <HorizontalStackLayout Spacing="10">
-                                <BindableLayout.ItemsSource>
-                                    <x:Array Type="{x:Type x:String}">
-                                        <x:String>Human</x:String>
-                                        <x:String>Elf</x:String>
-                                        <x:String>Dwarf</x:String>
-                                        <x:String>Orc</x:String>
-                                    </x:Array>
-                                </BindableLayout.ItemsSource>
-                                <BindableLayout.ItemTemplate>
-                                    <DataTemplate>
-                                        <Frame Style="{StaticResource RaceSelectionFrameStyle}">
-                                            <VerticalStackLayout Spacing="5">
-                                                <Image Source="{Binding ., StringFormat='race_{0}.png'}"
-                                                       HeightRequest="60" 
-                                                       WidthRequest="60" 
-                                                       Aspect="AspectFit"/>
-                                                <Label Text="{Binding}"
-                                                       Style="{StaticResource MedievalLabelStyle}"
-                                                       HorizontalOptions="Center"/>
-                                            </VerticalStackLayout>
-                                            <Frame.GestureRecognizers>
-                                                <TapGestureRecognizer 
-                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectRaceCommand}"
-                                                    CommandParameter="{Binding}" />
-                                            </Frame.GestureRecognizers>
-                                        </Frame>
-                                    </DataTemplate>
-                                </BindableLayout.ItemTemplate>
-                            </HorizontalStackLayout>
-                        </ScrollView>
-                    </VerticalStackLayout>
+                <Label Text="Choose your Race" Style="{StaticResource MedievalLabelStyle}" FontSize="18"/>
+                <FlexLayout BindableLayout.ItemsSource="{Binding Races}"
+                            Wrap="Wrap"
+                            JustifyContent="SpaceEvenly"
+                            AlignItems="Center">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate>
+                            <Frame Style="{StaticResource RaceSelectionFrameStyle}" Margin="5">
+                                <VerticalStackLayout Spacing="5">
+                                    <Image Source="{Binding Name, StringFormat='race_{0}.png'}"
+                                           HeightRequest="50" 
+                                           Aspect="AspectFit"/>
+                                    <Label Text="{Binding Name}"
+                                           Style="{StaticResource MedievalLabelStyle}"
+                                           FontSize="12"/>
+                                </VerticalStackLayout>
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer 
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectRaceCommand}"
+                                        CommandParameter="{Binding}" />
+                                </Frame.GestureRecognizers>
+                            </Frame>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </FlexLayout>
 
-                    <!-- Create Character Button -->
-                    <Button Text="Embark on your Quest"
-                            Command="{Binding CreateCharacterCommand}"
-                            Style="{StaticResource MedievalButtonStyle}"
-                            FontAttributes="Bold"
-                            FontSize="20"
-                            Padding="20,10"
-                            WidthRequest="250"/>
-                </VerticalStackLayout>
-            </Grid>
+                <Button Text="Embark on your Quest"
+                        Command="{Binding CreateCharacterCommand}"
+                        Style="{StaticResource MedievalButtonStyle}"
+                        FontAttributes="Bold"
+                        FontSize="18"
+                        Padding="20,10"
+                        HorizontalOptions="Center"/>
+            </VerticalStackLayout>
         </ScrollView>
 
-        <!-- Bottom Decorative Border -->
         <Image Grid.Row="2" Source="scroll_bottom.png" Aspect="Fill" HeightRequest="50"/>
     </Grid>
 </ContentPage>

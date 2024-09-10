@@ -41,10 +41,17 @@ namespace mauiRPG.ViewModels
         }
 
         [RelayCommand]
-        private void SelectRace(string raceName)
+        private void SelectRace(Race race)
         {
-            SelectedRace = Races.FirstOrDefault(r => r.Name == raceName);
-            _logger.LogInformation("Selected race: {RaceName}", SelectedRace?.Name);
+            try
+            {
+                SelectedRace = race;
+                _logger.LogInformation("Selected race: {RaceName}", race.Name);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error selecting race");
+            }
         }
 
         [RelayCommand]
