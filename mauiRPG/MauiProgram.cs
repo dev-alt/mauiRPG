@@ -18,6 +18,7 @@ namespace mauiRPG
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+                    fonts.AddFont("MedievalSharp-Regular.ttf", "MedievalSharp");
                 });
 
             // Register services

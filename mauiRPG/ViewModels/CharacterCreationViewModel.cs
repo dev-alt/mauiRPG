@@ -29,12 +29,14 @@ namespace mauiRPG.ViewModels
             new Orc()
         ];
 
+        public event EventHandler<string>? ShowErrorRequested;
+        public event EventHandler<string>? ShowSuccessRequested;
+
         public CharacterCreationViewModel(CharacterService characterService, GameStateService gameStateService, ILogger<CharacterCreationViewModel> logger)
         {
             _characterService = characterService;
             _gameStateService = gameStateService;
             _logger = logger;
-
             _logger.LogInformation("CharacterCreationViewModel initialized");
         }
 
@@ -51,7 +53,7 @@ namespace mauiRPG.ViewModels
             if (string.IsNullOrWhiteSpace(Name) || SelectedRace == null)
             {
                 _logger.LogWarning("Attempted to create character with invalid input. Name: {Name}, Race: {Race}", Name, SelectedRace?.Name);
-                await Application.Current.MainPage.DisplayAlert("Error", "Please enter a name and select a race.", "OK");
+                ShowErrorRequested?.Invoke(this, "Brave adventurer, thy quest cannot begin without a name and chosen lineage. Please provide both to forge thy legend.");
                 return;
             }
 
@@ -73,7 +75,8 @@ namespace mauiRPG.ViewModels
 
             _logger.LogInformation("Created character: {PlayerName}, Race: {RaceName}", player.Name, player.Race.Name);
 
-            await Application.Current.MainPage.DisplayAlert("Success", "Character created successfully!", "OK");
+            ShowSuccessRequested?.Invoke(this, "Huzzah! Thy character has been forged in the annals of legend. May thy quest be glorious!");
+
             await Shell.Current.GoToAsync($"{nameof(LevelSelectView)}");
         }
     }

@@ -5,42 +5,62 @@
              xmlns:models="clr-namespace:mauiRPG.Models"
              x:Class="mauiRPG.Views.LevelSelectView"
              x:DataType="viewmodels:StageSelectViewModel"
-             Title="Select Level">
+             Title="Choose Thy Quest"
+             BackgroundColor="#2C2416">
+
+    <ContentPage.Resources>
+        <Style x:Key="MedievalLabelStyle" TargetType="Label">
+            <Setter Property="FontFamily" Value="MedievalSharp"/>
+            <Setter Property="TextColor" Value="#FFD700"/>
+        </Style>
+        <Style x:Key="MedievalButtonStyle" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="#8B4513"/>
+            <Setter Property="TextColor" Value="#FFD700"/>
+            <Setter Property="FontFamily" Value="MedievalSharp"/>
+            <Setter Property="CornerRadius" Value="0"/>
+            <Setter Property="Padding" Value="10,5"/>
+        </Style>
+    </ContentPage.Resources>
 
     <Grid RowDefinitions="Auto,Auto,*" Padding="20">
-        <Label Text="Level Select" 
-               FontSize="Large" 
+        <Label Text="Choose Thy Quest" 
+               Style="{StaticResource MedievalLabelStyle}"
+               FontSize="32" 
                HorizontalOptions="Center" 
                Margin="0,0,0,20"/>
 
-        <VerticalStackLayout Grid.Row="1" Spacing="10">
-            <Label Text="{Binding CurrentPlayer.Name, StringFormat='Current Player: {0}'}"
-                   FontSize="Medium"
-                   HorizontalOptions="Center"/>
-            <Button Text="View Player Info"
-                    Command="{Binding ViewPlayerInfoCommand}"
-                    HorizontalOptions="Center"/>
-        </VerticalStackLayout>
+        <Frame Grid.Row="1" BackgroundColor="#3A2F0B" BorderColor="#8B4513" Padding="10" Margin="0,0,0,20">
+            <VerticalStackLayout Spacing="10">
+                <Label Text="{Binding CurrentPlayer.Name, StringFormat='Hero: {0}'}"
+                       Style="{StaticResource MedievalLabelStyle}"
+                       FontSize="20"
+                       HorizontalOptions="Center"/>
+                <Button Text="View Hero's Chronicle"
+                        Command="{Binding ViewPlayerInfoCommand}"
+                        Style="{StaticResource MedievalButtonStyle}"
+                        HorizontalOptions="Center"/>
+            </VerticalStackLayout>
+        </Frame>
 
         <CollectionView Grid.Row="2" 
                         ItemsSource="{Binding Levels}"
-                        SelectionMode="None"
-                        Margin="0,20,0,0">
+                        SelectionMode="None">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:Level">
-                    <Frame Margin="0,0,0,10" Padding="10">
+                    <Frame Margin="0,0,0,10" Padding="10" BackgroundColor="#3A2F0B" BorderColor="#8B4513">
                         <Grid ColumnDefinitions="Auto,*">
                             <Image Source="{Binding ImageSource}"
                                    HeightRequest="100"
                                    WidthRequest="100"
                                    Aspect="AspectFill" />
                             <VerticalStackLayout Grid.Column="1" Spacing="5" Padding="10,0,0,0">
-                                <Label Text="{Binding Name}" FontSize="Large" />
-                                <Label Text="{Binding Number, StringFormat='Level {0}'}" />
-                                <Button Text="Play"
+                                <Label Text="{Binding Name}" Style="{StaticResource MedievalLabelStyle}" FontSize="24" />
+                                <Label Text="{Binding Number, StringFormat='Stage {0}'}" Style="{StaticResource MedievalLabelStyle}" FontSize="18" />
+                                <Button Text="Embark"
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:StageSelectViewModel}}, Path=SelectLevelCommand}"
                                         CommandParameter="{Binding}"
-                                        IsEnabled="{Binding IsUnlocked}" />
+                                        IsEnabled="{Binding IsUnlocked}"
+                                        Style="{StaticResource MedievalButtonStyle}" />
                             </VerticalStackLayout>
                         </Grid>
                     </Frame>

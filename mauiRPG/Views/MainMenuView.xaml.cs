@@ -3,6 +3,7 @@ using mauiRPG.ViewModels;
 using mauiRPG.Services;
 using System.Diagnostics;
 using mauiRPG.Models;
+using System.Threading.Tasks;
 
 namespace mauiRPG.Views
 {
@@ -22,6 +23,13 @@ namespace mauiRPG.Views
             _gameStateService = gameStateService;
             _viewModel = new MainViewModel(characterService, settingsService, gameStateService);
             BindingContext = _viewModel;
+
+            Loaded += OnPageLoaded;
+        }
+
+        private void OnPageLoaded(object? sender, EventArgs e)
+        {
+            AnimateElements();
         }
 
         protected override void OnAppearing()
@@ -38,13 +46,51 @@ namespace mauiRPG.Views
             _viewModel.ShowSettingsPopupRequested -= OnShowSettingsPopupRequested;
         }
 
+        private async void AnimateElements()
+        {
+            var animationTasks = new[]
+            {
+                FadeInBackground(),
+                ScaleUpLogo(),
+                FadeInTitle()
+            };
+
+            await Task.WhenAll(animationTasks);
+        }
+
+        private async Task FadeInBackground()
+        {
+            for (double i = 0.8; i >= 0.2; i -= 0.01)
+            {
+                OverlayBox.Opacity = i;
+                await Task.Delay(20);
+            }
+        }
+
+        private async Task ScaleUpLogo()
+        {
+            for (double i = 1; i <= 1.1; i += 0.002)
+            {
+                GameLogo.Scale = i;
+                await Task.Delay(20);
+            }
+        }
+
+        private async Task FadeInTitle()
+        {
+            for (double i = 0; i <= 1; i += 0.02)
+            {
+                GameTitle.Opacity = i;
+                await Task.Delay(20);
+            }
+        }
+
         private async void OnShowCharacterPopupRequested(object? sender, EventArgs e)
         {
             var characterSelectViewModel = new CharacterSelectViewModel(_characterService, _gameStateService);
             _currentPopup = new CharacterSelectPopup(characterSelectViewModel);
-            var result = await this.ShowPopupAsync(_currentPopup);
-
-            if (result is Character selectedCharacter)
+            await ShowPopupSafely(_currentPopup);
+            if (_currentPopup.BindingContext is CharacterSelectViewModel viewModel && viewModel.SelectedCharacter is Character selectedCharacter)
             {
                 Debug.WriteLine($"Character selected from popup: {selectedCharacter.Name}");
                 await _viewModel.LoadSelectedCharacterCommand.ExecuteAsync(selectedCharacter);
@@ -54,7 +100,25 @@ namespace mauiRPG.Views
         private async void OnShowSettingsPopupRequested(object? sender, EventArgs e)
         {
             _currentPopup = new SettingsSelectPopup(_settingsService);
-            await this.ShowPopupAsync(_currentPopup);
+            await ShowPopupSafely(_currentPopup);
+        }
+
+        private async Task ShowPopupSafely(Popup popup)
+        {
+            if (Window == null)
+            {
+                await Task.Delay(100); // Wait for the Window to be available
+            }
+
+            if (Window != null)
+            {
+                await this.ShowPopupAsync(popup);
+            }
+            else
+            {
+                Debug.WriteLine("Failed to show popup: Window is null");
+                // Consider showing an alert to the user
+            }
         }
     }
 }

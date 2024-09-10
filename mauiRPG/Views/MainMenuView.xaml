@@ -3,68 +3,84 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:mauiRPG.ViewModels"
              x:Class="mauiRPG.Views.MainMenuView"
-             Title="mauiRPG">
+             Title="Realm of mauiRPG">
 
     <ContentPage.Resources>
         <Style x:Key="MenuButtonStyle" TargetType="Button">
-            <Setter Property="BackgroundColor" Value="#4a4a4a"/>
-            <Setter Property="TextColor" Value="White"/>
-            <Setter Property="FontSize" Value="18"/>
-            <Setter Property="CornerRadius" Value="10"/>
-            <Setter Property="Padding" Value="20,10"/>
+            <Setter Property="BackgroundColor" Value="#8B4513"/>
+            <Setter Property="TextColor" Value="#FFD700"/>
+            <Setter Property="FontFamily" Value="MedievalSharp"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="CornerRadius" Value="0"/>
+            <Setter Property="Padding" Value="20,15"/>
             <Setter Property="Margin" Value="0,10"/>
-            <Setter Property="WidthRequest" Value="250"/>
+            <Setter Property="WidthRequest" Value="300"/>
+            <Setter Property="BorderColor" Value="#D2691E"/>
+            <Setter Property="BorderWidth" Value="2"/>
         </Style>
     </ContentPage.Resources>
 
     <Grid>
         <Image Source="fantasy_background.jpg" Aspect="AspectFill" />
 
-        <BoxView Color="#80000000" />
+        <BoxView x:Name="OverlayBox" Color="#000000" Opacity="0.8" />
 
-        <VerticalStackLayout 
-            Spacing="30" 
-            Padding="30,0" 
-            VerticalOptions="Center">
+        <Grid RowDefinitions="Auto,*,Auto">
+            <!-- Top decorative border -->
+            <Image Source="top_border.png" Aspect="Fill" HeightRequest="50"/>
 
-            <Image
-                Source="game_logo.png"
-                SemanticProperties.Description="mauiRPG game logo"
-                HeightRequest="150"
-                HorizontalOptions="Center" />
+            <!-- Main content -->
+            <VerticalStackLayout 
+                Grid.Row="1"
+                Spacing="30" 
+                Padding="30,0" 
+                VerticalOptions="Center">
 
-            <Label 
-                Text="mauiRPG"
-                SemanticProperties.HeadingLevel="Level1"
-                FontSize="48"
-                FontAttributes="Bold"
-                TextColor="White"
-                HorizontalOptions="Center" />
+                <Image
+                    x:Name="GameLogo"
+                    Source="game_logo.png"
+                    SemanticProperties.Description="mauiRPG game logo"
+                    HeightRequest="200"
+                    HorizontalOptions="Center" />
 
-            <Button 
-                Text="Create New Character"
-                Style="{StaticResource MenuButtonStyle}"
-                Command="{Binding CreateNewCharacterCommand}"
-                HorizontalOptions="Center" />
+                <Label 
+                    x:Name="GameTitle"
+                    Text="Realm of mauiRPG"
+                    FontFamily="MedievalSharp"
+                    FontSize="48"
+                    FontAttributes="Bold"
+                    TextColor="#FFD700"
+                    HorizontalOptions="Center"
+                    Opacity="0"/>
 
-            <Button 
-                Text="Load Character"
-                Style="{StaticResource MenuButtonStyle}"
-                Command="{Binding ShowLoadCharacterCommand}"
-                HorizontalOptions="Center" />
+                <Button 
+                    Text="Forge New Hero"
+                    Style="{StaticResource MenuButtonStyle}"
+                    Command="{Binding CreateNewCharacterCommand}"
+                    HorizontalOptions="Center" />
 
-            <Button 
-                Text="Settings"
-                Style="{StaticResource MenuButtonStyle}"
-                Command="{Binding ShowOpenSettingsCommand}"
-                HorizontalOptions="Center" />
+                <Button 
+                    Text="Continue Quest"
+                    Style="{StaticResource MenuButtonStyle}"
+                    Command="{Binding ShowLoadCharacterCommand}"
+                    HorizontalOptions="Center" />
 
-            <Button 
-                Text="Exit"
-                Style="{StaticResource MenuButtonStyle}"
-                Command="{Binding ExitCommand}"
-                HorizontalOptions="Center" />
-        </VerticalStackLayout>
+                <Button 
+                    Text="Enchantments"
+                    Style="{StaticResource MenuButtonStyle}"
+                    Command="{Binding ShowOpenSettingsCommand}"
+                    HorizontalOptions="Center" />
+
+                <Button 
+                    Text="Return to Reality"
+                    Style="{StaticResource MenuButtonStyle}"
+                    Command="{Binding ExitCommand}"
+                    HorizontalOptions="Center" />
+            </VerticalStackLayout>
+
+            <!-- Bottom decorative border -->
+            <Image Grid.Row="2" Source="bottom_border.png" Aspect="Fill" HeightRequest="50"/>
+        </Grid>
 
         <!-- Semi-transparent overlay for popups -->
         <BoxView 
