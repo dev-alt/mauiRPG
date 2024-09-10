@@ -66,9 +66,15 @@
                     HorizontalOptions="Center" />
 
                 <Button 
+                    Text="Quests"
+                    Style="{StaticResource MenuButtonStyle}"
+                    Command="{Binding Quest}"
+                    HorizontalOptions="Center" />
+
+                <Button 
                     Text="Enchantments"
                     Style="{StaticResource MenuButtonStyle}"
-                    Command="{Binding ShowOpenSettingsCommand}"
+                   Clicked="Button_OnClicked"
                     HorizontalOptions="Center" />
 
                 <Button 

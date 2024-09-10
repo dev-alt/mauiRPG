@@ -23,7 +23,6 @@ namespace mauiRPG.Views
             _gameStateService = gameStateService;
             _viewModel = new MainViewModel(characterService, settingsService, gameStateService);
             BindingContext = _viewModel;
-
             Loaded += OnPageLoaded;
         }
 
@@ -103,21 +102,27 @@ namespace mauiRPG.Views
             await ShowPopupSafely(_currentPopup);
         }
 
-        private async Task ShowPopupSafely(Popup popup)
+        private static async Task ShowPopupSafely(Popup popup)
         {
-            if (Window == null)
+            try
             {
-                await Task.Delay(100); 
-            }
+                if (Application.Current?.MainPage == null)
+                {
+                    Debug.WriteLine("MainPage is null");
+                    return;
+                }
 
-            if (Window != null)
-            {
-                await this.ShowPopupAsync(popup);
+                await Application.Current.MainPage.ShowPopupAsync(popup);
             }
-            else
+            catch (Exception ex)
             {
-                Debug.WriteLine("Failed to show popup: Window is null");
+                Debug.WriteLine($"Failed to show popup: {ex.Message}");
             }
+        }
+
+        private async void Button_OnClicked(object? sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync("//QuestBoard");
         }
     }
 }

@@ -7,6 +7,7 @@ namespace mauiRPG.Views;
 
 public partial class CharacterSelect : ContentPage
 {
+
     private readonly CharacterCreationViewModel _viewModel;
 
     public CharacterSelect(CharacterService characterService, GameStateService gameStateService, ILogger<CharacterCreationViewModel> logger)

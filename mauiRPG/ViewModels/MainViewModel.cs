@@ -102,6 +102,7 @@ namespace mauiRPG.ViewModels
             ShowSettingsPopupRequested?.Invoke(this, EventArgs.Empty);
         }
 
+
         [RelayCommand]
         private void CancelLoadCharacter()
         {

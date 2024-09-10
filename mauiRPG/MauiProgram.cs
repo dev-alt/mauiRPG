@@ -21,12 +21,15 @@ namespace mauiRPG
                     fonts.AddFont("MedievalSharp-Regular.ttf", "MedievalSharp");
                 });
 
+            // View model registrations
             // Register services
             builder.Services.AddSingleton<GameStateService>();
             builder.Services.AddSingleton<CharacterService>();
             builder.Services.AddTransient<ICombatService, CombatService>();
             builder.Services.AddSingleton<InventoryService>();
             builder.Services.AddSingleton<ISettingsService, SettingsService>();
+            builder.Services.AddTransient<IQuestService, QuestService>();
+            builder.Services.AddTransient<IDialogService, DialogService>();
 
             // Add CombatManagerService
             builder.Services.AddTransient<CombatManagerService>();
@@ -46,6 +49,7 @@ namespace mauiRPG
             builder.Services.AddTransient<LevelSelectView>();
             builder.Services.AddTransient<LevelPage>();
             builder.Services.AddTransient<QuestBoardView>();
+
 
 
             builder.Logging.AddDebug();

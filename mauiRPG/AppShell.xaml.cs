@@ -11,7 +11,7 @@ namespace mauiRPG
             Routing.RegisterRoute(nameof(LevelPage), typeof(LevelPage));
             Routing.RegisterRoute(nameof(CharacterSelect), typeof(CharacterSelect));
             Routing.RegisterRoute(nameof(LevelSelectView), typeof(LevelSelectView));
-            Routing.RegisterRoute(nameof(QuestBoardView), typeof(QuestBoardView));
+            Routing.RegisterRoute("QuestBoard", typeof(QuestBoardView));
         }
     }
 }

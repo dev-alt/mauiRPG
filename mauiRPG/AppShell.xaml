@@ -7,32 +7,31 @@
     xmlns:models="clr-namespace:mauiRPG.Models"
     xmlns:views="clr-namespace:mauiRPG.Views"
     Shell.FlyoutBehavior="Flyout"
-    Title="Realm of the Forgotten Crown"
-    FlyoutBackgroundColor="#2C2416"
-    FlyoutHeaderBehavior="Fixed">
+    FlyoutBackgroundColor="#1E1E2E"
+    FlyoutHeaderBehavior="Fixed"
+    Shell.NavBarIsVisible="False">
 
     <Shell.Resources>
         <Style x:Key="BaseStyle" TargetType="Element">
-            <Setter Property="Shell.BackgroundColor" Value="#3A2F0B"/>
-            <Setter Property="Shell.ForegroundColor" Value="#FFD700"/>
+            <Setter Property="Shell.BackgroundColor" Value="#1E1E2E"/>
+            <Setter Property="Shell.ForegroundColor" Value="#E0E0E0"/>
             <Setter Property="Shell.TitleColor" Value="#FFD700"/>
-            <Setter Property="Shell.TabBarBackgroundColor" Value="#2C2416"/>
-            <Setter Property="Shell.TabBarForegroundColor" Value="#FFD700"/>
-            <Setter Property="Shell.TabBarUnselectedColor" Value="#8B4513"/>
+            <Setter Property="Shell.TabBarBackgroundColor" Value="#2E2E3E"/>
+            <Setter Property="Shell.TabBarForegroundColor" Value="#E0E0E0"/>
+            <Setter Property="Shell.TabBarUnselectedColor" Value="#888888"/>
             <Setter Property="Shell.TabBarTitleColor" Value="#FFD700"/>
         </Style>
         <Style TargetType="ShellItem" BasedOn="{StaticResource BaseStyle}" />
     </Shell.Resources>
 
     <Shell.FlyoutHeader>
-        <Grid BackgroundColor="#2C2416" Padding="20">
+        <Grid BackgroundColor="#1E1E2E" Padding="20">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <Image Source="game_logo.png" HeightRequest="100" Aspect="AspectFit" />
-            <Label Text="Realm of mauiRPG"
+            <Image Source="game_logo.png" HeightRequest="150" Aspect="AspectFit" />
+            <Label Text="Realm of the Forgotten Crown"
                    FontSize="24"
                    FontFamily="MedievalSharp"
                    TextColor="#FFD700"
@@ -40,14 +39,6 @@
                    VerticalOptions="Center"
                    Margin="0,20" 
                    Grid.Row="1"/>
-            <Label Text="Choose Thy Path"
-                   FontSize="18"
-                   FontFamily="MedievalSharp"
-                   TextColor="#D2B48C"
-                   HorizontalOptions="Center"
-                   VerticalOptions="Center"
-                   Margin="0,10"
-                   Grid.Row="2" />
         </Grid>
     </Shell.FlyoutHeader>
 
@@ -61,7 +52,7 @@
         Title="Quest Board"
         ContentTemplate="{DataTemplate views:QuestBoardView}"
         Icon="quest_icon.png"
-        Route="QuestBoardView" />
+        Route="QuestBoard" />
 
     <ShellContent
         Title="Character Tome"

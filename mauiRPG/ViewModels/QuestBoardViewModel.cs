@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 using mauiRPG.Models;
 using mauiRPG.Services;
 using mauiRPG.Views;
+using CommunityToolkit.Maui.Views;
 
 namespace mauiRPG.ViewModels
 {
@@ -14,6 +15,7 @@ namespace mauiRPG.ViewModels
         private readonly GameStateService _gameStateService;
         private readonly IQuestService _questService;
         private readonly IDialogService _dialogService;
+        private readonly Page _currentPage;
 
         [ObservableProperty]
         private Player? _currentPlayer;
@@ -23,20 +25,21 @@ namespace mauiRPG.ViewModels
 
         public ObservableCollection<Quest> AvailableQuests { get; } = [];
 
-        public QuestBoardViewModel(GameStateService gameStateService, IQuestService questService, IDialogService dialogService)
+        public QuestBoardViewModel(GameStateService gameStateService, IQuestService questService, IDialogService dialogService, Page currentPage)
         {
             _gameStateService = gameStateService;
             _questService = questService;
             _dialogService = dialogService;
+            _currentPage = currentPage;
             CurrentPlayer = _gameStateService.CurrentPlayer;
             LoadAvailableQuests();
         }
 
-        private void LoadAvailableQuests()
+        private async void LoadAvailableQuests()
         {
             try
             {
-                var quests = _questService.GetAvailableQuests(CurrentPlayer);
+                var quests = await _questService.GetAvailableQuests(CurrentPlayer);
                 AvailableQuests.Clear();
                 foreach (var quest in quests.Where(q => q.IsAvailable))
                 {
@@ -45,7 +48,7 @@ namespace mauiRPG.ViewModels
             }
             catch (Exception ex)
             {
-                _dialogService.ShowError("Error loading quests", ex.Message);
+                await ShowErrorPopup("Error loading quests", ex.Message);
             }
         }
 
@@ -54,7 +57,7 @@ namespace mauiRPG.ViewModels
         {
             if (CurrentPlayer == null)
             {
-                await _dialogService.ShowAlert("Error", "No player information available.");
+                await ShowErrorPopup("Error", "No player information available.");
                 return;
             }
             await _dialogService.ShowPlayerInfo(CurrentPlayer);
@@ -65,19 +68,19 @@ namespace mauiRPG.ViewModels
         {
             if (CurrentPlayer == null)
             {
-                await _dialogService.ShowAlert("Error", "No current player.");
+                await ShowErrorPopup("Error", "No current player.");
                 return;
             }
             if (SelectedQuest == null)
             {
-                await _dialogService.ShowAlert("Error", "No quest selected.");
+                await ShowErrorPopup("Error", "No quest selected.");
                 return;
             }
             try
             {
                 if (CurrentPlayer.Level < SelectedQuest.RequiredLevel)
                 {
-                    await _dialogService.ShowAlert("Cannot Accept Quest", $"You need to be level {SelectedQuest.RequiredLevel} to accept this quest.");
+                    await ShowErrorPopup("Cannot Accept Quest", $"You need to be level {SelectedQuest.RequiredLevel} to accept this quest.");
                     return;
                 }
                 await _questService.AcceptQuest(CurrentPlayer, SelectedQuest);
@@ -86,7 +89,7 @@ namespace mauiRPG.ViewModels
             }
             catch (Exception ex)
             {
-                await _dialogService.ShowError("Error accepting quest", ex.Message);
+                await ShowErrorPopup("Error accepting quest", ex.Message);
             }
         }
 
@@ -102,18 +105,11 @@ namespace mauiRPG.ViewModels
             LoadAvailableQuests();
             await _dialogService.ShowAlert("Quests Refreshed", "The quest board has been updated.");
         }
-    }
 
-    public interface IQuestService
-    {
-        Task AcceptQuest(Player currentPlayer, Quest quest);
-        IEnumerable<Quest> GetAvailableQuests(Player? currentPlayer);
-    }
-
-    public interface IDialogService
-    {
-        Task ShowAlert(string title, string message);
-        Task ShowError(string title, string message);
-        Task ShowPlayerInfo(Player player);
+        private async Task ShowErrorPopup(string title, string message)
+        {
+            var errorPopup = new ErrorPopup($"{title}\n\n{message}");
+            await _currentPage.ShowPopupAsync(errorPopup);
+        }
     }
 }

@@ -17,7 +17,9 @@ namespace mauiRPG.Models
         public int Health { get; set; } 
         public int Experience { get; set; } = 0;
         public bool IsDefending { get; set; }
-
+        public List<Quest> ActiveQuests { get; set; } = [];
+        public List<Quest> CompletedQuests { get; set; } = [];
+        public int Gold { get; set; }
         public void UpdateStats()
         {
             Strength = 10;
