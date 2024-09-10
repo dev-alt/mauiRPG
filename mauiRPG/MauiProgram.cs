@@ -44,6 +44,7 @@ namespace mauiRPG
             builder.Services.AddTransient<CharacterSelect>();
             builder.Services.AddTransient<LevelSelectView>();
             builder.Services.AddTransient<LevelPage>();
+            builder.Services.AddTransient<QuestBoardView>();
 
             builder.Logging.AddDebug();
 

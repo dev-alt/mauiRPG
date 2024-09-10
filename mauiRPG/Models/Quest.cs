@@ -1,11 +1,11 @@
 ﻿namespace mauiRPG.Models
 {
-    public class Quest(int id, string name, string description, int experienceReward)
+    public class Quest
     {
-        public int Id { get; set; } = id;
-        public string Name { get; set; } = name;
-        public string Description { get; set; } = description;
-        public bool IsCompleted { get; set; } = false;
-        public int ExperienceReward { get; set; } = experienceReward;
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string IconSource { get; set; }
+        public int Reward { get; set; }
+        // Add other properties as needed (e.g., difficulty, required level, etc.)
     }
 }

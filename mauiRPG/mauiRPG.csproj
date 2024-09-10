@@ -107,6 +107,9 @@
 	  <MauiXaml Update="Views\PlayerInfoView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\QuestBoardView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\SettingsSelectPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

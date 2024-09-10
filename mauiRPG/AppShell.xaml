@@ -59,9 +59,9 @@
 
     <ShellContent
         Title="Quest Board"
-        ContentTemplate="{DataTemplate views:LevelSelectView}"
+        ContentTemplate="{DataTemplate views:QuestBoardView}"
         Icon="quest_icon.png"
-        Route="LevelSelect" />
+        Route="QuestBoardView" />
 
     <ShellContent
         Title="Character Tome"
