@@ -3,45 +3,77 @@
                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
                xmlns:viewmodels="clr-namespace:mauiRPG.ViewModels"
-               x:Class="mauiRPG.Views.CharacterSelectPopup">
+               x:Class="mauiRPG.Views.CharacterSelectPopup"
+               Color="Transparent"
+               Size="350,500">
 
-    <Frame VerticalOptions="Center"
-           HorizontalOptions="Center"
-           WidthRequest="{OnPlatform WinUI=400, Default=300}"
-           HeightRequest="{OnPlatform WinUI=550, Default=450}"
-           CornerRadius="10"
+    <toolkit:Popup.Resources>
+        <Style x:Key="MedievalButtonStyle" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="#8B4513"/>
+            <Setter Property="TextColor" Value="#FFD700"/>
+            <Setter Property="FontFamily" Value="MedievalSharp"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="CornerRadius" Value="0"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+        <Style x:Key="CharacterItemStyle" TargetType="Frame">
+            <Setter Property="BackgroundColor" Value="#3A2F0B"/>
+            <Setter Property="BorderColor" Value="#FFD700"/>
+            <Setter Property="CornerRadius" Value="0"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Margin" Value="0,5"/>
+        </Style>
+    </toolkit:Popup.Resources>
+
+    <Frame BackgroundColor="#2C2416" 
+           BorderColor="#8B4513" 
+           CornerRadius="0" 
            Padding="20"
-           BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}">
-        <Grid RowDefinitions="Auto,*,Auto,Auto">
-            <Label Text="Select a Player"
-                   FontSize="24"
-                   FontAttributes="Bold"
-                   TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
-                   HorizontalOptions="Center"
-                   Margin="0,0,0,10"/>
-            <ScrollView Grid.Row="1" Margin="0,10">
+           HasShadow="True">
+        <Grid RowDefinitions="Auto,*,Auto" RowSpacing="20">
+            <StackLayout>
+                <Label Text="Choose Your Hero" 
+                       FontFamily="MedievalSharp"
+                       FontSize="28" 
+                       FontAttributes="Bold" 
+                       TextColor="#FFD700" 
+                       HorizontalOptions="Center"/>
+                <BoxView Color="#8B4513" HeightRequest="2" Margin="0,10"/>
+            </StackLayout>
+
+            <ScrollView Grid.Row="1">
                 <CollectionView ItemsSource="{Binding Characters}"
                                 SelectionMode="Single"
                                 SelectedItem="{Binding SelectedCharacter, Mode=TwoWay}">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Grid Padding="10" ColumnDefinitions="*, Auto">
-                                <Label Text="{Binding Name}"
-                                       TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
-                                       FontSize="16"
-                                       VerticalOptions="Center"/>
-                            </Grid>
+                            <Frame Style="{StaticResource CharacterItemStyle}">
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <Image Source="character_icon.png" 
+                                           WidthRequest="40" 
+                                           HeightRequest="40" 
+                                           Margin="0,0,10,0"/>
+                                    <Label Grid.Column="1" 
+                                           Text="{Binding Name}"
+                                           TextColor="#FFD700"
+                                           FontFamily="MedievalSharp"
+                                           FontSize="18"
+                                           VerticalOptions="Center"/>
+                                </Grid>
+                            </Frame>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
             </ScrollView>
-            <StackLayout Grid.Row="2" Orientation="Horizontal" HorizontalOptions="Center" Spacing="10" Margin="0,10,0,10">
-                <Button Text="Load Selected Character"
-                    Command="{Binding LoadCharacterCommand}"
-                    Margin="0,10,0,0"/>
-            <Button Text="Cancel"
-                    Command="{Binding ClosePopupCommand}"
-                    Margin="0,10,0,0"/>
+
+            <StackLayout Grid.Row="2" Spacing="10">
+                <Button Text="Embark on Adventure" 
+                        Command="{Binding LoadCharacterCommand}"
+                        Style="{StaticResource MedievalButtonStyle}"/>
+                <Button Text="Return to Tavern" 
+                        Command="{Binding ClosePopupCommand}"
+                        Style="{StaticResource MedievalButtonStyle}"/>
             </StackLayout>
         </Grid>
     </Frame>

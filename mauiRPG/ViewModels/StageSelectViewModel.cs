@@ -37,12 +37,15 @@ namespace mauiRPG.ViewModels
         private void InitializeLevels()
         {
             _logger.LogInformation("InitializeLevels called");
-            Levels = new ObservableCollection<Level>
-            {
-                new("The Beginning", "level1.jpg") { Number = 1, IsUnlocked = true, Name = "The Beginning", ImageSource = "level1.jpg" },
-                new("Dark Forest", "level2.png") { Number = 2, IsUnlocked = true, Name = "Dark Forest", ImageSource = "level2.jpg" },
-                new("Mystic Mountains", "level3.png") { Number = 3, IsUnlocked = false, Name = "Mystic Mountains", ImageSource = "level3.png" }
-            };
+            Levels =
+            [
+                new("The Beginning", "level1.jpg")
+                    { Number = 1, IsUnlocked = true, Name = "The Beginning", ImageSource = "level1.jpg" },
+                new("Dark Forest", "level2.png")
+                    { Number = 2, IsUnlocked = true, Name = "Dark Forest", ImageSource = "level2.jpg" },
+                new("Mystic Mountains", "level3.png")
+                    { Number = 3, IsUnlocked = false, Name = "Mystic Mountains", ImageSource = "level3.png" }
+            ];
             _logger.LogInformation("Levels initialized with {LevelCount} levels", Levels.Count);
         }
 

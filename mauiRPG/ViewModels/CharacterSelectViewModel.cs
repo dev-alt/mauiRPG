@@ -5,29 +5,23 @@ using mauiRPG.Models;
 using mauiRPG.Services;
 using mauiRPG.Views;
 using System.Diagnostics;
-
 namespace mauiRPG.ViewModels
 {
     public partial class CharacterSelectViewModel : ObservableObject
     {
         private readonly CharacterService _characterService;
         private readonly GameStateService _gameStateService;
-
         [ObservableProperty]
         private Character? _selectedCharacter;
-
         public ObservableCollection<Character> Characters { get; } = [];
-
         public event EventHandler? CloseRequested;
         public event EventHandler<Character>? CharacterSelected;
-
         public CharacterSelectViewModel(CharacterService characterService, GameStateService gameStateService)
         {
             _characterService = characterService;
             _gameStateService = gameStateService;
             LoadCharacters();
         }
-
         private void LoadCharacters()
         {
             var loadedCharacters = _characterService.LoadCharacters();
@@ -38,7 +32,6 @@ namespace mauiRPG.ViewModels
             }
             Debug.WriteLine($"Loaded {Characters.Count} characters in CharacterSelectViewModel");
         }
-
         [RelayCommand]
         private void LoadCharacter()
         {
@@ -57,7 +50,6 @@ namespace mauiRPG.ViewModels
                     break;
             }
         }
-
         [RelayCommand]
         private void ClosePopup()
         {

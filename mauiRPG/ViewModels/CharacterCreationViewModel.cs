@@ -5,6 +5,7 @@ using mauiRPG.Models;
 using mauiRPG.Services;
 using mauiRPG.Views;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 
 namespace mauiRPG.ViewModels
 {
@@ -14,44 +15,43 @@ namespace mauiRPG.ViewModels
         private readonly GameStateService _gameStateService;
         private readonly ILogger<CharacterCreationViewModel> _logger;
 
-        public ObservableCollection<Race> Races { get; }
-
-        public event EventHandler? CloseRequested;
+        [ObservableProperty]
+        private string _name = string.Empty;
 
         [ObservableProperty]
-        private string _name = "Name";
+        private Race? _selectedRace;
 
-        [ObservableProperty]
-        private Race _selectedRace;
+        public ObservableCollection<Race> Races { get; } =
+        [
+            new Human(),
+            new Elf(),
+            new Dwarf(),
+            new Orc()
+        ];
 
-
-        public CharacterCreationViewModel(CharacterService characterService, GameStateService gameStateService,
-            ILogger<CharacterCreationViewModel> logger)
+        public CharacterCreationViewModel(CharacterService characterService, GameStateService gameStateService, ILogger<CharacterCreationViewModel> logger)
         {
             _characterService = characterService;
             _gameStateService = gameStateService;
             _logger = logger;
 
-            Races =
-            [
-                new Orc(),
-                new Human(),
-                new Dwarf(),
-                new Elf()
-            ];
-
-
-            SelectedRace = Races[0];
-
             _logger.LogInformation("CharacterCreationViewModel initialized");
+        }
+
+        [RelayCommand]
+        private void SelectRace(string raceName)
+        {
+            SelectedRace = Races.FirstOrDefault(r => r.Name == raceName);
+            _logger.LogInformation("Selected race: {RaceName}", SelectedRace?.Name);
         }
 
         [RelayCommand]
         private async Task CreateCharacter()
         {
-            if (string.IsNullOrWhiteSpace(Name))
+            if (string.IsNullOrWhiteSpace(Name) || SelectedRace == null)
             {
-                await Application.Current?.MainPage?.DisplayAlert("Error", "Please enter a valid name, and select a race and class.", "OK")!;
+                _logger.LogWarning("Attempted to create character with invalid input. Name: {Name}, Race: {Race}", Name, SelectedRace?.Name);
+                await Application.Current.MainPage.DisplayAlert("Error", "Please enter a name and select a race.", "OK");
                 return;
             }
 
@@ -61,34 +61,20 @@ namespace mauiRPG.ViewModels
                 Race = SelectedRace,
                 Level = 1,
                 Health = 100,
+                MaxHealth = 100,
                 Strength = 10,
                 Intelligence = 10,
                 Dexterity = 10,
-                Constitution = 10,
-
-                Inventory =
-                [
-                new HealthPotion { Name = "Health Potion", Description = "Restores 50 HP", IconSource = "health_potion.png" },
-            ]
+                Constitution = 10
             };
 
             _characterService.SavePlayer(player);
             _gameStateService.CurrentPlayer = player;
 
-            _logger.LogInformation("Character created and set as CurrentPlayer: {PlayerName}", player.Name);
+            _logger.LogInformation("Created character: {PlayerName}, Race: {RaceName}", player.Name, player.Race.Name);
 
-            if (Application.Current?.MainPage != null)
-            {
-                await Application.Current.MainPage.DisplayAlert("Success", "Character successfully created.", "OK");
-            }
-
+            await Application.Current.MainPage.DisplayAlert("Success", "Character created successfully!", "OK");
             await Shell.Current.GoToAsync($"{nameof(LevelSelectView)}");
-        }
-
-        [RelayCommand]
-        private void Close()
-        {
-            CloseRequested?.Invoke(this, EventArgs.Empty);
         }
     }
 }
