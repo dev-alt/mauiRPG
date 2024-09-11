@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using mauiRPG.Models;
@@ -28,6 +28,12 @@ namespace mauiRPG.ViewModels
             _logger.LogInformation("StageSelectViewModel constructor called");
             _logger.LogInformation("GameStateService is {GameStateServiceStatus}", "not null");
 
+            LoadData();
+        }
+
+        [RelayCommand]
+        public void LoadData()
+        {
             CurrentPlayer = _gameStateService.CurrentPlayer;
             _logger.LogInformation("CurrentPlayer is {CurrentPlayerStatus}", $"set to {CurrentPlayer?.Name ?? "null"}");
 

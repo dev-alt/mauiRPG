@@ -1,8 +1,10 @@
 using mauiRPG.ViewModels;
 
-namespace mauiRPG.Views
+namespace mauiRPG.Views;
+
+public partial class LevelSelectView : ContentPage
 {
-    public partial class LevelSelectView : ContentPage
+    public LevelSelectView(StageSelectViewModel viewModel)
     {
         public LevelSelectView(StageSelectViewModel viewModel)
         {
@@ -11,12 +13,12 @@ namespace mauiRPG.Views
         }
 
         protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        if (BindingContext is StageSelectViewModel viewModel)
         {
-            base.OnAppearing();
-            if (BindingContext is StageSelectViewModel viewModel)
-            {
-                viewModel.CurrentPlayer = ((StageSelectViewModel)BindingContext).CurrentPlayer;
-            }
+            viewModel.CurrentPlayer = ((StageSelectViewModel)BindingContext).CurrentPlayer;
         }
     }
+}
 }

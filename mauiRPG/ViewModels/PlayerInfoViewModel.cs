@@ -1,4 +1,4 @@
-﻿using mauiRPG.Models;
+using mauiRPG.Models;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -22,7 +22,15 @@ namespace mauiRPG.ViewModels
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null!)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            Name = _player.Name ?? "Unknown";
+            RaceName = _player.Race?.Name ?? "Unknown";
+            ClassName = _player.Class?.Name ?? "Unknown";
+            Level = _player.Level.ToString();
+            Health = _player.Health.ToString();
+            Strength = _player.Strength.ToString();
+            Intelligence = _player.Intelligence.ToString();
+            Dexterity = _player.Dexterity.ToString();
+            Constitution = _player.Constitution.ToString();
         }
     }
 }

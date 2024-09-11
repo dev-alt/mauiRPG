@@ -14,7 +14,6 @@ namespace mauiRPG.Views
             InitializeComponent();
             _logger = logger;
 
-            // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
             if (player != null)
             {
                 _logger.LogInformation("Player info: Name={Name}, Race={Race}",
