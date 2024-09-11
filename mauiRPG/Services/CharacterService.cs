@@ -10,6 +10,7 @@ namespace mauiRPG.Services
     {
         private readonly string _filePath = Path.Combine(FileSystem.AppDataDirectory, "characters.json");
         private readonly JsonSerializerOptions _jsonOptions;
+        private const int MaxCharacters = 5;
 
         public CharacterService()
         {
@@ -21,18 +22,38 @@ namespace mauiRPG.Services
             };
         }
 
-        public void SaveCharacter(Character character)
+        public bool SaveCharacter(Character character, bool @override = false)
         {
             List<Character> characters = LoadCharacters();
-            characters.Add(character);
-            SaveCharacters(characters);
-        }
 
-        public void SavePlayer(Player player)
-        {
-            List<Character> characters = LoadCharacters();
-            characters.Add(player);
+            if (characters.Count >= MaxCharacters && !@override)
+            {
+                return false;
+            }
+
+            var existingIndex = characters.FindIndex(c => c.Name == character.Name);
+            if (existingIndex != -1)
+            {
+                if (@override)
+                {
+                    characters[existingIndex] = character;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else if (characters.Count < MaxCharacters)
+            {
+                characters.Add(character);
+            }
+            else
+            {
+                return false;
+            }
+
             SaveCharacters(characters);
+            return true;
         }
 
         public List<Character> LoadCharacters()
@@ -48,12 +69,31 @@ namespace mauiRPG.Services
             return characters.FirstOrDefault(c => c is Player p && p.Name == playerName) as Player;
         }
 
+        public bool DeleteCharacter(string characterName)
+        {
+            List<Character> characters = LoadCharacters();
+            var character = characters.FirstOrDefault(c => c.Name == characterName);
+            if (character != null)
+            {
+                characters.Remove(character);
+                SaveCharacters(characters);
+                return true;
+            }
+
+            return false;
+        }
+
         private void SaveCharacters(List<Character> characters)
         {
             var json = JsonSerializer.Serialize(characters, _jsonOptions);
             File.WriteAllText(_filePath, json);
         }
     }
+
+
+
+
+
 
     public class CharacterConverter : JsonConverter<Character>
     {
@@ -88,7 +128,8 @@ namespace mauiRPG.Services
                     Race = JsonSerializer.Deserialize<Race>(raceElement.GetRawText(), options)
                            ?? throw new JsonException("Failed to deserialize Race"),
                     EquippedItems = root.TryGetProperty("EquippedItems", out var equippedItemsElement)
-                        ? JsonSerializer.Deserialize<Dictionary<EquipmentSlot, Equipment>>(equippedItemsElement.GetRawText(), options)
+                        ? JsonSerializer.Deserialize<Dictionary<EquipmentSlot, Equipment>>(
+                              equippedItemsElement.GetRawText(), options)
                           ?? new Dictionary<EquipmentSlot, Equipment>()
                         : new Dictionary<EquipmentSlot, Equipment>(),
                     Inventory = root.TryGetProperty("Inventory", out var inventoryElement)

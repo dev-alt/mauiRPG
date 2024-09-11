@@ -83,7 +83,7 @@ namespace mauiRPG.ViewModels
 
                 _logger.LogInformation("Player object created successfully");
 
-                _characterService.SavePlayer(player);
+                _characterService.SaveCharacter(player);
                 _logger.LogInformation("Player saved successfully");
 
                 _gameStateService.CurrentPlayer = player;

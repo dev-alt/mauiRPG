@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using mauiRPG.Models;
 using mauiRPG.Services;
-using mauiRPG.Views;
 using System.Diagnostics;
 
 namespace mauiRPG.ViewModels
@@ -72,10 +71,29 @@ namespace mauiRPG.ViewModels
         }
 
         [RelayCommand]
+        private void DeleteCharacter()
+        {
+            if (SelectedCharacter == null)
+            {
+                ErrorOccurred?.Invoke(this, "Please select a character to delete.");
+                return;
+            }
+
+            if (_characterService.DeleteCharacter(SelectedCharacter.Name))
+            {
+                Characters.Remove(SelectedCharacter);
+                SelectedCharacter = null;
+            }
+            else
+            {
+                ErrorOccurred?.Invoke(this, "Failed to delete the character. Please try again.");
+            }
+        }
+
+        [RelayCommand]
         private void ClosePopup()
         {
             CloseRequested?.Invoke(this, EventArgs.Empty);
         }
-
     }
 }
