@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -42,7 +43,20 @@ public partial class CombatViewModel : ObservableObject
     [ObservableProperty]
     private string _defeatMessage = string.Empty;
 
+    [ObservableProperty]
+    private bool _isBattleActionVisible;
+
+    [ObservableProperty]
+    private string _currentBattleAction = string.Empty;
+
     public event EventHandler<CombatOutcome>? CombatEnded;
+
+    private CombatView? _combatView;
+
+    public void SetCombatView(CombatView view)
+    {
+        _combatView = view;
+    }
 
     public CombatViewModel(CombatManagerService combatManager, InventoryService inventoryService, Player player, CombatantModel enemy, GameStateService gameStateService)
     {
@@ -55,7 +69,6 @@ public partial class CombatViewModel : ObservableObject
         InventoryItems = [];
         BattleCount = 1;
 
-        // Ensure initial health values are set
         Player.CurrentHealth = Player.MaxHealth;
         Enemy.CurrentHealth = Enemy.MaxHealth;
 
@@ -92,13 +105,15 @@ public partial class CombatViewModel : ObservableObject
     {
         if (!IsCombatOver())
         {
+            await ShowBattleAction("Attack");
             var playerResult = _combatManager.ExecutePlayerTurn(Player, Enemy);
-            UpdateCombatLog(playerResult);
+            await UpdateCombatLog(playerResult);
 
             if (!IsCombatOver())
             {
+                await ShowBattleAction("Enemy Attack");
                 var enemyResult = _combatManager.ExecuteEnemyTurn(Enemy, Player);
-                UpdateCombatLog(enemyResult);
+                await UpdateCombatLog(enemyResult);
             }
 
             await CheckCombatEndAsync();
@@ -110,8 +125,9 @@ public partial class CombatViewModel : ObservableObject
     {
         if (!IsCombatOver())
         {
+            await ShowBattleAction("Defend");
             Player.IsDefending = true;
-            UpdateCombatLog(new CombatResult
+            await UpdateCombatLog(new CombatResult
             {
                 Attacker = Player.Name,
                 Defender = Player.Name,
@@ -120,8 +136,9 @@ public partial class CombatViewModel : ObservableObject
                 RemainingHealth = Player.CurrentHealth
             });
 
+            await ShowBattleAction("Enemy Attack");
             var enemyResult = _combatManager.ExecuteEnemyTurn(Enemy, Player);
-            UpdateCombatLog(enemyResult);
+            await UpdateCombatLog(enemyResult);
 
             Player.IsDefending = false;
             await CheckCombatEndAsync();
@@ -133,11 +150,12 @@ public partial class CombatViewModel : ObservableObject
     {
         if (!IsCombatOver())
         {
+            await ShowBattleAction($"Use {item.Name}");
             int previousHealth = Player.CurrentHealth;
             item.Use(Player);
             int healthRestored = Player.CurrentHealth - previousHealth;
 
-            UpdateCombatLog(new CombatResult
+            await UpdateCombatLog(new CombatResult
             {
                 Attacker = Player.Name,
                 Defender = Player.Name,
@@ -151,8 +169,9 @@ public partial class CombatViewModel : ObservableObject
                 InventoryItems.Remove(item);
             }
 
+            await ShowBattleAction("Enemy Attack");
             var enemyResult = _combatManager.ExecuteEnemyTurn(Enemy, Player);
-            UpdateCombatLog(enemyResult);
+            await UpdateCombatLog(enemyResult);
             await CheckCombatEndAsync();
         }
     }
@@ -162,10 +181,11 @@ public partial class CombatViewModel : ObservableObject
     {
         if (!IsCombatOver())
         {
+            await ShowBattleAction("Attempt Escape");
             bool escaped = _combatManager.AttemptEscape();
             if (escaped)
             {
-                UpdateCombatLog(new CombatResult
+                await UpdateCombatLog(new CombatResult
                 {
                     Attacker = Player.Name,
                     Defender = Enemy.Name,
@@ -177,7 +197,7 @@ public partial class CombatViewModel : ObservableObject
             }
             else
             {
-                UpdateCombatLog(new CombatResult
+                await UpdateCombatLog(new CombatResult
                 {
                     Attacker = Player.Name,
                     Defender = Enemy.Name,
@@ -185,22 +205,47 @@ public partial class CombatViewModel : ObservableObject
                     Damage = 0,
                     RemainingHealth = Player.CurrentHealth
                 });
+                await ShowBattleAction("Enemy Attack");
                 var enemyResult = _combatManager.ExecuteEnemyTurn(Enemy, Player);
-                UpdateCombatLog(enemyResult);
+                await UpdateCombatLog(enemyResult);
                 await CheckCombatEndAsync();
             }
         }
     }
 
-    private void UpdateCombatLog(CombatResult result)
+    private async Task UpdateCombatLog(CombatResult result)
     {
         CombatLog.Add(new CombatLogEntryModel
         {
             Message = result.Message ?? $"{result.Attacker} dealt {result.Damage} damage to {result.Defender}. {result.Defender}'s remaining health: {result.RemainingHealth}",
             IsPlayerAction = result.Attacker == Player.Name
         });
+
+        // Show splash damage
+        if (_combatView != null)
+        {
+            if (result.Defender == Player.Name)
+            {
+                await _combatView.ShowPlayerDamage(result.Damage);
+                await _combatView.ShowPlayerBattleZoneDamage(result.Damage);
+            }
+            else
+            {
+                await _combatView.ShowEnemyDamage(result.Damage);
+                await _combatView.ShowEnemyBattleZoneDamage(result.Damage);
+            }
+        }
+
         OnPropertyChanged(nameof(Player));
         OnPropertyChanged(nameof(Enemy));
+    }
+
+    private async Task ShowBattleAction(string action)
+    {
+        CurrentBattleAction = action;
+        IsBattleActionVisible = true;
+        await Task.Delay(1000);
+        IsBattleActionVisible = false;
     }
 
     private async Task PrepareNextBattle()
@@ -215,16 +260,12 @@ public partial class CombatViewModel : ObservableObject
 
         IsLoading = false;
 
-        // Add a message to indicate the start of a new battle
         CombatLog.Add(new CombatLogEntryModel { Message = $"Preparing for battle {BattleCount}!", IsPlayerAction = false });
 
-        // Notify that the player won the previous battle and is continuing
         CombatEnded?.Invoke(this, CombatOutcome.PlayerVictory);
 
-        // Reset combat result for the new battle
         CombatResult = string.Empty;
 
-        // Ensure UI is updated
         OnPropertyChanged(nameof(Enemy));
     }
 
@@ -242,8 +283,7 @@ public partial class CombatViewModel : ObservableObject
 
             if (Player.CurrentHealth > 0)
             {
-                // Player won
-                int experienceGained = Enemy.Level * 10; // Simple experience calculation
+                int experienceGained = Enemy.Level * 10;
                 Player.GainExperience(experienceGained);
                 CombatLog.Add(new CombatLogEntryModel { Message = $"{Player.Name} gained {experienceGained} experience!", IsPlayerAction = true });
 
@@ -281,5 +321,4 @@ public partial class CombatViewModel : ObservableObject
         PlayerEscaped,
         ContinueToNextBattle
     }
-
 }

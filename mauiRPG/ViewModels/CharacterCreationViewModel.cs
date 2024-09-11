@@ -86,12 +86,12 @@ namespace mauiRPG.ViewModels
                 _characterService.SaveCharacter(player);
                 _logger.LogInformation("Player saved successfully");
 
-                _gameStateService.CurrentPlayer = player;
+                _gameStateService.SetCurrentPlayer(player);
                 _logger.LogInformation("Current player set in GameStateService");
 
                 ShowSuccessRequested?.Invoke(this, "Huzzah! Thy character has been forged in the annals of legend. May thy quest be glorious!");
 
-                await Shell.Current.GoToAsync("///LevelSelect", true);
+                await Shell.Current.GoToAsync("LevelSelect");
             }
             catch (Exception ex)
             {

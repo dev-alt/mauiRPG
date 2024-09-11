@@ -42,6 +42,7 @@ namespace mauiRPG
             builder.Services.AddTransient<CombatViewModel>();
             builder.Services.AddTransient<InventoryViewModel>();
             builder.Services.AddTransient<QuestBoardViewModel>();
+            builder.Services.AddTransient<AppShellViewModel>();
 
             // Register Views
             builder.Services.AddTransient<MainMenuView>();

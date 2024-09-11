@@ -63,6 +63,7 @@
                                      Spacing="20" 
                                      Padding="30,0" 
                                      VerticalOptions="Center">
+                    
                     <Button Text="Forge New Hero"
                             Style="{StaticResource MenuButtonStyle}"
                             Command="{Binding CreateNewCharacterCommand}"/>

@@ -4,7 +4,6 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:mauiRPG"
-    xmlns:models="clr-namespace:mauiRPG.Models"
     xmlns:views="clr-namespace:mauiRPG.Views"
     Shell.FlyoutBehavior="Flyout"
     FlyoutBackgroundColor="#1E1E2E"
@@ -45,19 +44,24 @@
     <ShellContent
         Title="The Tavern"
         ContentTemplate="{DataTemplate views:MainMenuView}"
-        Icon="tavern_icon.png"
         Route="MainMenu" />
 
     <ShellContent
         Title="Quest Board"
         ContentTemplate="{DataTemplate views:QuestBoardView}"
-        Icon="quest_icon.png"
-        Route="QuestBoard" />
+        Route="QuestBoard"
+        IsVisible="{Binding IsCharacterLoaded}" />
 
     <ShellContent
         Title="Character Tome"
         ContentTemplate="{DataTemplate views:CharacterSelect}"
-        Icon="character_icon.png"
-        Route="CharacterSelect" />
+        Route="CharacterSelect"
+        IsVisible="{Binding IsCharacterLoaded}" />
+
+    <ShellContent
+        Title="Level Select"
+        ContentTemplate="{DataTemplate views:LevelSelectView}"
+        Route="LevelSelect"
+        IsVisible="{Binding IsCharacterLoaded}" />
 
 </Shell>

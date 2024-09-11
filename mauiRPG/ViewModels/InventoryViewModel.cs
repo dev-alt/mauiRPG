@@ -11,7 +11,7 @@ namespace mauiRPG.ViewModels
         private readonly GameStateService _gameStateService;
 
         [ObservableProperty]
-        private  ObservableCollection<Item> _inventoryItems;
+        private ObservableCollection<Item> _inventoryItems;
 
         [ObservableProperty]
         private Item? _selectedItem;
@@ -21,7 +21,7 @@ namespace mauiRPG.ViewModels
         public InventoryViewModel(GameStateService gameStateService)
         {
             _gameStateService = gameStateService;
-            _inventoryItems = _gameStateService.CurrentPlayer.Inventory;
+            _inventoryItems = _gameStateService.CurrentPlayer?.Inventory ?? [];
         }
 
         [RelayCommand]
@@ -35,7 +35,6 @@ namespace mauiRPG.ViewModels
                 InventoryItems.Remove(item);
             }
         }
-
 
         [RelayCommand]
         private void DropItem()

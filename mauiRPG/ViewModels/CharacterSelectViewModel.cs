@@ -59,7 +59,7 @@ namespace mauiRPG.ViewModels
 
             if (SelectedCharacter is Player player)
             {
-                _gameStateService.CurrentPlayer = player;
+                _gameStateService.SetCurrentPlayer(player);
                 Debug.WriteLine($"Current player set to: {player.Name}");
                 CharacterSelected?.Invoke(this, player);
             }

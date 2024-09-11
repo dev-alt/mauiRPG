@@ -1,17 +1,20 @@
-﻿using mauiRPG.Views;
+﻿using mauiRPG.ViewModels;
+using mauiRPG.Views;
 
 namespace mauiRPG
 {
     public partial class AppShell : Shell
     {
-        public AppShell()
+        public AppShell(AppShellViewModel viewModel)
         {
             InitializeComponent();
-            Routing.RegisterRoute(nameof(MainMenuView), typeof(MainMenuView));
-            Routing.RegisterRoute(nameof(LevelPage), typeof(LevelPage));
-            Routing.RegisterRoute(nameof(CharacterSelect), typeof(CharacterSelect));
-            Routing.RegisterRoute(nameof(LevelSelectView), typeof(LevelSelectView));
+            BindingContext = viewModel;
+
+            Routing.RegisterRoute("MainMenu", typeof(MainMenuView));
+            Routing.RegisterRoute("LevelSelect", typeof(LevelSelectView));
+            Routing.RegisterRoute("CharacterSelect", typeof(CharacterSelect));
             Routing.RegisterRoute("QuestBoard", typeof(QuestBoardView));
+            Routing.RegisterRoute("LevelPage", typeof(LevelPage));
         }
     }
 }

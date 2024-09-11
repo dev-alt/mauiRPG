@@ -1,17 +1,17 @@
 ﻿using mauiRPG.Views;
+using mauiRPG.ViewModels;
 
 namespace mauiRPG
 {
     public partial class App : Application
     {
-        public App(MainMenuView mainMenuView)
+        public App(MainMenuView mainMenuView, AppShellViewModel appShellViewModel)
         {
             InitializeComponent();
-
-            MainPage = new AppShell();
+            MainPage = new AppShell(appShellViewModel);
             Shell.Current.Navigation.PushAsync(mainMenuView);
-
         }
+
         protected override Window CreateWindow(IActivationState? activationState)
         {
             var window = base.CreateWindow(activationState);

@@ -58,9 +58,27 @@ namespace mauiRPG.Services
 
         public List<Character> LoadCharacters()
         {
-            if (!File.Exists(_filePath)) return [];
+            if (!File.Exists(_filePath))
+            {
+                return [];
+            }
+
             var json = File.ReadAllText(_filePath);
-            return JsonSerializer.Deserialize<List<Character>>(json, _jsonOptions) ?? [];
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                return [];
+            }
+
+            try
+            {
+                return JsonSerializer.Deserialize<List<Character>>(json, _jsonOptions) ?? [];
+            }
+            catch (JsonException)
+            {
+                // Log the error if needed
+
+                return [];
+            }
         }
 
         public Player? LoadPlayer(string playerName)
@@ -130,20 +148,20 @@ namespace mauiRPG.Services
                     EquippedItems = root.TryGetProperty("EquippedItems", out var equippedItemsElement)
                         ? JsonSerializer.Deserialize<Dictionary<EquipmentSlot, Equipment>>(
                               equippedItemsElement.GetRawText(), options)
-                          ?? new Dictionary<EquipmentSlot, Equipment>()
-                        : new Dictionary<EquipmentSlot, Equipment>(),
+                          ?? []
+                        : [],
                     Inventory = root.TryGetProperty("Inventory", out var inventoryElement)
                         ? JsonSerializer.Deserialize<ObservableCollection<Item>>(inventoryElement.GetRawText(), options)
-                          ?? new ObservableCollection<Item>()
-                        : new ObservableCollection<Item>(),
+                          ?? []
+                        : [],
                     ActiveQuests = root.TryGetProperty("ActiveQuests", out var activeQuestsElement)
                         ? JsonSerializer.Deserialize<List<Quest>>(activeQuestsElement.GetRawText(), options)
-                          ?? new List<Quest>()
-                        : new List<Quest>(),
+                          ?? []
+                        : [],
                     CompletedQuests = root.TryGetProperty("CompletedQuests", out var completedQuestsElement)
                         ? JsonSerializer.Deserialize<List<Quest>>(completedQuestsElement.GetRawText(), options)
-                          ?? new List<Quest>()
-                        : new List<Quest>()
+                          ?? []
+                        : []
                 };
 
                 return player;

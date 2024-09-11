@@ -6,11 +6,14 @@ using mauiRPG.Views;
 
 namespace mauiRPG.ViewModels
 {
+
     public partial class LevelPageViewModel(
-        GameStateService gameStateService, CombatManagerService combatManagerService,
+        GameStateService gameStateService,
+        CombatManagerService combatManagerService,
         InventoryService inventoryService)
         : ObservableObject
     {
+
         [ObservableProperty]
         private Level? _currentLevel;
 
@@ -19,17 +22,16 @@ namespace mauiRPG.ViewModels
 
         [ObservableProperty]
         private CombatViewModel? _combatViewModel;
-        
+
         [RelayCommand]
         private void LoadLevel(int levelNumber)
         {
-            // Load the level data based on the level number
             CurrentLevel = new Level($"Level {levelNumber}", $"level{levelNumber}.jpg")
             {
                 Number = levelNumber,
                 IsUnlocked = true,
                 Name = $"Level {levelNumber}",
-                ImageSource = $"level{levelNumber}.jpg" 
+                ImageSource = $"level{levelNumber}.jpg"
             };
 
             SimulateEnemyEncounter();
@@ -44,7 +46,11 @@ namespace mauiRPG.ViewModels
                 MaxHealth = 50,
             };
 
-            InitiateCombat(gameStateService.CurrentPlayer, enemy);
+            var currentPlayer = gameStateService.CurrentPlayer;
+            if (currentPlayer != null)
+            {
+                InitiateCombat(currentPlayer, enemy);
+            }
         }
 
         private void InitiateCombat(Player player, CombatantModel enemy)
