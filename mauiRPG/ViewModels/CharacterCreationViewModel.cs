@@ -57,34 +57,47 @@ namespace mauiRPG.ViewModels
         [RelayCommand]
         private async Task CreateCharacter()
         {
-            if (string.IsNullOrWhiteSpace(Name) || SelectedRace == null)
+            try
             {
-                _logger.LogWarning("Attempted to create character with invalid input. Name: {Name}, Race: {Race}", Name, SelectedRace?.Name);
-                ShowErrorRequested?.Invoke(this, "Brave adventurer, thy quest cannot begin without a name and chosen lineage. Please provide both to forge thy legend.");
-                return;
+                if (string.IsNullOrWhiteSpace(Name) || SelectedRace == null)
+                {
+                    _logger.LogWarning("Attempted to create character with invalid input. Name: {Name}, Race: {Race}", Name, SelectedRace?.Name);
+                    ShowErrorRequested?.Invoke(this, "Brave adventurer, thy quest cannot begin without a name and chosen lineage. Please provide both to forge thy legend.");
+                    return;
+                }
+
+                _logger.LogInformation("Creating character with Name: {Name}, Race: {Race}", Name, SelectedRace.Name);
+
+                var player = new Player
+                {
+                    Name = Name,
+                    Race = SelectedRace,
+                    Level = 1,
+                    CurrentHealth = 100,
+                    MaxHealth = 100,
+                    Strength = 10,
+                    Intelligence = 10,
+                    Dexterity = 10,
+                    Constitution = 10
+                };
+
+                _logger.LogInformation("Player object created successfully");
+
+                _characterService.SavePlayer(player);
+                _logger.LogInformation("Player saved successfully");
+
+                _gameStateService.CurrentPlayer = player;
+                _logger.LogInformation("Current player set in GameStateService");
+
+                ShowSuccessRequested?.Invoke(this, "Huzzah! Thy character has been forged in the annals of legend. May thy quest be glorious!");
+
+                await Shell.Current.GoToAsync($"{nameof(LevelSelectView)}");
             }
-
-            var player = new Player
+            catch (Exception ex)
             {
-                Name = Name,
-                Race = SelectedRace,
-                Level = 1,
-                Health = 100,
-                MaxHealth = 100,
-                Strength = 10,
-                Intelligence = 10,
-                Dexterity = 10,
-                Constitution = 10
-            };
-
-            _characterService.SavePlayer(player);
-            _gameStateService.CurrentPlayer = player;
-
-            _logger.LogInformation("Created character: {PlayerName}, Race: {RaceName}", player.Name, player.Race.Name);
-
-            ShowSuccessRequested?.Invoke(this, "Huzzah! Thy character has been forged in the annals of legend. May thy quest be glorious!");
-
-            await Shell.Current.GoToAsync($"{nameof(LevelSelectView)}");
+                _logger.LogError(ex, "Error creating character");
+                ShowErrorRequested?.Invoke(this, $"An error occurred while creating your character: {ex.Message}");
+            }
         }
     }
 }

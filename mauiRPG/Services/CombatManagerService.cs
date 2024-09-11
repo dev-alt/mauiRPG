@@ -4,62 +4,34 @@ using System.Threading.Tasks;
 
 namespace mauiRPG.Services
 {
-    /// <summary>
-    /// Manages combat-related operations and enemy generation.
-    /// </summary>
     public class CombatManagerService(ICombatService combatService)
     {
-        private readonly ICombatService _combatService = combatService ?? throw new ArgumentNullException(nameof(combatService));
         private readonly Random _random = new();
 
-        /// <summary>
-        /// Executes the player's turn in combat.
-        /// </summary>
         public CombatResult ExecutePlayerTurn(Player player, CombatantModel enemy)
         {
-            return _combatService.ExecutePlayerAttack(player, enemy);
+            return combatService.ExecutePlayerAttack(player, enemy);
         }
 
-        /// <summary>
-        /// Executes the enemy's turn in combat.
-        /// </summary>
         public CombatResult ExecuteEnemyTurn(CombatantModel enemy, Player player)
         {
-            return _combatService.ExecuteEnemyAttack(enemy, player);
-        }
-
-        /// <summary>
-        /// Executes the player's defend action.
-        /// </summary>
-        public static CombatResult ExecutePlayerDefend(Player player, CombatantModel enemy)
-        {
-            player.IsDefending = true;
-            int damage = CalculateDamage(enemy.Attack, player.Defense * 2); // Double defense when defending
-            player.CurrentHealth = Math.Max(0, player.CurrentHealth - damage);
-            player.IsDefending = false;
-
-            return new CombatResult
+            int action = _random.Next(100);
+            if (action < 20 && !enemy.IsDefending)
             {
-                Attacker = enemy.Name,
-                Defender = player.Name,
-                Damage = damage,
-                RemainingHealth = player.CurrentHealth,
-                Message = $"{player.Name} defends. {enemy.Name} attacks for {damage} damage!"
-            };
+                enemy.IsDefending = true;
+                return combatService.Defend(enemy);
+            }
+            else if (action < 40 && enemy.CurrentHealth < enemy.MaxHealth / 2)
+            {
+                return combatService.ExecuteSpecialAttack(enemy, player);
+            }
+            else
+            {
+                return combatService.ExecuteEnemyAttack(enemy, player);
+            }
         }
 
-        /// <summary>
-        /// Attempts to escape from combat.
-        /// </summary>
-        public bool AttemptEscape()
-        {
-            return _combatService.AttemptEscape();
-        }
-
-        /// <summary>
-        /// Generates a new enemy based on the current battle count.
-        /// </summary>
-        public CombatantModel GenerateNewEnemy(int battleCount)
+        private CombatantModel GenerateNewEnemy(int battleCount)
         {
             string[] enemyTypes = ["Goblin", "Orc", "Troll", "Dark Elf", "Dragon"];
             string enemyName = enemyTypes[_random.Next(enemyTypes.Length)];
@@ -76,9 +48,6 @@ namespace mauiRPG.Services
             };
         }
 
-        /// <summary>
-        /// Prepares for the next battle, healing the player and generating a new enemy.
-        /// </summary>
         public async Task<CombatantModel> PrepareNextBattle(Player player, int battleCount)
         {
             await Task.Delay(3000); // Simulating preparation time
@@ -91,17 +60,16 @@ namespace mauiRPG.Services
             return newEnemy;
         }
 
-        /// <summary>
-        /// Checks if the combat is over.
-        /// </summary>
+        public bool AttemptEscape()
+        {
+            return combatService.AttemptEscape();
+        }
+
         public static bool IsCombatOver(Player player, CombatantModel enemy)
         {
             return player.CurrentHealth <= 0 || enemy.CurrentHealth <= 0;
         }
 
-        /// <summary>
-        /// Gets the result of the combat.
-        /// </summary>
         public static string GetCombatResult(Player player, CombatantModel enemy)
         {
             if (player.CurrentHealth <= 0)
@@ -109,14 +77,6 @@ namespace mauiRPG.Services
             else if (enemy.CurrentHealth <= 0)
                 return $"{enemy.Name} has been defeated. {player.Name} is victorious!";
             return "Combat is still ongoing.";
-        }
-
-        /// <summary>
-        /// Calculates the damage dealt in an attack.
-        /// </summary>
-        private static int CalculateDamage(int attack, int defense)
-        {
-            return Math.Max(1, attack - defense);
         }
     }
 }

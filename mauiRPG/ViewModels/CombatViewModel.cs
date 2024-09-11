@@ -36,6 +36,12 @@ public partial class CombatViewModel : ObservableObject
     [ObservableProperty]
     private ObservableCollection<Item> _inventoryItems;
 
+    [ObservableProperty]
+    private bool _isDefeated;
+
+    [ObservableProperty]
+    private string _defeatMessage = string.Empty;
+
     public event EventHandler<CombatOutcome>? CombatEnded;
 
     public CombatViewModel(CombatManagerService combatManager, InventoryService inventoryService, Player player, CombatantModel enemy, GameStateService gameStateService)
@@ -82,7 +88,7 @@ public partial class CombatViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void Attack()
+    private async Task AttackAsync()
     {
         if (!IsCombatOver())
         {
@@ -95,23 +101,35 @@ public partial class CombatViewModel : ObservableObject
                 UpdateCombatLog(enemyResult);
             }
 
-            CheckCombatEnd();
+            await CheckCombatEndAsync();
         }
     }
 
     [RelayCommand]
-    private void Defend()
+    private async Task DefendAsync()
     {
         if (!IsCombatOver())
         {
-            var result = CombatManagerService.ExecutePlayerDefend(Player, Enemy);
-            UpdateCombatLog(result);
-            CheckCombatEnd();
+            Player.IsDefending = true;
+            UpdateCombatLog(new CombatResult
+            {
+                Attacker = Player.Name,
+                Defender = Player.Name,
+                Message = $"{Player.Name} takes a defensive stance.",
+                Damage = 0,
+                RemainingHealth = Player.CurrentHealth
+            });
+
+            var enemyResult = _combatManager.ExecuteEnemyTurn(Enemy, Player);
+            UpdateCombatLog(enemyResult);
+
+            Player.IsDefending = false;
+            await CheckCombatEndAsync();
         }
     }
 
     [RelayCommand]
-    private void UseItem(Item item)
+    private async Task UseItemAsync(Item item)
     {
         if (!IsCombatOver())
         {
@@ -135,12 +153,12 @@ public partial class CombatViewModel : ObservableObject
 
             var enemyResult = _combatManager.ExecuteEnemyTurn(Enemy, Player);
             UpdateCombatLog(enemyResult);
-            CheckCombatEnd();
+            await CheckCombatEndAsync();
         }
     }
 
     [RelayCommand]
-    private void Run()
+    private async Task RunAsync()
     {
         if (!IsCombatOver())
         {
@@ -169,7 +187,7 @@ public partial class CombatViewModel : ObservableObject
                 });
                 var enemyResult = _combatManager.ExecuteEnemyTurn(Enemy, Player);
                 UpdateCombatLog(enemyResult);
-                CheckCombatEnd();
+                await CheckCombatEndAsync();
             }
         }
     }
@@ -189,6 +207,7 @@ public partial class CombatViewModel : ObservableObject
     {
         IsLoading = true;
         BattleCount++;
+
         Enemy = await _combatManager.PrepareNextBattle(Player, BattleCount);
 
         CombatLog.Clear();
@@ -204,6 +223,9 @@ public partial class CombatViewModel : ObservableObject
 
         // Reset combat result for the new battle
         CombatResult = string.Empty;
+
+        // Ensure UI is updated
+        OnPropertyChanged(nameof(Enemy));
     }
 
     private bool IsCombatOver()
@@ -211,7 +233,7 @@ public partial class CombatViewModel : ObservableObject
         return CombatManagerService.IsCombatOver(Player, Enemy);
     }
 
-    private async void CheckCombatEnd()
+    private async Task CheckCombatEndAsync()
     {
         if (CombatManagerService.IsCombatOver(Player, Enemy))
         {
@@ -220,16 +242,27 @@ public partial class CombatViewModel : ObservableObject
 
             if (Player.CurrentHealth > 0)
             {
+                // Player won
+                int experienceGained = Enemy.Level * 10; // Simple experience calculation
+                Player.GainExperience(experienceGained);
+                CombatLog.Add(new CombatLogEntryModel { Message = $"{Player.Name} gained {experienceGained} experience!", IsPlayerAction = true });
+
                 await PrepareNextBattle();
             }
             else
             {
-                // Player lost, end the combat
-                CombatEnded?.Invoke(this, CombatOutcome.ContinueToNextBattle);
+                IsDefeated = true;
+                DefeatMessage = $"{Player.Name} has been defeated. Game Over!";
+                CombatEnded?.Invoke(this, CombatOutcome.EnemyVictory);
             }
         }
     }
 
+    [RelayCommand]
+    private static async Task ReturnToHomeScreen()
+    {
+        await Shell.Current.GoToAsync("//MainMenu");
+    }
 
     [RelayCommand]
     private void ResetCombat()

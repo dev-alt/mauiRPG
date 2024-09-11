@@ -100,5 +100,20 @@
                 <Label Text="Preparing for next skirmish..." TextColor="#FFD700" FontSize="18" FontFamily="MedievalSharp" Margin="0,10,0,0"/>
             </StackLayout>
         </Grid>
+        <!-- Defeat Overlay -->
+        <Grid Grid.RowSpan="3" IsVisible="{Binding IsDefeated}" BackgroundColor="#80000000">
+            <Frame BackgroundColor="#2C2416" BorderColor="#8B4513" CornerRadius="0" Padding="20" VerticalOptions="Center" HorizontalOptions="Center">
+                <StackLayout Spacing="20">
+                    <Label Text="{Binding DefeatMessage}"
+                           TextColor="#FFD700"
+                           FontSize="24"
+                           FontFamily="MedievalSharp"
+                           HorizontalOptions="Center"/>
+                    <Button Text="Return to Tavern"
+                            Command="{Binding ReturnToHomeScreenCommand}"
+                            Style="{StaticResource ActionButtonStyle}"/>
+                </StackLayout>
+            </Frame>
+        </Grid>
     </Grid>
 </ContentView>

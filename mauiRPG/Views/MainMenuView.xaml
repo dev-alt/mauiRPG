@@ -17,82 +17,75 @@
             <Setter Property="WidthRequest" Value="300"/>
             <Setter Property="BorderColor" Value="#D2691E"/>
             <Setter Property="BorderWidth" Value="2"/>
+            <Setter Property="Shadow">
+                <Setter.Value>
+                    <Shadow Brush="#000000" Offset="2,2" Radius="4" Opacity="0.6"/>
+                </Setter.Value>
+            </Setter>
         </Style>
     </ContentPage.Resources>
 
     <Grid>
         <Image Source="fantasy_background.png" Aspect="AspectFill" />
 
-        <BoxView x:Name="OverlayBox" Color="#000000" Opacity="0.8" />
+        <BoxView x:Name="OverlayBox" Color="#000000" Opacity="0.7" />
 
         <Grid RowDefinitions="Auto,*,Auto">
             <!-- Top decorative border -->
             <Image Source="top_border.png" Aspect="Fill" HeightRequest="50"/>
 
             <!-- Main content -->
-            <VerticalStackLayout 
-                Grid.Row="1"
-                Spacing="30" 
-                Padding="30,0" 
-                VerticalOptions="Center">
+            <Grid Grid.Row="1" RowDefinitions="Auto,*,Auto">
+                <Image x:Name="GameLogo"
+                       Source="game_logo.png"
+                       SemanticProperties.Description="mauiRPG game logo"
+                       HeightRequest="200"
+                       Margin="0,20,0,0"
+                       HorizontalOptions="Center" />
 
-                <Image
-                    x:Name="GameLogo"
-                    Source="game_logo.png"
-                    SemanticProperties.Description="mauiRPG game logo"
-                    HeightRequest="200"
-                    HorizontalOptions="Center" />
+                <Label x:Name="GameTitle"
+                       Grid.Row="1"
+                       Text="Realm of the Forgotten Crown"
+                       FontFamily="MedievalSharp"
+                       FontSize="48"
+                       FontAttributes="Bold"
+                       TextColor="#FFD700"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Start"
+                       Opacity="0"
+                       Margin="0,20,0,0">
+                    <Label.Shadow>
+                        <Shadow Brush="#000000" Offset="2,2" Radius="4" Opacity="0.6"/>
+                    </Label.Shadow>
+                </Label>
 
-                <Label 
-                    x:Name="GameTitle"
-                    Text="Realm of the Forgotten Crown"
-                    FontFamily="MedievalSharp"
-                    FontSize="48"
-                    FontAttributes="Bold"
-                    TextColor="#FFD700"
-                    HorizontalOptions="Center"
-                    Opacity="0"/>
-
-                <Button 
-                    Text="Forge New Hero"
-                    Style="{StaticResource MenuButtonStyle}"
-                    Command="{Binding CreateNewCharacterCommand}"
-                    HorizontalOptions="Center" />
-
-                <Button 
-                    Text="Continue Quest"
-                    Style="{StaticResource MenuButtonStyle}"
-                    Command="{Binding ShowLoadCharacterCommand}"
-                    HorizontalOptions="Center" />
-
-                <Button 
-                    Text="Quests"
-                    Style="{StaticResource MenuButtonStyle}"
-                    Command="{Binding Quest}"
-                    HorizontalOptions="Center" />
-
-                <Button 
-                    Text="Enchantments"
-                    Style="{StaticResource MenuButtonStyle}"
-                   Clicked="Button_OnClicked"
-                    HorizontalOptions="Center" />
-
-                <Button 
-                    Text="Return to Reality"
-                    Style="{StaticResource MenuButtonStyle}"
-                    Command="{Binding ExitCommand}"
-                    HorizontalOptions="Center" />
-            </VerticalStackLayout>
+                <VerticalStackLayout Grid.Row="2"
+                                     Spacing="20" 
+                                     Padding="30,0" 
+                                     VerticalOptions="Center">
+                    <Button Text="Forge New Hero"
+                            Style="{StaticResource MenuButtonStyle}"
+                            Command="{Binding CreateNewCharacterCommand}"/>
+                    <Button Text="Continue Quest"
+                            Style="{StaticResource MenuButtonStyle}"
+                            Command="{Binding ShowLoadCharacterCommand}"/>
+                    <Button Text="Enchantments"
+                            Style="{StaticResource MenuButtonStyle}"
+                            Command="{Binding ShowOpenSettingsCommand}"/>
+                    <Button Text="Return to Reality"
+                            Style="{StaticResource MenuButtonStyle}"
+                            Command="{Binding ExitCommand}"/>
+                </VerticalStackLayout>
+            </Grid>
 
             <!-- Bottom decorative border -->
             <Image Grid.Row="2" Source="bottom_border.png" Aspect="Fill" HeightRequest="50"/>
         </Grid>
 
         <!-- Semi-transparent overlay for popups -->
-        <BoxView 
-            IsVisible="{Binding IsAnyPopupVisible}"
-            Color="#80000000"
-            InputTransparent="False">
+        <BoxView IsVisible="{Binding IsAnyPopupVisible}"
+                 Color="#80000000"
+                 InputTransparent="False">
             <BoxView.GestureRecognizers>
                 <TapGestureRecognizer Command="{Binding ClosePopupsCommand}" />
             </BoxView.GestureRecognizers>

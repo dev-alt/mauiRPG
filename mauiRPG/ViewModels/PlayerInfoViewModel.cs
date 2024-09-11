@@ -11,7 +11,8 @@ namespace mauiRPG.ViewModels
         public string Name => _player?.Name ?? "Unknown";
         public string RaceName => _player?.Race?.Name ?? "Unknown";
         public string Level => _player?.Level.ToString() ?? "0";
-        public string Health => _player?.Health.ToString() ?? "0";
+        public string Health => _player?.CurrentHealth.ToString() ?? "0"; // Changed from Health to CurrentHealth
+        public string MaxHealth => _player?.MaxHealth.ToString() ?? "0"; // Added MaxHealth
         public string Strength => _player?.Strength.ToString() ?? "0";
         public string Intelligence => _player?.Intelligence.ToString() ?? "0";
         public string Dexterity => _player?.Dexterity.ToString() ?? "0";

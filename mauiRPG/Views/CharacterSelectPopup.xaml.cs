@@ -9,12 +9,15 @@ namespace mauiRPG.Views
     {
         private readonly CharacterSelectViewModel _viewModel;
 
+        public event EventHandler<string>? ErrorOccurred;
+
         public CharacterSelectPopup(CharacterSelectViewModel viewModel)
         {
             InitializeComponent();
             _viewModel = viewModel;
             BindingContext = _viewModel;
             _viewModel.CloseRequested += (sender, args) => Close();
+            _viewModel.ErrorOccurred += OnErrorOccurred;
         }
 
         protected override void OnHandlerChanged()
@@ -29,6 +32,11 @@ namespace mauiRPG.Views
         private void OnPopupClosed(object? sender, PopupClosedEventArgs e)
         {
             WeakReferenceMessenger.Default.Send(new PopupClosedMessage());
+        }
+
+        private void OnErrorOccurred(object? sender, string errorMessage)
+        {
+            ErrorOccurred?.Invoke(this, errorMessage);
         }
     }
 }

@@ -26,7 +26,6 @@ namespace mauiRPG.Models
         [ObservableProperty]
         private double _healthPercentage;
 
-        // Add missing properties
         [ObservableProperty]
         private int _strength;
 
@@ -38,6 +37,9 @@ namespace mauiRPG.Models
 
         [ObservableProperty]
         private int _constitution;
+
+        [ObservableProperty]
+        private int _level = 1;
 
         partial void OnCurrentHealthChanged(int value)
         {

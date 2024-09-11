@@ -1,12 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System.ComponentModel;
 
 namespace mauiRPG.Models
 {
     public partial class CombatantModel : Character
     {
         [ObservableProperty] private bool _isDefending;
-        [ObservableProperty] private int _defense;
 
         public CombatantModel()
         {

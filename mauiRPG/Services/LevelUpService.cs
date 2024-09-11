@@ -25,7 +25,7 @@ namespace mauiRPG.Services
         private static void ApplyLevelUpBonuses(Player player)
         {
             player.MaxHealth += 10;
-            player.Health = player.MaxHealth;
+            player.CurrentHealth = player.MaxHealth;
             player.Strength += 2;
             player.Intelligence += 2;
             player.Dexterity += 2;

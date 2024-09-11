@@ -3,7 +3,6 @@ using mauiRPG.ViewModels;
 using mauiRPG.Services;
 using System.Diagnostics;
 using mauiRPG.Models;
-using System.Threading.Tasks;
 
 namespace mauiRPG.Views
 {
@@ -59,7 +58,7 @@ namespace mauiRPG.Views
 
         private async Task FadeInBackground()
         {
-            for (double i = 0.8; i >= 0.2; i -= 0.01)
+            for (double i = 0.7; i >= 0.5; i -= 0.01)
             {
                 OverlayBox.Opacity = i;
                 await Task.Delay(20);
@@ -87,14 +86,26 @@ namespace mauiRPG.Views
         private async void OnShowCharacterPopupRequested(object? sender, EventArgs e)
         {
             var characterSelectViewModel = new CharacterSelectViewModel(_characterService, _gameStateService);
-            _currentPopup = new CharacterSelectPopup(characterSelectViewModel);
-            await ShowPopupSafely(_currentPopup);
-            if (_currentPopup.BindingContext is CharacterSelectViewModel viewModel && viewModel.SelectedCharacter is Character selectedCharacter)
+            var characterSelectPopup = new CharacterSelectPopup(characterSelectViewModel);
+            characterSelectPopup.ErrorOccurred += OnCharacterSelectErrorOccurred;
+            _currentPopup = characterSelectPopup;
+
+            var result = await ShowPopupSafely(_currentPopup);
+
+            if (result is Character selectedCharacter)
             {
                 Debug.WriteLine($"Character selected from popup: {selectedCharacter.Name}");
                 await _viewModel.LoadSelectedCharacterCommand.ExecuteAsync(selectedCharacter);
             }
         }
+
+        private async void OnCharacterSelectErrorOccurred(object? sender, string errorMessage)
+        {
+            var errorPopup = new ErrorPopup(errorMessage);
+            await ShowPopupSafely(errorPopup);
+        }
+
+
 
         private async void OnShowSettingsPopupRequested(object? sender, EventArgs e)
         {
@@ -102,27 +113,26 @@ namespace mauiRPG.Views
             await ShowPopupSafely(_currentPopup);
         }
 
-        private static async Task ShowPopupSafely(Popup popup)
+        private async Task<object?> ShowPopupSafely(Popup popup)
         {
             try
             {
                 if (Application.Current?.MainPage == null)
                 {
                     Debug.WriteLine("MainPage is null");
-                    return;
+                    await DisplayAlert("Error", "An error occurred while loading the popup.", "OK");
+                    return null;
                 }
 
-                await Application.Current.MainPage.ShowPopupAsync(popup);
+                var result = await Application.Current.MainPage.ShowPopupAsync(popup);
+                return result;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Failed to show popup: {ex.Message}");
+                await DisplayAlert("Error", "An error occurred while loading the popup.", "OK");
+                return null;
             }
-        }
-
-        private async void Button_OnClicked(object? sender, EventArgs e)
-        {
-            await Shell.Current.GoToAsync("//QuestBoard");
         }
     }
 }

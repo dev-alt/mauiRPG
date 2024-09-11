@@ -12,6 +12,20 @@
         {
             Type = ItemType.Equipment;
         }
+
+        public override void Use(Player player)
+        {
+            // Equip the item
+            if (player.EquippedItems.ContainsKey(Slot))
+            {
+                player.EquippedItems[Slot] = this;
+            }
+            else
+            {
+                player.EquippedItems.Add(Slot, this);
+            }
+            player.UpdateStats();
+        }
     }
 
     public enum EquipmentSlot
