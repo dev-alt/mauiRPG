@@ -91,7 +91,7 @@ namespace mauiRPG.ViewModels
 
                 ShowSuccessRequested?.Invoke(this, "Huzzah! Thy character has been forged in the annals of legend. May thy quest be glorious!");
 
-                await Shell.Current.GoToAsync($"{nameof(LevelSelectView)}");
+                await Shell.Current.GoToAsync("///LevelSelect", true);
             }
             catch (Exception ex)
             {
