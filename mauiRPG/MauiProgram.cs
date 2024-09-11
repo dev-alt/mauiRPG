@@ -16,6 +16,7 @@ namespace mauiRPG
                 .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
+                    fonts.AddFont("icon.svg", "AppIcon");
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                     fonts.AddFont("MedievalSharp-Regular.ttf", "MedievalSharp");
