@@ -1,7 +1,6 @@
-﻿using System.Windows.Input;
-using mauiRPG.Services;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using mauiRPG.Services;
 
 namespace mauiRPG.ViewModels
 {

@@ -6,7 +6,7 @@ namespace mauiRPG.Views
     public partial class LevelPage : ContentPage
     {
         private readonly LevelPageViewModel _viewModel;
-        
+
         public int LevelNumber
         {
             set

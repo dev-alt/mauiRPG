@@ -1,11 +1,11 @@
-﻿using System.Collections.ObjectModel;
-using CommunityToolkit.Maui.Views;
+﻿using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using mauiRPG.Models;
 using mauiRPG.Services;
 using mauiRPG.Views;
 using Microsoft.Extensions.Logging;
+using System.Collections.ObjectModel;
 
 namespace mauiRPG.ViewModels
 {

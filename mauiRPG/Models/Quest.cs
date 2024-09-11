@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace mauiRPG.Models
+﻿namespace mauiRPG.Models
 {
     public class Quest
     {

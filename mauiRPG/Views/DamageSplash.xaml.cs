@@ -1,6 +1,3 @@
-using System;
-using Microsoft.Maui.Controls;
-
 namespace mauiRPG.Views
 {
     public partial class DamageSplash : ContentView

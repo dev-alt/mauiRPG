@@ -1,6 +1,4 @@
-﻿using mauiRPG.Models;
-
-namespace mauiRPG.Models
+﻿namespace mauiRPG.Models
 {
     public class HealthPotion : Item
     {

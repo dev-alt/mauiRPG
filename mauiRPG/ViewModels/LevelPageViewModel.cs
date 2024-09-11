@@ -2,7 +2,6 @@
 using CommunityToolkit.Mvvm.Input;
 using mauiRPG.Models;
 using mauiRPG.Services;
-using mauiRPG.Views;
 
 namespace mauiRPG.ViewModels
 {

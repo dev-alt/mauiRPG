@@ -1,7 +1,7 @@
-using CommunityToolkit.Maui.Views;
-using mauiRPG.ViewModels;
-using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Mvvm.Messaging;
+using mauiRPG.ViewModels;
 
 namespace mauiRPG.Views
 {

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace mauiRPG.Services
+﻿namespace mauiRPG.Services
 {
     public interface ISettingsService
     {

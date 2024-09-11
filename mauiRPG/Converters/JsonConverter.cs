@@ -1,6 +1,6 @@
-﻿using System.Text.Json;
+﻿using mauiRPG.Models;
+using System.Text.Json;
 using System.Text.Json.Serialization;
-using mauiRPG.Models;
 
 namespace mauiRPG.Converters
 {

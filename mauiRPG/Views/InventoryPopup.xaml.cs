@@ -1,6 +1,5 @@
-using mauiRPG.ViewModels;
-using mauiRPG.Services;
 using CommunityToolkit.Maui.Views;
+using mauiRPG.ViewModels;
 
 namespace mauiRPG.Views
 {

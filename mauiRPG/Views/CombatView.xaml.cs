@@ -1,6 +1,4 @@
 using mauiRPG.ViewModels;
-using System.ComponentModel;
-using System.Diagnostics;
 
 namespace mauiRPG.Views
 {
@@ -39,4 +37,4 @@ namespace mauiRPG.Views
             await EnemyBattleZoneDamageSplash.ShowDamage(damage);
         }
     }
-    }
+}

@@ -1,5 +1,4 @@
 ﻿using mauiRPG.Models;
-using System.Collections.Generic;
 
 namespace mauiRPG.Services
 {

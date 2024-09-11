@@ -1,8 +1,8 @@
-﻿using mauiRPG.Services;
+﻿using CommunityToolkit.Maui;
+using mauiRPG.Services;
 using mauiRPG.ViewModels;
 using mauiRPG.Views;
 using Microsoft.Extensions.Logging;
-using CommunityToolkit.Maui;
 
 namespace mauiRPG
 {

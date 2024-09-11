@@ -1,7 +1,5 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using mauiRPG.Services;
-using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace mauiRPG.ViewModels
 {

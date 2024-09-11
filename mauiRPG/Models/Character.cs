@@ -1,5 +1,5 @@
-﻿using SQLite;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using SQLite;
 
 namespace mauiRPG.Models
 {

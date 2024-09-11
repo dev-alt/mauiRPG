@@ -1,6 +1,5 @@
 ﻿using mauiRPG.Models;
 using Microsoft.Extensions.Logging;
-using System;
 
 namespace mauiRPG.Services
 {

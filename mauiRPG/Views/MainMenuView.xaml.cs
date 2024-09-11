@@ -1,8 +1,8 @@
 using CommunityToolkit.Maui.Views;
-using mauiRPG.ViewModels;
-using mauiRPG.Services;
-using System.Diagnostics;
 using mauiRPG.Models;
+using mauiRPG.Services;
+using mauiRPG.ViewModels;
+using System.Diagnostics;
 
 namespace mauiRPG.Views
 {
