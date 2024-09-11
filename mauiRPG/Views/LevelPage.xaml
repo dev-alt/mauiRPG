@@ -1,11 +1,35 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:mauiRPG.ViewModels"
+             xmlns:views="clr-namespace:mauiRPG.Views"
              x:Class="mauiRPG.Views.LevelPage"
-             Title="{Binding Name}">
-    <Grid x:Name="MainLayout">
-        <Image Source="{Binding ImageSource}" Aspect="AspectFill" />
-        <Label Text="{Binding Name}" FontSize="Large" />
-    </Grid>
+             x:DataType="viewmodels:LevelPageViewModel"
+             BackgroundColor="#2C2416">
 
+    <ContentPage.Resources>
+        <Style x:Key="MedievalLabelStyle" TargetType="Label">
+            <Setter Property="FontFamily" Value="MedievalSharp"/>
+            <Setter Property="TextColor" Value="#FFD700"/>
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="HorizontalOptions" Value="Center"/>
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid x:Name="MainLayout">
+        <Image Source="{Binding CurrentLevel.ImageSource}" Aspect="AspectFill" Opacity="0.7"/>
+
+        <BoxView Color="#80000000"/>
+
+        <StackLayout VerticalOptions="Start" Margin="0,20,0,0">
+            <Frame BackgroundColor="#3A2F0B" BorderColor="#8B4513" CornerRadius="0" Padding="10" Margin="20,0">
+                <Label Text="{Binding CurrentLevel.Name}" Style="{StaticResource MedievalLabelStyle}"/>
+            </Frame>
+        </StackLayout>
+
+        <!-- CombatView -->
+        <ContentView IsVisible="{Binding IsCombatViewVisible}">
+            <views:CombatView BindingContext="{Binding CombatViewModel}" />
+        </ContentView>
+    </Grid>
 </ContentPage>

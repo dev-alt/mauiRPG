@@ -1,6 +1,4 @@
-﻿using mauiRPG.Models;
-
-namespace mauiRPG.Models
+﻿namespace mauiRPG.Models
 {
     public class HealthPotion : Item
     {
@@ -13,12 +11,8 @@ namespace mauiRPG.Models
 
         public override void Use(Player player)
         {
-            player.Health += HealAmount;
             // Ensure health doesn't exceed max health
-            if (player.Health > player.MaxHealth)
-            {
-                player.Health = player.MaxHealth;
-            }
+            player.CurrentHealth = Math.Min(player.CurrentHealth + HealAmount, player.MaxHealth);
         }
     }
 }

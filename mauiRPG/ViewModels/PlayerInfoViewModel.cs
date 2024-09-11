@@ -1,46 +1,26 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
 using mauiRPG.Models;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace mauiRPG.ViewModels
 {
-    public partial class PlayerInfoViewModel : ObservableObject
+    public class PlayerInfoViewModel(Player player) : INotifyPropertyChanged
     {
-        private readonly Player _player;
+        private readonly Player _player = player ?? throw new ArgumentNullException(nameof(player));
 
-        [ObservableProperty]
-        private string name;
+        public string Name => _player?.Name ?? "Unknown";
+        public string RaceName => _player?.Race?.Name ?? "Unknown";
+        public string Level => _player?.Level.ToString() ?? "0";
+        public string Health => _player?.CurrentHealth.ToString() ?? "0"; // Changed from Health to CurrentHealth
+        public string MaxHealth => _player?.MaxHealth.ToString() ?? "0"; // Added MaxHealth
+        public string Strength => _player?.Strength.ToString() ?? "0";
+        public string Intelligence => _player?.Intelligence.ToString() ?? "0";
+        public string Dexterity => _player?.Dexterity.ToString() ?? "0";
+        public string Constitution => _player?.Constitution.ToString() ?? "0";
 
-        [ObservableProperty]
-        private string raceName;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        [ObservableProperty]
-        private string className;
-
-        [ObservableProperty]
-        private string level;
-
-        [ObservableProperty]
-        private string health;
-
-        [ObservableProperty]
-        private string strength;
-
-        [ObservableProperty]
-        private string intelligence;
-
-        [ObservableProperty]
-        private string dexterity;
-
-        [ObservableProperty]
-        private string constitution;
-
-        public PlayerInfoViewModel(Player player)
-        {
-            _player = player ?? throw new ArgumentNullException(nameof(player));
-            UpdateProperties();
-        }
-
-        private void UpdateProperties()
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null!)
         {
             Name = _player.Name ?? "Unknown";
             RaceName = _player.Race?.Name ?? "Unknown";

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               x:Class="mauiRPG.Views.InventoryPopup"
+               Color="Transparent"
+               Size="350,500">
+    <toolkit:Popup.Resources>
+        <Style x:Key="InventoryItemStyle" TargetType="Frame">
+            <Setter Property="BackgroundColor" Value="#3A2F0B"/>
+            <Setter Property="BorderColor" Value="#8B4513"/>
+            <Setter Property="CornerRadius" Value="0"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+        <Style x:Key="ItemNameStyle" TargetType="Label">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="TextColor" Value="#FFD700"/>
+            <Setter Property="FontAttributes" Value="Bold"/>
+            <Setter Property="FontFamily" Value="MedievalSharp"/>
+        </Style>
+        <Style x:Key="ItemDescriptionStyle" TargetType="Label">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="TextColor" Value="#D2B48C"/>
+            <Setter Property="FontFamily" Value="MedievalSharp"/>
+        </Style>
+        <Style x:Key="ActionButtonStyle" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="#8B4513"/>
+            <Setter Property="TextColor" Value="#FFD700"/>
+            <Setter Property="CornerRadius" Value="0"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="FontAttributes" Value="Bold"/>
+            <Setter Property="FontFamily" Value="MedievalSharp"/>
+        </Style>
+    </toolkit:Popup.Resources>
+
+    <Frame BackgroundColor="#2C2416" BorderColor="#8B4513" CornerRadius="0" Padding="15">
+        <Grid RowSpacing="15">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Label Text="Thy Inventory" FontSize="28" FontAttributes="Bold" HorizontalOptions="Center" TextColor="#FFD700" FontFamily="MedievalSharp"/>
+
+            <ScrollView Grid.Row="1">
+                <CollectionView ItemsSource="{Binding InventoryItems}" SelectionMode="Single" SelectedItem="{Binding SelectedItem}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame Style="{StaticResource InventoryItemStyle}">
+                                <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">
+                                    <Image Grid.RowSpan="2" Source="{Binding IconSource}" WidthRequest="40" HeightRequest="40" Margin="0,0,10,0"/>
+                                    <Label Grid.Column="1" Text="{Binding Name}" Style="{StaticResource ItemNameStyle}"/>
+                                    <Label Grid.Column="1" Grid.Row="1" Text="{Binding Description}" Style="{StaticResource ItemDescriptionStyle}"/>
+                                    <Button Grid.Column="2" Grid.RowSpan="2" 
+                                            Text="Use" 
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type toolkit:Popup}}, Path=BindingContext.UseItemCommand}" 
+                                            CommandParameter="{Binding .}" 
+                                            Style="{StaticResource ActionButtonStyle}"/>
+                                </Grid>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </ScrollView>
+
+            <Button Grid.Row="2" 
+                    Text="Close Inventory" 
+                    Command="{Binding CloseCommand}" 
+                    Style="{StaticResource ActionButtonStyle}"
+                    HorizontalOptions="Center"/>
+        </Grid>
+    </Frame>
+</toolkit:Popup>

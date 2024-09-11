@@ -1,96 +1,177 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="mauiRPG.Views.CombatView"
-             xmlns:viewmodels="clr-namespace:mauiRPG.ViewModels">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+﻿<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:converters="clr-namespace:mauiRPG.Converters"
+             xmlns:views="clr-namespace:mauiRPG.Views"
+             x:Class="mauiRPG.Views.CombatView">
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <converters:BoolToColorConverter x:Key="BoolToColorConverter"/>
+            <Style x:Key="CombatantNameStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="24"/>
+                <Setter Property="FontAttributes" Value="Bold"/>
+                <Setter Property="TextColor" Value="#FFD700"/>
+                <Setter Property="HorizontalOptions" Value="Center"/>
+                <Setter Property="FontFamily" Value="MedievalSharp"/>
+            </Style>
+            <Style x:Key="HealthLabelStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="18"/>
+                <Setter Property="TextColor" Value="#D2B48C"/>
+                <Setter Property="HorizontalOptions" Value="Center"/>
+                <Setter Property="FontFamily" Value="MedievalSharp"/>
+            </Style>
+            <Style x:Key="ActionButtonStyle" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="#8B4513"/>
+                <Setter Property="TextColor" Value="#FFD700"/>
+                <Setter Property="CornerRadius" Value="10"/>
+                <Setter Property="Margin" Value="5"/>
+                <Setter Property="HeightRequest" Value="60"/>
+                <Setter Property="FontAttributes" Value="Bold"/>
+                <Setter Property="FontFamily" Value="MedievalSharp"/>
+                <Setter Property="FontSize" Value="16"/>
+            </Style>
+            <Style x:Key="CombatantFrameStyle" TargetType="Frame">
+                <Setter Property="CornerRadius" Value="15"/>
+                <Setter Property="Padding" Value="15"/>
+                <Setter Property="HasShadow" Value="True"/>
+                <Setter Property="BorderColor" Value="#8B4513"/>
+            </Style>
+        </ResourceDictionary>
+    </ContentView.Resources>
 
-        <!-- Enemy Info (Top Right) -->
-        <Frame Grid.Row="0" Padding="10" Margin="10" HorizontalOptions="End" VerticalOptions="Start" 
-               BackgroundColor="#80FFFFFF" BorderColor="Black" CornerRadius="10">
-            <StackLayout>
-                <Label Text="{Binding EnemyName}" FontSize="Medium" FontAttributes="Bold"/>
-                <ProgressBar Progress="{Binding EnemyHealthPercentage}" ProgressColor="Green"/>
-                <Label Text="{Binding EnemyHealth, StringFormat='HP: {0}'}" FontSize="Small"/>
-            </StackLayout>
-        </Frame>
+    <Grid RowDefinitions="Auto,*,Auto,Auto" Padding="10">
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="#2C2416" Offset="0.0" />
+                <GradientStop Color="#1A1A2E" Offset="1.0" />
+            </LinearGradientBrush>
+        </Grid.Background>
 
-        <!-- Combat Area -->
-        <Grid Grid.Row="1" x:Name="CombatArea">
-            <!-- Player placeholder -->
-            <Rectangle x:Name="PlayerPlaceholder" Fill="Blue" WidthRequest="50" HeightRequest="100"
-                       HorizontalOptions="Start" VerticalOptions="Center" Margin="50,0,0,0"/>
-            <!-- Enemy placeholder -->
-            <Rectangle x:Name="EnemyPlaceholder" Fill="Red" WidthRequest="50" HeightRequest="100"
-                       HorizontalOptions="End" VerticalOptions="Center" Margin="0,0,50,0"/>
-            <!-- Animation layer -->
-            <Grid x:Name="AnimationLayer" InputTransparent="True"/>
-        </Grid>
-
-        <!-- Combat Log -->
-        <ScrollView Grid.Row="1" Margin="10,120,10,10">
-            <Label Text="{Binding CombatLog}" FontSize="Small" />
-        </ScrollView>
-
-        <!-- Player Info (Bottom Left) -->
-        <Frame Grid.Row="2" Padding="10" Margin="10" HorizontalOptions="Start" VerticalOptions="End" 
-               BackgroundColor="#80FFFFFF" BorderColor="Black" CornerRadius="10">
-            <StackLayout>
-                <Label Text="{Binding PlayerName}" FontSize="Medium" FontAttributes="Bold"/>
-                <ProgressBar Progress="{Binding PlayerHealthPercentage}" ProgressColor="Green"/>
-                <Label Text="{Binding PlayerHealth, StringFormat='HP: {0}'}" FontSize="Small"/>
-            </StackLayout>
-        </Frame>
-
-        <!-- Action Buttons -->
-        <Frame Grid.Row="2" Padding="10" Margin="10" HorizontalOptions="End" VerticalOptions="End" 
-               BackgroundColor="#80FFFFFF" BorderColor="Black" CornerRadius="10">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <Button Text="Attack" Command="{Binding AttackCommand}" Grid.Column="0" Grid.Row="0"/>
-                <Button Text="Inventory" Command="{Binding OpenInventoryCommand}" Grid.Column="1" Grid.Row="0"/>
-                <Button Text="Defend" Command="{Binding DefendCommand}" Grid.Column="0" Grid.Row="1"/>
-                <Button Text="Run" Command="{Binding RunCommand}" Grid.Column="1" Grid.Row="1"/>
+        <!-- Enemy Info -->
+        <Frame Grid.Row="0" Style="{StaticResource CombatantFrameStyle}" BorderColor="#8B0000" BackgroundColor="#400000" Margin="0,0,0,10">
+            <Grid ColumnDefinitions="Auto,*">
+                <Label Text="👿" FontSize="48" VerticalOptions="Center" Margin="0,0,15,0"/>
+                <StackLayout Grid.Column="1" Spacing="5">
+                    <Label Text="{Binding Enemy.Name}" Style="{StaticResource CombatantNameStyle}"/>
+                    <Frame Padding="0" CornerRadius="7" IsClippedToBounds="True" BackgroundColor="#8B0000">
+                        <ProgressBar Progress="{Binding Enemy.HealthPercentage}" ProgressColor="#FF4500" HeightRequest="15" />
+                    </Frame>
+                    <Label Text="{Binding Enemy.CurrentHealth, StringFormat='Vitality: {0}'}" Style="{StaticResource HealthLabelStyle}"/>
+                </StackLayout>
+                <views:DamageSplash x:Name="EnemyDamageSplash" Grid.ColumnSpan="2" HorizontalOptions="Center" VerticalOptions="Center"/>
             </Grid>
         </Frame>
 
-        <!-- Inventory Overlay -->
-        <Grid x:Name="InventoryOverlay" Grid.RowSpan="3" IsVisible="{Binding IsInventoryOpen}"
-              BackgroundColor="#80000000">
-            <Frame BackgroundColor="White" VerticalOptions="Center" HorizontalOptions="Center"
-                   WidthRequest="300" HeightRequest="400" Padding="20">
-                <StackLayout>
-                    <Label Text="Inventory" FontSize="Large" HorizontalOptions="Center"/>
-                    <CollectionView ItemsSource="{Binding InventoryItems}">
+        <!-- Enhanced Battle Arena -->
+        <Frame Grid.Row="1" Style="{StaticResource CombatantFrameStyle}" 
+               BorderColor="#4B0082" BackgroundColor="#2E0854" Margin="0,10">
+            <Grid RowDefinitions="Auto,*" ColumnDefinitions="*,Auto,*">
+                <Label Text="⚔️ Battle Arena ⚔️" Grid.ColumnSpan="3"
+                       TextColor="#FFD700" HorizontalOptions="Center" 
+                       FontFamily="MedievalSharp" FontSize="28" FontAttributes="Bold"/>
+
+                <!-- Player Character -->
+                <Grid Grid.Row="1" Grid.Column="0" HorizontalOptions="Center" VerticalOptions="Center">
+                    <StackLayout>
+                        <Label Text="🧙" FontSize="48" HorizontalOptions="Center"/>
+                        <Frame Padding="0" CornerRadius="7" IsClippedToBounds="True" BackgroundColor="#006400" WidthRequest="100">
+                            <ProgressBar Progress="{Binding Player.HealthPercentage}" 
+                                         ProgressColor="#32CD32" HeightRequest="10"/>
+                        </Frame>
+                    </StackLayout>
+                    <views:DamageSplash x:Name="PlayerBattleZoneDamageSplash" 
+                                        HorizontalOptions="Center" 
+                                        VerticalOptions="Start"/>
+                </Grid>
+
+                <!-- Battle Actions -->
+                <StackLayout Grid.Row="1" Grid.Column="1" VerticalOptions="Center">
+                    <Frame BackgroundColor="#4B0082" CornerRadius="20" Padding="10"
+                           IsVisible="{Binding IsBattleActionVisible}">
+                        <Label Text="{Binding CurrentBattleAction}" TextColor="#FFD700" 
+                               FontSize="24" FontAttributes="Bold" FontFamily="MedievalSharp"/>
+                    </Frame>
+                </StackLayout>
+
+                <!-- Enemy Character -->
+                <Grid Grid.Row="1" Grid.Column="2" HorizontalOptions="Center" VerticalOptions="Center">
+                    <StackLayout>
+                        <Label Text="👿" FontSize="48" HorizontalOptions="Center"/>
+                        <Frame Padding="0" CornerRadius="7" IsClippedToBounds="True" BackgroundColor="#8B0000" WidthRequest="100">
+                            <ProgressBar Progress="{Binding Enemy.HealthPercentage}" 
+                                         ProgressColor="#FF4500" HeightRequest="10"/>
+                        </Frame>
+                    </StackLayout>
+                    <views:DamageSplash x:Name="EnemyBattleZoneDamageSplash" 
+                                        HorizontalOptions="Center" 
+                                        VerticalOptions="Start"/>
+                </Grid>
+            </Grid>
+        </Frame>
+        <!-- Player Info -->
+        <Frame Grid.Row="2" Style="{StaticResource CombatantFrameStyle}" BorderColor="#006400" BackgroundColor="#004000" Margin="0,10,0,10">
+            <Grid ColumnDefinitions="Auto,*">
+                <Label Text="🧙" FontSize="48" VerticalOptions="Center" Margin="0,0,15,0"/>
+                <StackLayout Grid.Column="1" Spacing="5">
+                    <Label Text="{Binding Player.Name}" Style="{StaticResource CombatantNameStyle}"/>
+                    <Frame Padding="0" CornerRadius="7" IsClippedToBounds="True" BackgroundColor="#006400">
+                        <ProgressBar Progress="{Binding Player.HealthPercentage}" ProgressColor="#32CD32" HeightRequest="15" />
+                    </Frame>
+                    <Label Text="{Binding Player.CurrentHealth, StringFormat='Vitality: {0}'}" Style="{StaticResource HealthLabelStyle}"/>
+                </StackLayout>
+                <views:DamageSplash x:Name="PlayerDamageSplash" Grid.ColumnSpan="2" HorizontalOptions="Center" VerticalOptions="Center"/>
+            </Grid>
+        </Frame>
+
+        <!-- Action Buttons and Combat Log -->
+        <Grid Grid.Row="3" RowDefinitions="Auto,*">
+            <!-- Action Buttons -->
+            <Grid ColumnDefinitions="*,*,*,*" Margin="0,10">
+                <Button Grid.Column="0" Text="⚔️ Strike" Command="{Binding AttackCommand}" Style="{StaticResource ActionButtonStyle}"/>
+                <Button Grid.Column="1" Text="🛡️ Guard" Command="{Binding DefendCommand}" Style="{StaticResource ActionButtonStyle}"/>
+                <Button Grid.Column="2" Text="🎒 Satchel" Command="{Binding OpenInventoryCommand}" Style="{StaticResource ActionButtonStyle}"/>
+                <Button Grid.Column="3" Text="🏃 Retreat" Command="{Binding RunCommand}" Style="{StaticResource ActionButtonStyle}"/>
+            </Grid>
+
+            <!-- Combat Log -->
+            <Frame Grid.Row="1" Style="{StaticResource CombatantFrameStyle}" BorderColor="#DAA520" BackgroundColor="#3A2F0B" Margin="0,10,0,0" HeightRequest="150">
+                <ScrollView>
+                    <CollectionView ItemsSource="{Binding CombatLog}">
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <Grid Padding="10">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Label Text="{Binding Name}" VerticalOptions="Center"/>
-                                    <Button Text="Use" 
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CombatViewModel}}, Path=UseItemCommand}"
-                                            CommandParameter="{Binding .}"
-                                            Grid.Column="1"/>
-                                </Grid>
+                                <Label Text="{Binding Message}"
+                                       TextColor="{Binding IsPlayerAction, Converter={StaticResource BoolToColorConverter}}"
+                                       FontSize="14"
+                                       FontFamily="MedievalSharp"
+                                       Margin="0,2"/>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
-                    <Button Text="Close" Command="{Binding CloseInventoryCommand}" Margin="0,10,0,0"/>
+                </ScrollView>
+            </Frame>
+        </Grid>
+
+        <!-- Loading Overlay -->
+        <Grid Grid.RowSpan="4" IsVisible="{Binding IsLoading}" BackgroundColor="#80000000">
+            <Frame BackgroundColor="#2C2416" BorderColor="#8B4513" CornerRadius="15" Padding="20" VerticalOptions="Center" HorizontalOptions="Center">
+                <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                    <ActivityIndicator IsRunning="{Binding IsLoading}" Color="#FFD700" HeightRequest="60" WidthRequest="60"/>
+                    <Label Text="Preparing for next skirmish..." TextColor="#FFD700" FontSize="20" FontFamily="MedievalSharp" Margin="0,15,0,0"/>
+                </StackLayout>
+            </Frame>
+        </Grid>
+
+        <!-- Defeat Overlay -->
+        <Grid Grid.RowSpan="4" IsVisible="{Binding IsDefeated}" BackgroundColor="#80000000">
+            <Frame BackgroundColor="#2C2416" BorderColor="#8B4513" CornerRadius="15" Padding="25" VerticalOptions="Center" HorizontalOptions="Center">
+                <StackLayout Spacing="25">
+                    <Label Text="{Binding DefeatMessage}"
+                           TextColor="#FFD700"
+                           FontSize="28"
+                           FontFamily="MedievalSharp"
+                           HorizontalOptions="Center"/>
+                    <Button Text="Return to Tavern"
+                            Command="{Binding ReturnToHomeScreenCommand}"
+                            Style="{StaticResource ActionButtonStyle}"/>
                 </StackLayout>
             </Frame>
         </Grid>

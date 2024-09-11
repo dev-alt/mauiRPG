@@ -82,7 +82,7 @@ namespace mauiRPG.ViewModels
 
             if (SelectedCharacter is Player player)
             {
-                _gameStateService.CurrentPlayer = player;
+                _gameStateService.SetCurrentPlayer(player);
                 Debug.WriteLine($"Current player set to: {player.Name}");
                 IsCharacterListVisible = false;
                 IsAnyPopupVisible = false;
@@ -101,6 +101,7 @@ namespace mauiRPG.ViewModels
             IsAnyPopupVisible = true;
             ShowSettingsPopupRequested?.Invoke(this, EventArgs.Empty);
         }
+
 
         [RelayCommand]
         private void CancelLoadCharacter()

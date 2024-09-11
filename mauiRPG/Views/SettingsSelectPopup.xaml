@@ -6,62 +6,82 @@
                x:Class="mauiRPG.Views.SettingsSelectPopup"
                Color="Transparent">
 
-
+    <toolkit:Popup.Resources>
+        <Style x:Key="MedievalLabelStyle" TargetType="Label">
+            <Setter Property="FontFamily" Value="MedievalSharp"/>
+            <Setter Property="TextColor" Value="#FFD700"/>
+            <Setter Property="FontSize" Value="18"/>
+        </Style>
+        <Style x:Key="MedievalButtonStyle" TargetType="Button">
+            <Setter Property="FontFamily" Value="MedievalSharp"/>
+            <Setter Property="TextColor" Value="#FFD700"/>
+            <Setter Property="BackgroundColor" Value="#8B4513"/>
+            <Setter Property="CornerRadius" Value="0"/>
+            <Setter Property="Padding" Value="10,5"/>
+        </Style>
+    </toolkit:Popup.Resources>
 
     <Frame VerticalOptions="Center"
            HorizontalOptions="Center"
            WidthRequest="300"
-           HeightRequest="480"
-           CornerRadius="10"
+           HeightRequest="500"
+           CornerRadius="0"
            Padding="20"
-           BackgroundColor="{AppThemeBinding Light=White, Dark=Black}">
-        <StackLayout>
-            <Label Text="Settings"
-                   FontSize="24"
+           BackgroundColor="#2C2416"
+           BorderColor="#8B4513">
+        <StackLayout Spacing="20">
+            <Label Text="Ye Olde Settings"
+                   Style="{StaticResource MedievalLabelStyle}"
+                   FontSize="28"
                    FontAttributes="Bold"
-                   TextColor="{AppThemeBinding Light=Black, Dark=White}"
-                   HorizontalOptions="Center"
-                   Margin="0,0,0,20"/>
-            <ScrollView HeightRequest="280">
+                   HorizontalOptions="Center"/>
+            <BoxView Color="#8B4513" HeightRequest="2"/>
+            <ScrollView>
                 <StackLayout Spacing="20">
                     <!-- Sound Settings -->
                     <StackLayout>
-                        <Label Text="Sound Settings" FontSize="18" FontAttributes="Bold" TextColor="{AppThemeBinding Light=Black, Dark=White}"/>
-                        <Label Text="Music Volume" TextColor="{AppThemeBinding Light=Black, Dark=White}"/>
-                        <Slider x:Name="MusicVolumeSlider" Minimum="0" Maximum="100" Value="{Binding MusicVolume}"/>
-                        <Label Text="SFX Volume" TextColor="{AppThemeBinding Light=Black, Dark=White}"/>
-                        <Slider x:Name="SfxVolumeSlider" Minimum="0" Maximum="100" Value="{Binding SfxVolume}"/>
+                        <Label Text="Tavern Ambiance" Style="{StaticResource MedievalLabelStyle}"/>
+                        <Label Text="Minstrel's Volume" Style="{StaticResource MedievalLabelStyle}" FontSize="14"/>
+                        <Slider x:Name="MusicVolumeSlider" Minimum="0" Maximum="100" Value="{Binding MusicVolume}"
+                                MinimumTrackColor="#8B4513" MaximumTrackColor="#D2691E" ThumbColor="#FFD700"/>
+                        <Label Text="Battle Cries Volume" Style="{StaticResource MedievalLabelStyle}" FontSize="14"/>
+                        <Slider x:Name="SfxVolumeSlider" Minimum="0" Maximum="100" Value="{Binding SfxVolume}"
+                                MinimumTrackColor="#8B4513" MaximumTrackColor="#D2691E" ThumbColor="#FFD700"/>
                     </StackLayout>
                     <!-- Difficulty Settings -->
                     <StackLayout>
-                        <Label Text="Difficulty" FontSize="18" FontAttributes="Bold" TextColor="{AppThemeBinding Light=Black, Dark=White}"/>
-                        <Picker x:Name="DifficultyPicker" 
-                                ItemsSource="{Binding DifficultyLevels}"
-                                SelectedItem="{Binding SelectedDifficulty}"/>
+                        <Label Text="Quest Difficulty" Style="{StaticResource MedievalLabelStyle}"/>
+                        <Frame BackgroundColor="#3A2F0B" BorderColor="#8B4513" Padding="0" CornerRadius="0">
+                            <Picker x:Name="DifficultyPicker" 
+                                    ItemsSource="{Binding DifficultyLevels}"
+                                    SelectedItem="{Binding SelectedDifficulty}"
+                                    TextColor="#FFD700"
+                                    TitleColor="#D2691E"
+                                    BackgroundColor="Transparent"/>
+                        </Frame>
                     </StackLayout>
                     <!-- Theme Settings -->
                     <StackLayout>
-                        <Label Text="Theme" FontSize="18" FontAttributes="Bold" TextColor="{AppThemeBinding Light=Black, Dark=White}"/>
-                        <Switch x:Name="ThemeSwitch" 
-                                IsToggled="{Binding IsDarkMode}"
-                                OnColor="{AppThemeBinding Light=Black, Dark=White}"/>
-                        <Label Text="{Binding ThemeText}" TextColor="{AppThemeBinding Light=Black, Dark=White}"/>
+                        <Label Text="Realm Appearance" Style="{StaticResource MedievalLabelStyle}"/>
+                        <Grid ColumnDefinitions="*, Auto, *">
+                            <Label Text="Daylight" Style="{StaticResource MedievalLabelStyle}" FontSize="14" HorizontalOptions="End"/>
+                            <Switch x:Name="ThemeSwitch" 
+                                    IsToggled="{Binding IsDarkMode}"
+                                    OnColor="#8B4513"
+                                    ThumbColor="#FFD700"
+                                    Grid.Column="1"/>
+                            <Label Text="Nightfall" Style="{StaticResource MedievalLabelStyle}" FontSize="14" Grid.Column="2"/>
+                        </Grid>
                     </StackLayout>
                 </StackLayout>
             </ScrollView>
-            <Button Text="Save Settings" 
+            <BoxView Color="#8B4513" HeightRequest="2"/>
+            <Button Text="Seal the Scroll" 
                     Command="{Binding SaveSettingsCommand}"
-                    BackgroundColor="{AppThemeBinding Light=#007AFF, Dark=#0A84FF}"
-                    TextColor="White"
-                    CornerRadius="5"
-                    Margin="0,10,0,0"/>
-
-            <Button Text="Close"
+                    Style="{StaticResource MedievalButtonStyle}"/>
+            <Button Text="Return to Realm"
                     Command="{Binding CloseCommand}"
-                    BackgroundColor="{AppThemeBinding Light=#FF3B30, Dark=#FF453A}"
-                    TextColor="White"
-                    CornerRadius="5"
-                    Margin="0,10,0,0"/>
+                    Style="{StaticResource MedievalButtonStyle}"/>
         </StackLayout>
     </Frame>
 </toolkit:Popup>

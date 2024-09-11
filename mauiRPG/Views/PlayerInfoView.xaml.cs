@@ -16,8 +16,8 @@ namespace mauiRPG.Views
 
             if (player != null)
             {
-                _logger.LogInformation("Player info: Name={Name}, Race={Race}, Class={Class}",
-                    player.Name, player.Race?.Name, player.Class?.Name);
+                _logger.LogInformation("Player info: Name={Name}, Race={Race}",
+                    player.Name, player.Race?.Name);
                 BindingContext = new PlayerInfoViewModel(player);
             }
             else

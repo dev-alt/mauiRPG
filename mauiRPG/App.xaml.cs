@@ -1,17 +1,17 @@
-﻿using mauiRPG.Views;
+﻿using mauiRPG.ViewModels;
+using mauiRPG.Views;
 
 namespace mauiRPG
 {
     public partial class App : Application
     {
-        public App(MainMenuView mainMenuView)
+        public App(MainMenuView mainMenuView, AppShellViewModel appShellViewModel)
         {
             InitializeComponent();
-
-            MainPage = new AppShell();
+            MainPage = new AppShell(appShellViewModel);
             Shell.Current.Navigation.PushAsync(mainMenuView);
-
         }
+
         protected override Window CreateWindow(IActivationState? activationState)
         {
             var window = base.CreateWindow(activationState);
@@ -19,8 +19,8 @@ namespace mauiRPG
 #if WINDOWS
             if (DeviceInfo.Idiom == DeviceIdiom.Desktop)
             {
-                window.Width = 600;
-                window.Height = 800;
+                window.Width = 800;
+                window.Height = 1200;
             }
 #endif
 

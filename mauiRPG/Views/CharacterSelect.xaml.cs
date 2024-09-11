@@ -1,3 +1,4 @@
+using CommunityToolkit.Maui.Views;
 using mauiRPG.Services;
 using mauiRPG.ViewModels;
 using Microsoft.Extensions.Logging;
@@ -7,10 +8,33 @@ namespace mauiRPG.Views;
 public partial class CharacterSelect : ContentPage
 {
 
+    private readonly CharacterCreationViewModel _viewModel;
+
     public CharacterSelect(CharacterService characterService, GameStateService gameStateService, ILogger<CharacterCreationViewModel> logger)
     {
-		InitializeComponent();
-        BindingContext = new CharacterCreationViewModel(characterService, gameStateService, logger);
+        InitializeComponent();
+        _viewModel = new CharacterCreationViewModel(characterService, gameStateService, logger);
+        _viewModel.ShowErrorRequested += OnShowErrorRequested;
+        _viewModel.ShowSuccessRequested += OnShowSuccessRequested;
+        BindingContext = _viewModel;
     }
 
+    private async void OnShowErrorRequested(object? sender, string message)
+    {
+        var errorPopup = new ErrorPopup(message);
+        await this.ShowPopupAsync(errorPopup);
+    }
+
+    private async void OnShowSuccessRequested(object? sender, string message)
+    {
+        var successPopup = new ErrorPopup(message);
+        await this.ShowPopupAsync(successPopup);
+    }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        _viewModel.ShowErrorRequested -= OnShowErrorRequested;
+        _viewModel.ShowSuccessRequested -= OnShowSuccessRequested;
+    }
 }

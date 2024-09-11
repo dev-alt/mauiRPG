@@ -1,22 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using mauiRPG.Converters;
+using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace mauiRPG.Models
 {
     public class Player : Character
     {
-        public Dictionary<EquipmentSlot, Equipment> EquippedItems { get; set; } = [];
-
-        [JsonConverter(typeof(RaceConverter))] public required Race Race { get; set; }
-
-        [JsonConverter(typeof(ClassConverter))]
-        public required Class Class { get; set; }
-
+        public Dictionary<EquipmentSlot, Equipment> EquippedItems { get; init; } = [];
+        [JsonConverter(typeof(RaceConverter))] public required Race Race { get; init; }
+        public ObservableCollection<Item> Inventory { get; set; } = [];
         public int Experience { get; set; } = 0;
+        public bool IsDefending { get; set; }
+        public List<Quest> ActiveQuests { get; set; } = [];
+        public List<Quest> CompletedQuests { get; set; } = [];
+        public int Gold { get; set; }
+
         public void UpdateStats()
         {
             Strength = 10;
@@ -24,7 +22,6 @@ namespace mauiRPG.Models
             Dexterity = 10;
             Constitution = 10;
 
-            // Apply equipment bonuses
             foreach (var equipment in EquippedItems.Values)
             {
                 Strength += equipment.StrengthBonus;
@@ -33,9 +30,30 @@ namespace mauiRPG.Models
                 Constitution += equipment.ConstitutionBonus;
             }
 
-            // Recalculate max health based on new Constitution
-            MaxHealth = 100 + (Constitution * 10); // Example calculation
+            MaxHealth = 100 + (Constitution * 10);
+        }
+
+        public void GainExperience(int amount)
+        {
+            Experience += amount;
+            CheckLevelUp();
+        }
+
+        private void CheckLevelUp()
+        {
+            int experienceNeeded = Level * 100;
+            while (Experience >= experienceNeeded)
+            {
+                Level++;
+                Experience -= experienceNeeded;
+                // Apply level up bonuses
+                MaxHealth += 10;
+                Strength += 2;
+                Intelligence += 2;
+                Dexterity += 2;
+                Constitution += 2;
+                experienceNeeded = Level * 100;
+            }
         }
     }
 }
-

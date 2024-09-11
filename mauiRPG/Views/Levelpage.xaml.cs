@@ -1,25 +1,28 @@
 using mauiRPG.ViewModels;
 
-namespace mauiRPG.Views;
-
-[QueryProperty(nameof(LevelNumber), "levelNumber")]
-public partial class LevelPage : ContentPage
+namespace mauiRPG.Views
 {
-    public LevelPage(LevelPageViewModel viewModel)
+    [QueryProperty(nameof(LevelNumber), "levelNumber")]
+    public partial class LevelPage : ContentPage
     {
-        InitializeComponent();
-        BindingContext = viewModel;
-    }
+        private readonly LevelPageViewModel _viewModel;
 
-    public int LevelNumber
-    {
-        set
+        public int LevelNumber
         {
-            if (BindingContext is LevelPageViewModel viewModel)
+            set
             {
-                viewModel.LevelNumber = value;
+                if (_viewModel != null)
+                {
+                    _viewModel.LoadLevelCommand.Execute(value);
+                }
             }
         }
-    }
 
+        public LevelPage(LevelPageViewModel viewModel)
+        {
+            InitializeComponent();
+            _viewModel = viewModel;
+            BindingContext = _viewModel;
+        }
+    }
 }

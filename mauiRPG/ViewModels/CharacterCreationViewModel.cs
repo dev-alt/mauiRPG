@@ -1,10 +1,9 @@
-﻿using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using mauiRPG.Models;
 using mauiRPG.Services;
-using mauiRPG.Views;
 using Microsoft.Extensions.Logging;
+using System.Collections.ObjectModel;
 
 namespace mauiRPG.ViewModels
 {
@@ -14,87 +13,89 @@ namespace mauiRPG.ViewModels
         private readonly GameStateService _gameStateService;
         private readonly ILogger<CharacterCreationViewModel> _logger;
 
-        public ObservableCollection<Race> Races { get; }
-        public ObservableCollection<Class> Classes { get; }
-
-        public event EventHandler? CloseRequested;
+        [ObservableProperty]
+        private string _name = string.Empty;
 
         [ObservableProperty]
-        private string _name = "Name";
+        private Race? _selectedRace;
 
-        [ObservableProperty]
-        private Race _selectedRace;
+        public ObservableCollection<Race> Races { get; } =
+        [
+            new Human(),
+            new Elf(),
+            new Dwarf(),
+            new Orc()
+        ];
 
-        [ObservableProperty]
-        private Class _selectedClass;
+        public event EventHandler<string>? ShowErrorRequested;
+        public event EventHandler<string>? ShowSuccessRequested;
 
-        public CharacterCreationViewModel(CharacterService characterService, GameStateService gameStateService,
-            ILogger<CharacterCreationViewModel> logger)
+        public CharacterCreationViewModel(CharacterService characterService, GameStateService gameStateService, ILogger<CharacterCreationViewModel> logger)
         {
             _characterService = characterService;
             _gameStateService = gameStateService;
             _logger = logger;
-
-            Races =
-            [
-                new Orc(),
-                new Human(),
-                new Dwarf(),
-                new Elf()
-            ];
-
-            Classes =
-            [
-                new Warrior(),
-                new Mage(),
-                new Rogue()
-            ];
-
-            SelectedRace = Races[0];
-            SelectedClass = Classes[0];
-
             _logger.LogInformation("CharacterCreationViewModel initialized");
+        }
+
+        [RelayCommand]
+        private void SelectRace(Race race)
+        {
+            try
+            {
+                SelectedRace = race;
+                _logger.LogInformation("Selected race: {RaceName}", race.Name);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error selecting race");
+            }
         }
 
         [RelayCommand]
         private async Task CreateCharacter()
         {
-            if (string.IsNullOrWhiteSpace(Name))
+            try
             {
-                await Application.Current?.MainPage?.DisplayAlert("Error", "Please enter a valid name, and select a race and class.", "OK")!;
-                return;
+                if (string.IsNullOrWhiteSpace(Name) || SelectedRace == null)
+                {
+                    _logger.LogWarning("Attempted to create character with invalid input. Name: {Name}, Race: {Race}", Name, SelectedRace?.Name);
+                    ShowErrorRequested?.Invoke(this, "Brave adventurer, thy quest cannot begin without a name and chosen lineage. Please provide both to forge thy legend.");
+                    return;
+                }
+
+                _logger.LogInformation("Creating character with Name: {Name}, Race: {Race}", Name, SelectedRace.Name);
+
+                var player = new Player
+                {
+                    Name = Name,
+                    Race = SelectedRace,
+                    Level = 1,
+                    CurrentHealth = 100,
+                    MaxHealth = 100,
+                    Strength = 10,
+                    Intelligence = 10,
+                    Dexterity = 10,
+                    Constitution = 10
+                };
+
+                _logger.LogInformation("Player object created successfully");
+
+                _characterService.SaveCharacter(player);
+                _logger.LogInformation("Player saved successfully");
+
+                _gameStateService.SetCurrentPlayer(player);
+                _logger.LogInformation("Current player set in GameStateService");
+
+                ShowSuccessRequested?.Invoke(this, "Huzzah! Thy character has been forged in the annals of legend. May thy quest be glorious!");
+
+                await Shell.Current.GoToAsync("LevelSelect");
             }
-
-            var player = new Player
+            catch (Exception ex)
             {
-                Name = Name,
-                Race = SelectedRace,
-                Class = SelectedClass,
-                Level = 1,
-                Health = 100,
-                Strength = 10,
-                Intelligence = 10,
-                Dexterity = 10,
-                Constitution = 10
-            };
-
-            _characterService.SavePlayer(player);
-            _gameStateService.CurrentPlayer = player;
-
-            _logger.LogInformation("Character created and set as CurrentPlayer: {PlayerName}", player.Name);
-
-            if (Application.Current?.MainPage != null)
-            {
-                await Application.Current.MainPage.DisplayAlert("Success", "Character successfully created.", "OK");
+                _logger.LogError(ex, "Error creating character");
+                ShowErrorRequested?.Invoke(this, $"An error occurred while creating your character: {ex.Message}");
             }
-
-            await Shell.Current.GoToAsync($"{nameof(LevelSelectView)}");
-        }
-
-        [RelayCommand]
-        private void Close()
-        {
-            CloseRequested?.Invoke(this, EventArgs.Empty);
         }
     }
 }

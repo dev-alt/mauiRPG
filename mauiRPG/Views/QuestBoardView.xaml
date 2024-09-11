@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:mauiRPG.ViewModels" 
+             xmlns:models="clr-namespace:mauiRPG.Models"
+             x:Class="mauiRPG.Views.QuestBoardView"
+             x:DataType="viewmodels:QuestBoardViewModel"
+             Title="QuestBoard"
+             BackgroundColor="#2C2416">
+
+    <ContentPage.Resources>
+        <Style x:Key="MedievalLabelStyle" TargetType="Label">
+            <Setter Property="FontFamily" Value="MedievalSharp"/>
+            <Setter Property="TextColor" Value="#FFD700"/>
+        </Style>
+        <Style x:Key="MedievalButtonStyle" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="#8B4513"/>
+            <Setter Property="TextColor" Value="#FFD700"/>
+            <Setter Property="FontFamily" Value="MedievalSharp"/>
+            <Setter Property="CornerRadius" Value="0"/>
+            <Setter Property="Padding" Value="10,5"/>
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,Auto,*" Padding="20">
+        <Label Text="Ye Olde Quest Board" 
+               Style="{StaticResource MedievalLabelStyle}"
+               FontSize="32" 
+               HorizontalOptions="Center" 
+               Margin="0,0,0,20"/>
+
+        <Frame Grid.Row="1" BackgroundColor="#3A2F0B" BorderColor="#8B4513" Padding="10" Margin="0,0,0,20">
+            <VerticalStackLayout Spacing="10">
+                <Label Text="{Binding CurrentPlayer.Name, StringFormat='Brave {0}, choose thy quest!'}"
+                       Style="{StaticResource MedievalLabelStyle}"
+                       FontSize="20"
+                       HorizontalOptions="Center"/>
+                <Button Text="View Hero's Chronicle"
+                        Command="{Binding ViewPlayerInfoCommand}"
+                        Style="{StaticResource MedievalButtonStyle}"
+                        HorizontalOptions="Center"/>
+            </VerticalStackLayout>
+        </Frame>
+
+        <CollectionView Grid.Row="2" 
+                        ItemsSource="{Binding AvailableQuests}"
+                        SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Quest">
+                    <Frame Margin="0,0,0,10" Padding="10" BackgroundColor="#3A2F0B" BorderColor="#8B4513">
+                        <Grid ColumnDefinitions="Auto,*">
+                            <Image Source="{Binding IconSource}"
+                                   HeightRequest="80"
+                                   WidthRequest="80"
+                                   Aspect="AspectFit" />
+                            <VerticalStackLayout Grid.Column="1" Spacing="5" Padding="10,0,0,0">
+                                <Label Text="{Binding Name}" Style="{StaticResource MedievalLabelStyle}" FontSize="24" />
+                                <Label Text="{Binding Description}" Style="{StaticResource MedievalLabelStyle}" FontSize="16" TextColor="#D2B48C" />
+                                <Label Text="{Binding Reward, StringFormat='Reward: {0} gold'}" Style="{StaticResource MedievalLabelStyle}" FontSize="18" TextColor="#FFD700" />
+                                <Button Text="Accept Quest"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:QuestBoardViewModel}}, Path=AcceptQuestCommand}"
+                                        CommandParameter="{Binding}"
+                                        Style="{StaticResource MedievalButtonStyle}" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

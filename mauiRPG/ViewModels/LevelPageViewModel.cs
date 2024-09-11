@@ -5,67 +5,68 @@ using mauiRPG.Services;
 
 namespace mauiRPG.ViewModels
 {
+
     public partial class LevelPageViewModel(
         GameStateService gameStateService,
-        CombatService combatService,
+        CombatManagerService combatManagerService,
         InventoryService inventoryService)
         : ObservableObject
     {
-        [ObservableProperty]
-        private int _levelNumber;
 
         [ObservableProperty]
-        private LevelDetailsViewModel _levelDetailsViewModel;
+        private Level? _currentLevel;
 
         [ObservableProperty]
         private bool _isCombatViewVisible;
 
         [ObservableProperty]
-        private CombatViewModel _combatViewModel;
+        private CombatViewModel? _combatViewModel;
 
-        partial void OnLevelNumberChanged(int value)
-        {
-            LoadLevel(value);
-        }
-
+        [RelayCommand]
         private void LoadLevel(int levelNumber)
         {
-            var levelName = $"Level {levelNumber}";
-            var imageSource = $"level{levelNumber}.jpg";
-            Level level = new(name: levelName, imageSource: imageSource)
+            CurrentLevel = new Level($"Level {levelNumber}", $"level{levelNumber}.jpg")
             {
                 Number = levelNumber,
                 IsUnlocked = true,
-                Name = levelName,
-                ImageSource = imageSource
+                Name = $"Level {levelNumber}",
+                ImageSource = $"level{levelNumber}.jpg"
             };
-            LevelDetailsViewModel = new LevelDetailsViewModel(level);
 
             SimulateEnemyEncounter();
         }
-
         private void SimulateEnemyEncounter()
         {
-            var enemy = new EnemyWizard($"Evil Wizard {LevelNumber}", LevelNumber)
+            if (CurrentLevel == null) return;
+
+            var enemy = new CombatantModel
             {
-                Name = "Dark Wizard",
-                Description = "A powerful dark wizard",
-                Health = 50
+                Name = $"Dark Wizard {CurrentLevel.Number}",
+                MaxHealth = 50,
             };
-            InitiateCombat(gameStateService.CurrentPlayer, enemy);
+
+            var currentPlayer = gameStateService.CurrentPlayer;
+            if (currentPlayer != null)
+            {
+                InitiateCombat(currentPlayer, enemy);
+            }
         }
 
-        private void InitiateCombat(Player player, Enemy enemy)
+        private void InitiateCombat(Player player, CombatantModel enemy)
         {
-            CombatViewModel = new CombatViewModel(player, enemy, combatService, inventoryService);
-            IsCombatViewVisible = true;
+            CombatViewModel = new CombatViewModel(combatManagerService, inventoryService, player, enemy, gameStateService);
             CombatViewModel.CombatEnded += OnCombatEnded;
+            IsCombatViewVisible = true;
         }
 
-        private void OnCombatEnded(object? sender, CombatOutcome result)
+        private void OnCombatEnded(object? sender, CombatViewModel.CombatOutcome result)
         {
             IsCombatViewVisible = false;
-            // Handle combat result (e.g., show alert, update player stats, etc.)
+
+            if (CombatViewModel != null)
+            {
+                CombatViewModel.CombatEnded -= OnCombatEnded;
+            }
         }
     }
 }

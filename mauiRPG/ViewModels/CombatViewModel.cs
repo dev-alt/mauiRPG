@@ -1,77 +1,323 @@
 ﻿using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using mauiRPG.Models;
-using mauiRPG.ViewModels;
-using Microsoft.Extensions.Logging;
+using mauiRPG.Services;
+using mauiRPG.Views;
+using System.Collections.ObjectModel;
 
-public class CombatViewModel : BaseViewModel
+namespace mauiRPG.ViewModels;
+
+public partial class CombatViewModel : ObservableObject
 {
-    private readonly ICombatService _combatService;
-    private readonly IGameStateService _gameStateService;
-    private readonly ILogger<CombatViewModel> _logger;
+    private readonly CombatManagerService _combatManager;
+    private readonly GameStateService _gameStateService;
+    private readonly InventoryService _inventoryService;
 
-    public Player Player => _gameStateService.CurrentPlayer;
-    public Enemy CurrentEnemy { get; private set; }
+    [ObservableProperty]
+    private int _battleCount;
 
-    private string _combatLog;
-    public string CombatLog
+    [ObservableProperty]
+    private Player _player;
+
+    [ObservableProperty]
+    private CombatantModel _enemy;
+
+    [ObservableProperty]
+    private bool _isLoading;
+
+    [ObservableProperty]
+    private string _combatResult = string.Empty;
+
+    [ObservableProperty]
+    private ObservableCollection<CombatLogEntryModel> _combatLog;
+
+    [ObservableProperty]
+    private ObservableCollection<Item> _inventoryItems;
+
+    [ObservableProperty]
+    private bool _isDefeated;
+
+    [ObservableProperty]
+    private string _defeatMessage = string.Empty;
+
+    [ObservableProperty]
+    private bool _isBattleActionVisible;
+
+    [ObservableProperty]
+    private string _currentBattleAction = string.Empty;
+
+    public event EventHandler<CombatOutcome>? CombatEnded;
+
+    private CombatView? _combatView;
+
+    public void SetCombatView(CombatView view)
     {
-        get => _combatLog;
-        set => SetProperty(ref _combatLog, value);
+        _combatView = view;
     }
 
-    public Command AttackCommand { get; }
-    public Command DefendCommand { get; }
-    public Command RunCommand { get; }
-
-    public CombatViewModel(ICombatService combatService, IGameStateService gameStateService, ILogger<CombatViewModel> logger)
+    public CombatViewModel(CombatManagerService combatManager, InventoryService inventoryService, Player player, CombatantModel enemy, GameStateService gameStateService)
     {
-        _combatService = combatService;
+        _combatManager = combatManager;
+        _inventoryService = inventoryService;
         _gameStateService = gameStateService;
-        _logger = logger;
+        Player = player;
+        Enemy = enemy;
+        CombatLog = [];
+        InventoryItems = [];
+        BattleCount = 1;
 
-        AttackCommand = new Command(ExecuteAttack);
-        DefendCommand = new Command(ExecuteDefend);
-        RunCommand = new Command(ExecuteRun);
+        Player.CurrentHealth = Player.MaxHealth;
+        Enemy.CurrentHealth = Enemy.MaxHealth;
 
-        InitializeCombat();
+        LoadPlayerInventory();
+        InitializeCombatLog();
     }
 
-    private void InitializeCombat()
+    private void LoadPlayerInventory()
     {
-        CurrentEnemy = _combatService.GenerateEnemy(Player.Level);
-        CombatLog = $"A wild {CurrentEnemy.Name} appears!";
-    }
-
-    private void ExecuteAttack()
-    {
-        try
+        var items = _inventoryService.GetPlayerItems(Player.Id);
+        foreach (var item in items)
         {
-            var (playerDamage, enemyDamage) = _combatService.ExecutePlayerAttack(Player, CurrentEnemy);
-            
-            UpdateCombatLog($"You attack {CurrentEnemy.Name} for {playerDamage} damage!");
-            
-            if (CurrentEnemy.CurrentHP <= 0)
+            InventoryItems.Add(item);
+        }
+    }
+
+    private void InitializeCombatLog()
+    {
+        CombatLog.Add(new CombatLogEntryModel { Message = $"Combat begins! {Player.Name} vs {Enemy.Name}", IsPlayerAction = false });
+        CombatLog.Add(new CombatLogEntryModel { Message = $"{Player.Name} HP: {Player.CurrentHealth}/{Player.MaxHealth}", IsPlayerAction = true });
+        CombatLog.Add(new CombatLogEntryModel { Message = $"{Enemy.Name} HP: {Enemy.CurrentHealth}/{Enemy.MaxHealth}", IsPlayerAction = false });
+    }
+
+    [RelayCommand]
+    private async Task OpenInventoryAsync()
+    {
+        var inventoryViewModel = new InventoryViewModel(_gameStateService);
+        var inventoryPopup = new InventoryPopup(inventoryViewModel);
+        await Shell.Current.ShowPopupAsync(inventoryPopup);
+    }
+
+    [RelayCommand]
+    private async Task AttackAsync()
+    {
+        if (!IsCombatOver())
+        {
+            await ShowBattleAction("Attack");
+            var playerResult = _combatManager.ExecutePlayerTurn(Player, Enemy);
+            await UpdateCombatLog(playerResult);
+
+            if (!IsCombatOver())
             {
-                HandleEnemyDefeat();
+                await ShowBattleAction("Enemy Attack");
+                var enemyResult = _combatManager.ExecuteEnemyTurn(Enemy, Player);
+                await UpdateCombatLog(enemyResult);
+            }
+
+            await CheckCombatEndAsync();
+        }
+    }
+
+    [RelayCommand]
+    private async Task DefendAsync()
+    {
+        if (!IsCombatOver())
+        {
+            await ShowBattleAction("Defend");
+            Player.IsDefending = true;
+            await UpdateCombatLog(new CombatResult
+            {
+                Attacker = Player.Name,
+                Defender = Player.Name,
+                Message = $"{Player.Name} takes a defensive stance.",
+                Damage = 0,
+                RemainingHealth = Player.CurrentHealth
+            });
+
+            await ShowBattleAction("Enemy Attack");
+            var enemyResult = _combatManager.ExecuteEnemyTurn(Enemy, Player);
+            await UpdateCombatLog(enemyResult);
+
+            Player.IsDefending = false;
+            await CheckCombatEndAsync();
+        }
+    }
+
+    [RelayCommand]
+    private async Task UseItemAsync(Item item)
+    {
+        if (!IsCombatOver())
+        {
+            await ShowBattleAction($"Use {item.Name}");
+            int previousHealth = Player.CurrentHealth;
+            item.Use(Player);
+            int healthRestored = Player.CurrentHealth - previousHealth;
+
+            await UpdateCombatLog(new CombatResult
+            {
+                Attacker = Player.Name,
+                Defender = Player.Name,
+                Message = $"{Player.Name} used {item.Name} and restored {healthRestored} HP.",
+                Damage = -healthRestored,
+                RemainingHealth = Player.CurrentHealth
+            });
+
+            if (item.Type == ItemType.Consumable)
+            {
+                InventoryItems.Remove(item);
+            }
+
+            await ShowBattleAction("Enemy Attack");
+            var enemyResult = _combatManager.ExecuteEnemyTurn(Enemy, Player);
+            await UpdateCombatLog(enemyResult);
+            await CheckCombatEndAsync();
+        }
+    }
+
+    [RelayCommand]
+    private async Task RunAsync()
+    {
+        if (!IsCombatOver())
+        {
+            await ShowBattleAction("Attempt Escape");
+            bool escaped = _combatManager.AttemptEscape();
+            if (escaped)
+            {
+                await UpdateCombatLog(new CombatResult
+                {
+                    Attacker = Player.Name,
+                    Defender = Enemy.Name,
+                    Message = $"{Player.Name} successfully escaped from the battle!",
+                    Damage = 0,
+                    RemainingHealth = Player.CurrentHealth
+                });
+                CombatEnded?.Invoke(this, CombatOutcome.PlayerEscaped);
             }
             else
             {
-                UpdateCombatLog($"{CurrentEnemy.Name} counterattacks for {enemyDamage} damage!");
-                
-                if (Player.CurrentHP <= 0)
+                await UpdateCombatLog(new CombatResult
                 {
-                    HandlePlayerDefeat();
-                }
+                    Attacker = Player.Name,
+                    Defender = Enemy.Name,
+                    Message = $"{Player.Name} failed to escape!",
+                    Damage = 0,
+                    RemainingHealth = Player.CurrentHealth
+                });
+                await ShowBattleAction("Enemy Attack");
+                var enemyResult = _combatManager.ExecuteEnemyTurn(Enemy, Player);
+                await UpdateCombatLog(enemyResult);
+                await CheckCombatEndAsync();
             }
+        }
+    }
 
-            OnPropertyChanged(nameof(Player));
-            OnPropertyChanged(nameof(CurrentEnemy));
-        }
-        catch (Exception ex)
+    private async Task UpdateCombatLog(CombatResult result)
+    {
+        CombatLog.Add(new CombatLogEntryModel
         {
-            _logger.LogError(ex, "Error during attack execution");
-            UpdateCombatLog("An error occurred during the attack.");
+            Message = result.Message ?? $"{result.Attacker} dealt {result.Damage} damage to {result.Defender}. {result.Defender}'s remaining health: {result.RemainingHealth}",
+            IsPlayerAction = result.Attacker == Player.Name
+        });
+
+        // Show splash damage
+        if (_combatView != null)
+        {
+            if (result.Defender == Player.Name)
+            {
+                await _combatView.ShowPlayerDamage(result.Damage);
+                await _combatView.ShowPlayerBattleZoneDamage(result.Damage);
+            }
+            else
+            {
+                await _combatView.ShowEnemyDamage(result.Damage);
+                await _combatView.ShowEnemyBattleZoneDamage(result.Damage);
+            }
         }
+
+        OnPropertyChanged(nameof(Player));
+        OnPropertyChanged(nameof(Enemy));
+    }
+
+    private async Task ShowBattleAction(string action)
+    {
+        CurrentBattleAction = action;
+        IsBattleActionVisible = true;
+        await Task.Delay(1000);
+        IsBattleActionVisible = false;
+    }
+
+    private async Task PrepareNextBattle()
+    {
+        IsLoading = true;
+        BattleCount++;
+
+        Enemy = await _combatManager.PrepareNextBattle(Player, BattleCount);
+
+        CombatLog.Clear();
+        InitializeCombatLog();
+
+        IsLoading = false;
+
+        CombatLog.Add(new CombatLogEntryModel { Message = $"Preparing for battle {BattleCount}!", IsPlayerAction = false });
+
+        CombatEnded?.Invoke(this, CombatOutcome.PlayerVictory);
+
+        CombatResult = string.Empty;
+
+        OnPropertyChanged(nameof(Enemy));
+    }
+
+    private bool IsCombatOver()
+    {
+        return CombatManagerService.IsCombatOver(Player, Enemy);
+    }
+
+    private async Task CheckCombatEndAsync()
+    {
+        if (CombatManagerService.IsCombatOver(Player, Enemy))
+        {
+            CombatResult = CombatManagerService.GetCombatResult(Player, Enemy);
+            CombatLog.Add(new CombatLogEntryModel { Message = CombatResult, IsPlayerAction = false });
+
+            if (Player.CurrentHealth > 0)
+            {
+                int experienceGained = Enemy.Level * 10;
+                Player.GainExperience(experienceGained);
+                CombatLog.Add(new CombatLogEntryModel { Message = $"{Player.Name} gained {experienceGained} experience!", IsPlayerAction = true });
+
+                await PrepareNextBattle();
+            }
+            else
+            {
+                IsDefeated = true;
+                DefeatMessage = $"{Player.Name} has been defeated. Game Over!";
+                CombatEnded?.Invoke(this, CombatOutcome.EnemyVictory);
+            }
+        }
+    }
+
+    [RelayCommand]
+    private static async Task ReturnToHomeScreen()
+    {
+        await Shell.Current.GoToAsync("//MainMenu");
+    }
+
+    [RelayCommand]
+    private void ResetCombat()
+    {
+        Player.CurrentHealth = Player.MaxHealth;
+        Enemy.CurrentHealth = Enemy.MaxHealth;
+        CombatLog.Clear();
+        InitializeCombatLog();
+        CombatResult = string.Empty;
+    }
+
+    public enum CombatOutcome
+    {
+        PlayerVictory,
+        EnemyVictory,
+        PlayerEscaped,
+        ContinueToNextBattle
     }
 
     private void ExecuteDefend()

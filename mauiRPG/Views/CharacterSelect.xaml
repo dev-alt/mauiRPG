@@ -2,96 +2,133 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="mauiRPG.Views.CharacterSelect"
-             Title="Create Your Character"
-             BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Gray900}}">
+             BackgroundColor="#1E1E2E">
 
+    <ContentPage.Resources>
+        <Style x:Key="MedievalLabelStyle" TargetType="Label">
+            <Setter Property="FontFamily" Value="MedievalSharp"/>
+            <Setter Property="TextColor" Value="#E0E0E0"/>
+            <Setter Property="HorizontalTextAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="MedievalEntryStyle" TargetType="Entry">
+            <Setter Property="FontFamily" Value="MedievalSharp"/>
+            <Setter Property="TextColor" Value="#E0E0E0"/>
+            <Setter Property="PlaceholderColor" Value="#888888"/>
+            <Setter Property="BackgroundColor" Value="#2E2E3E"/>
+            <Setter Property="HorizontalTextAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="MedievalButtonStyle" TargetType="Button">
+            <Setter Property="FontFamily" Value="MedievalSharp"/>
+            <Setter Property="TextColor" Value="#E0E0E0"/>
+            <Setter Property="BackgroundColor" Value="#4E4E5E"/>
+            <Setter Property="CornerRadius" Value="0"/>
+        </Style>
+        <Style x:Key="RaceSelectionFrameStyle" TargetType="Frame">
+            <Setter Property="BackgroundColor" Value="#2E2E3E"/>
+            <Setter Property="BorderColor" Value="#4E4E5E"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="WidthRequest" Value="100"/>
+            <Setter Property="HeightRequest" Value="120"/>
+            <Setter Property="HasShadow" Value="False"/>
+        </Style>
+    </ContentPage.Resources>
 
-    <ScrollView>
-        <Grid RowDefinitions="Auto,*,Auto" 
-              ColumnDefinitions="*,Auto,*"
-              RowSpacing="20"
-              Padding="30, 0">
-
-            <!-- Top Border -->
-            <BoxView Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" 
-                     Color="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray800}}"
-                     HeightRequest="2" 
-                     Margin="0,20,0,0"/>
-
-            <!-- Main Content -->
-            <VerticalStackLayout Grid.Row="1" Grid.Column="1" 
-                                 Spacing="20" 
-                                 VerticalOptions="Center"
-                                 WidthRequest="{OnPlatform Default=300}"
-                                 Margin="20">
-
-                <!-- Title -->
-                <Label Text="Character Creation" 
-                       FontSize="32" 
-                       FontAttributes="Bold" 
-                       TextColor="White"
-                       HorizontalOptions="Center"
-                       Margin="0,0,0,20"/>
-
-                <!-- Name Entry -->
-                <Frame BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray700}}"
-                       CornerRadius="10" 
-                       Padding="15"
-                       HasShadow="True">
-                    <Entry x:Name="NameEntry" 
-                           Text="{Binding Name}" 
-                           Placeholder="Enter character name"
-                           FontSize="18"
-                           TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
-                           PlaceholderColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
-                </Frame>
-
-                <!-- Race Picker -->
-                <Frame BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray700}}"
-                       CornerRadius="10" 
-                       Padding="15"
-                       HasShadow="True">
-                    <Picker Title="Select Race"
-                            ItemsSource="{Binding Races}"
-                            ItemDisplayBinding="{Binding Name}"
-                            SelectedItem="{Binding SelectedRace}"
-                            FontSize="18"
-                            TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
-                            TitleColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
-                </Frame>
-
-                <!-- Class Picker -->
-                <Frame BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray700}}"
-                       CornerRadius="10" 
-                       Padding="15"
-                       HasShadow="True">
-                    <Picker Title="Select Class"
-                            ItemsSource="{Binding Classes}"
-                            ItemDisplayBinding="{Binding Name}"
-                            SelectedItem="{Binding SelectedClass}"
-                            FontSize="18"
-                            TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
-                            TitleColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
-                </Frame>
-
-                <!-- Create Character Button -->
-                <Button Text="Create Character"
-                        Command="{Binding CreateCharacterCommand}"
-                        HorizontalOptions="Center"
-                        BackgroundColor="{StaticResource Primary}"
-                        TextColor="White"
-                        CornerRadius="20"
-                        Padding="20,10"
-                        FontAttributes="Bold"
-                        FontSize="18"
-                        WidthRequest="200"/>
-            </VerticalStackLayout>
-
-            <!-- Bottom Border -->
-            <BoxView Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" 
-                     Color="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray800}}"
-                     HeightRequest="2" 
-                     Margin="0,0,0,20"/>
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- Decorative Header -->
+        <Grid Grid.Row="0" HeightRequest="80" BackgroundColor="#3E3E4E">
+            <Grid.Background>
+                <LinearGradientBrush EndPoint="0,1">
+                    <GradientStop Color="#3E3E4E" Offset="0.1"/>
+                    <GradientStop Color="#2E2E3E" Offset="1.0"/>
+                </LinearGradientBrush>
+            </Grid.Background>
+            <Label Text="Character Creation" Style="{StaticResource MedievalLabelStyle}" 
+                   FontSize="28" VerticalOptions="Center">
+                <Label.Shadow>
+                    <Shadow Brush="#000000" Offset="2,2" Radius="1" Opacity="0.6"/>
+                </Label.Shadow>
+            </Label>
         </Grid>
-    </ScrollView>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="20" Padding="20">
+                <Frame BorderColor="#4E4E5E" BackgroundColor="#2E2E3E" Padding="20" CornerRadius="10">
+                    <VerticalStackLayout Spacing="15">
+                        <Label Text="Forge Your Legend" 
+                               Style="{StaticResource MedievalLabelStyle}"
+                               FontSize="32" 
+                               FontAttributes="Bold">
+                            <Label.Shadow>
+                                <Shadow Brush="#000000" Offset="2,2" Radius="1" Opacity="0.6"/>
+                            </Label.Shadow>
+                        </Label>
+
+                        <Label Text="Hero's Name" Style="{StaticResource MedievalLabelStyle}" FontSize="18"/>
+                        <Entry x:Name="NameEntry" 
+                               Text="{Binding Name}" 
+                               Placeholder="Enter your name"
+                               Style="{StaticResource MedievalEntryStyle}"
+                               FontSize="18"/>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <Label Text="Choose your Race" Style="{StaticResource MedievalLabelStyle}" FontSize="24"/>
+                <Label Text="Each race brings unique strengths to your quest" Style="{StaticResource MedievalLabelStyle}" FontSize="14" Opacity="0.7"/>
+
+                <FlexLayout BindableLayout.ItemsSource="{Binding Races}"
+                            Wrap="Wrap"
+                            JustifyContent="SpaceEvenly"
+                            AlignItems="Center">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate>
+                            <Frame Style="{StaticResource RaceSelectionFrameStyle}" Margin="10">
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup Name="CommonStates">
+                                        <VisualState Name="Normal" />
+                                        <VisualState Name="Selected">
+                                            <VisualState.Setters>
+                                                <Setter Property="BorderColor" Value="#FFD700" />
+                                                <Setter Property="Scale" Value="1.1" />
+                                                <Setter Property="TranslationY" Value="-5" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                                <VerticalStackLayout Spacing="5">
+                                    <Image Source="{Binding Name, StringFormat='race_{0}.png'}"
+                                           HeightRequest="60" 
+                                           Aspect="AspectFit"/>
+                                    <Label Text="{Binding Name}"
+                                           Style="{StaticResource MedievalLabelStyle}"
+                                           FontSize="16"/>
+                                </VerticalStackLayout>
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer 
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectRaceCommand}"
+                                        CommandParameter="{Binding}" />
+                                </Frame.GestureRecognizers>
+                            </Frame>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </FlexLayout>
+
+                <Button Text="Embark on your Quest"
+                        Command="{Binding CreateCharacterCommand}"
+                        Style="{StaticResource MedievalButtonStyle}"
+                        FontAttributes="Bold"
+                        FontSize="20"
+                        Padding="20,10"
+                        Margin="0,20,0,0"
+                        HorizontalOptions="Center">
+                    <Button.Shadow>
+                        <Shadow Brush="#000000" Offset="2,2" Radius="4" Opacity="0.6"/>
+                    </Button.Shadow>
+                </Button>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Decorative Footer -->
+        <BoxView Grid.Row="2" Color="#3E3E4E" HeightRequest="20"/>
+    </Grid>
 </ContentPage>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               x:Class="mauiRPG.Views.ErrorPopup"
+               Color="Transparent"
+               Size="300,400">
+
+    <toolkit:Popup.Resources>
+        <Style x:Key="MedievalLabelStyle" TargetType="Label">
+            <Setter Property="FontFamily" Value="MedievalSharp"/>
+            <Setter Property="TextColor" Value="#8B4513"/>
+            <Setter Property="HorizontalTextAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="MedievalButtonStyle" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="#8B4513"/>
+            <Setter Property="TextColor" Value="#FFD700"/>
+            <Setter Property="FontFamily" Value="MedievalSharp"/>
+            <Setter Property="CornerRadius" Value="0"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Margin" Value="0,10,0,0"/>
+        </Style>
+    </toolkit:Popup.Resources>
+
+    <Frame BackgroundColor="#F4E4BC" 
+           BorderColor="#8B4513" 
+           CornerRadius="0" 
+           Padding="20"
+           HasShadow="True">
+        <Grid RowDefinitions="Auto,*,Auto" RowSpacing="20">
+            <Image Source="scroll_top.png" Aspect="Fill" HeightRequest="50"/>
+
+            <VerticalStackLayout Grid.Row="1" Spacing="15">
+                <Label Text="Alas, Brave Adventurer!" 
+                       Style="{StaticResource MedievalLabelStyle}"
+                       FontSize="24" 
+                       FontAttributes="Bold"/>
+
+                <Label Text="A Mystical Mishap Has Occurred"
+                       Style="{StaticResource MedievalLabelStyle}"
+                       FontSize="18"
+                       FontAttributes="Italic"/>
+
+                <Label x:Name="ErrorMessageLabel"
+                       Style="{StaticResource MedievalLabelStyle}"
+                       FontSize="16"
+                       LineBreakMode="WordWrap"/>
+
+                <Image Source="error_icon.png" 
+                       HeightRequest="80" 
+                       WidthRequest="80" 
+                       HorizontalOptions="Center"/>
+            </VerticalStackLayout>
+
+            <StackLayout Grid.Row="2">
+                <Button Text="Continue Thy Quest" 
+                        Clicked="OnCloseButtonClicked"
+                        Style="{StaticResource MedievalButtonStyle}"
+                        HorizontalOptions="Center"/>
+
+                <Image Source="scroll_bottom.png" Aspect="Fill" HeightRequest="50"/>
+            </StackLayout>
+        </Grid>
+    </Frame>
+</toolkit:Popup>

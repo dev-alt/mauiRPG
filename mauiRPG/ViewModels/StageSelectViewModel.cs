@@ -1,4 +1,3 @@
-﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -6,6 +5,7 @@ using mauiRPG.Models;
 using mauiRPG.Services;
 using mauiRPG.Views;
 using Microsoft.Extensions.Logging;
+using System.Collections.ObjectModel;
 
 namespace mauiRPG.ViewModels
 {
@@ -15,7 +15,7 @@ namespace mauiRPG.ViewModels
         private readonly ILogger<PlayerInfoPopup> _logger;
 
         [ObservableProperty]
-        private Player _currentPlayer = null!;
+        private Player? _currentPlayer;
 
         [ObservableProperty]
         private ObservableCollection<Level> _levels = [];
@@ -35,7 +35,8 @@ namespace mauiRPG.ViewModels
         public void LoadData()
         {
             CurrentPlayer = _gameStateService.CurrentPlayer;
-            _logger.LogInformation("CurrentPlayer is {CurrentPlayerStatus}", $"set to {CurrentPlayer.Name}");
+            _logger.LogInformation("CurrentPlayer is {CurrentPlayerStatus}", $"set to {CurrentPlayer?.Name ?? "null"}");
+
             InitializeLevels();
         }
 
@@ -44,27 +45,12 @@ namespace mauiRPG.ViewModels
             _logger.LogInformation("InitializeLevels called");
             Levels =
             [
-                new Level("The Beginning", "level1.jpg")
-                {
-                    Number = 1,
-                    IsUnlocked = true,
-                    Name = "The Beginning",
-                    ImageSource = "level1.jpg"
-                },
-                new Level("Dark Forest", "level2.png")
-                {
-                    Number = 2,
-                    IsUnlocked = true,
-                    Name = "Dark Forest",
-                    ImageSource = "level2.jpg"
-                },
-                new Level("Mystic Mountains", "level3.png")
-                {
-                    Number = 3,
-                    IsUnlocked = false,
-                    Name = "Mystic Mountains",
-                    ImageSource = "level3.png"
-                }
+                new("The Beginning", "level1.jpg")
+                    { Number = 1, IsUnlocked = true, Name = "The Beginning", ImageSource = "level1.jpg" },
+                new("Dark Forest", "level2.png")
+                    { Number = 2, IsUnlocked = true, Name = "Dark Forest", ImageSource = "level2.jpg" },
+                new("Mystic Mountains", "level3.png")
+                    { Number = 3, IsUnlocked = false, Name = "Mystic Mountains", ImageSource = "level3.png" }
             ];
             _logger.LogInformation("Levels initialized with {LevelCount} levels", Levels.Count);
         }
@@ -74,28 +60,19 @@ namespace mauiRPG.ViewModels
         {
             _logger.LogInformation("ViewPlayerInfo called");
 
-            _logger.LogInformation("CurrentPlayer: Name={Name}, Race={Race}, Class={Class}",
-                CurrentPlayer.Name,
-                CurrentPlayer.Race?.Name,
-                CurrentPlayer.Class?.Name);
+            _logger.LogInformation("CurrentPlayer: Name={Name}, Race={Race}",
+                CurrentPlayer?.Name ?? "null",
+                CurrentPlayer?.Race?.Name ?? "null");
 
             try
             {
-                var popup = new PlayerInfoPopup(CurrentPlayer, _logger);
-                if (Application.Current?.MainPage != null)
-                {
-                    await Application.Current.MainPage.ShowPopupAsync(popup);
-                }
+                var popup = new PlayerInfoPopup(CurrentPlayer!, _logger);
+                await Shell.Current.ShowPopupAsync(popup);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error creating or showing PlayerInfoPopup");
-                if (Application.Current?.MainPage != null)
-                {
-                    await Application.Current.MainPage.DisplayAlert("Error",
-                        "Unable to display player information",
-                        "OK");
-                }
+                await Shell.Current.DisplayAlert("Error", "Unable to display player information", "OK");
             }
         }
 
@@ -109,10 +86,7 @@ namespace mauiRPG.ViewModels
             }
             else
             {
-                if (Application.Current?.MainPage != null)
-                {
-                    await Application.Current.MainPage.DisplayAlert("Locked", $"Level {level.Number} is locked!", "OK");
-                }
+                await Shell.Current.DisplayAlert("Locked", $"Level {level.Number} is locked!", "OK");
             }
         }
     }

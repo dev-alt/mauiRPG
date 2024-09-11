@@ -6,16 +6,19 @@ public partial class LevelSelectView : ContentPage
 {
     public LevelSelectView(StageSelectViewModel viewModel)
     {
-        InitializeComponent();
-        BindingContext = viewModel;
-    }
+        public LevelSelectView(StageSelectViewModel viewModel)
+        {
+            InitializeComponent();
+            BindingContext = viewModel;
+        }
 
-    protected override void OnAppearing()
+        protected override void OnAppearing()
     {
         base.OnAppearing();
         if (BindingContext is StageSelectViewModel viewModel)
         {
-            viewModel.LoadData();
+            viewModel.CurrentPlayer = ((StageSelectViewModel)BindingContext).CurrentPlayer;
         }
     }
+}
 }
