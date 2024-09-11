@@ -1,4 +1,7 @@
 ﻿using mauiRPG.Models;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace mauiRPG.Services
 {
@@ -10,55 +13,17 @@ namespace mauiRPG.Services
         Task<IEnumerable<Quest>> GetActiveQuests(Player currentPlayer);
     }
 
-    public class QuestService : IQuestService
+    public class QuestService(IQuestRepository questRepository) : IQuestService
     {
-        private readonly List<Quest> _quests;
-
-        public QuestService()
-        {
-            _quests =
-            [
-                new Quest
-                {
-                    Id = 1,
-                    Name = "Slay the Dragon",
-                    Description = "Defeat the fearsome dragon terrorizing the nearby village.",
-                    IconSource = "dragon_quest.png",
-                    Reward = 1000,
-                    RequiredLevel = 5
-                },
-
-                new Quest
-                {
-                    Id = 2,
-                    Name = "Retrieve the Artifact",
-                    Description = "Locate and retrieve the ancient artifact from the haunted ruins.",
-                    IconSource = "artifact_quest.png",
-                    Reward = 750,
-                    RequiredLevel = 3
-                },
-
-                new Quest
-                {
-                    Id = 3,
-                    Name = "Escort the Merchant",
-                    Description = "Safely escort the merchant to the neighboring town.",
-                    IconSource = "escort_quest.png",
-                    Reward = 500,
-                    RequiredLevel = 1
-                }
-            ];
-        }
-
         public async Task<IEnumerable<Quest>> GetAvailableQuests(Player? currentPlayer)
         {
-            await Task.Delay(100); // Simulating network delay
-            return _quests.Where(q => q.IsAvailable && (currentPlayer?.Level ?? 0) >= q.RequiredLevel);
+            await Task.Delay(100).ConfigureAwait(false); // Simulate I/O-bound delay
+            return questRepository.GetAllQuests().Where(q => q.IsAvailable && (currentPlayer?.Level ?? 0) >= q.RequiredLevel);
         }
 
         public async Task AcceptQuest(Player currentPlayer, Quest quest)
         {
-            await Task.Delay(100); // Simulating network delay
+            await Task.Delay(100).ConfigureAwait(false); // Simulate I/O-bound delay
             if (currentPlayer.Level < quest.RequiredLevel)
             {
                 throw new InvalidOperationException("Player level is too low to accept this quest.");
@@ -70,7 +35,7 @@ namespace mauiRPG.Services
 
         public async Task CompleteQuest(Player currentPlayer, Quest quest)
         {
-            await Task.Delay(100); // Simulating network delay
+            await Task.Delay(100).ConfigureAwait(false); // Simulate I/O-bound delay
             if (!currentPlayer.ActiveQuests.Contains(quest))
             {
                 throw new InvalidOperationException("This quest is not active for the current player.");
@@ -84,7 +49,7 @@ namespace mauiRPG.Services
 
         public async Task<IEnumerable<Quest>> GetActiveQuests(Player currentPlayer)
         {
-            await Task.Delay(100); // Simulating network delay
+            await Task.Delay(100).ConfigureAwait(false); // Simulate I/O-bound delay
             return currentPlayer.ActiveQuests;
         }
     }

@@ -8,28 +8,29 @@
         public required string IconSource { get; set; }
         public int Reward { get; set; }
         public int RequiredLevel { get; set; }
-        public DateTime? AcceptedDate { get; set; }
-        public DateTime? CompletedDate { get; set; }
-        private QuestStatus Status { get; set; } = QuestStatus.Available;
+        public DateTime? AcceptedDate { get; private set; }
+        public DateTime? CompletedDate { get; private set; }
+        private QuestStatus _status = QuestStatus.Available;
 
-        public bool IsAvailable => Status == QuestStatus.Available;
-        public bool IsCompleted => Status == QuestStatus.Completed;
+        public bool IsAvailable => _status == QuestStatus.Available;
+        public bool IsActive => _status == QuestStatus.InProgress;
+        public bool IsCompleted => _status == QuestStatus.Completed;
 
         public void Accept()
         {
-            if (Status != QuestStatus.Available)
+            if (_status != QuestStatus.Available)
                 throw new InvalidOperationException("This quest is not available.");
 
-            Status = QuestStatus.InProgress;
+            _status = QuestStatus.InProgress;
             AcceptedDate = DateTime.Now;
         }
 
         public void Complete()
         {
-            if (Status != QuestStatus.InProgress)
+            if (_status != QuestStatus.InProgress)
                 throw new InvalidOperationException("This quest is not in progress.");
 
-            Status = QuestStatus.Completed;
+            _status = QuestStatus.Completed;
             CompletedDate = DateTime.Now;
         }
     }
