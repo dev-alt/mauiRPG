@@ -319,32 +319,4 @@ public partial class CombatViewModel : ObservableObject
         PlayerEscaped,
         ContinueToNextBattle
     }
-
-    private void ExecuteDefend()
-    {
-        // TODO: Implement defend logic
-    }
-
-    private void ExecuteRun()
-    {
-        // TODO: Implement run logic
-    }
-
-    private void HandleEnemyDefeat()
-    {
-        UpdateCombatLog($"You defeated {CurrentEnemy.Name}!");
-        // TODO: Award experience and loot
-        // TODO: End combat or generate new enemy
-    }
-
-    private void HandlePlayerDefeat()
-    {
-        UpdateCombatLog("You have been defeated!");
-        // TODO: Handle player defeat (game over, respawn, etc.)
-    }
-
-    private void UpdateCombatLog(string message)
-    {
-        CombatLog += $"\n{message}";
-    }
 }
