@@ -2,11 +2,11 @@
 
 namespace mauiRPG.Models
 {
-    public partial class CombatantModel : Character
+    public partial class EnemyModel : Character
     {
         [ObservableProperty] private bool _isDefending;
 
-        public CombatantModel()
+        public EnemyModel()
         {
             Defense = 5;
         }

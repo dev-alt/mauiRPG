@@ -47,7 +47,7 @@ namespace mauiRPG.ViewModels
         }
 
 
-        private void InitiateCombat(Player player, CombatantModel enemy)
+        private void InitiateCombat(Player player, EnemyModel enemy)
         {
             CombatViewModel = new CombatViewModel(combatManagerService, inventoryService, player, enemy, gameStateService);
             CombatViewModel.CombatEnded += OnCombatEnded;

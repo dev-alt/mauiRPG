@@ -6,7 +6,7 @@ namespace mauiRPG.Services
     {
         private readonly Random _random = new();
 
-        public CombatResult ExecutePlayerTurn(Player player, CombatantModel enemy)
+        public CombatResult ExecutePlayerTurn(Player player, EnemyModel enemy)
         {
             return combatService.ExecutePlayerAttack(player, enemy);
         }
@@ -14,7 +14,7 @@ namespace mauiRPG.Services
         {
             return combatService.ExecuteSpecialAttack(attacker, defender, damageMultiplier);
         }
-        public CombatResult ExecuteEnemyTurn(CombatantModel enemy, Player player)
+        public CombatResult ExecuteEnemyTurn(EnemyModel enemy, Player player)
         {
             int action = _random.Next(100);
             if (action < 20 && !enemy.IsDefending)
@@ -33,7 +33,7 @@ namespace mauiRPG.Services
             }
         }
 
-        public CombatantModel GenerateNewEnemy(int battleCount)
+        public EnemyModel GenerateNewEnemy(int battleCount)
         {
             string[] enemyTypes = ["Goblin", "Orc", "Troll", "Dark Elf", "Dragon"];
             string enemyName = enemyTypes[_random.Next(enemyTypes.Length)];
@@ -41,7 +41,7 @@ namespace mauiRPG.Services
             int healthVariation = _random.Next(-10, 11);
             int finalHealth = baseHealth + healthVariation;
 
-            return new CombatantModel
+            return new EnemyModel
             {
                 Name = $"{enemyName} Lvl {battleCount}",
                 MaxHealth = finalHealth,
@@ -51,7 +51,7 @@ namespace mauiRPG.Services
                 Level = battleCount
             };
         }
-        public async Task<CombatantModel> PrepareNextBattle(Player player, int battleCount)
+        public async Task<EnemyModel> PrepareNextBattle(Player player, int battleCount)
         {
             await Task.Delay(1000); // Reduced delay for better game flow
             var newEnemy = GenerateNewEnemy(battleCount);
@@ -65,16 +65,16 @@ namespace mauiRPG.Services
         {
             return combatService.AttemptEscape();
         }
-        public CombatResult ExecuteSpecialAttack(Player player, CombatantModel enemy, double damageMultiplier)
+        public CombatResult ExecuteSpecialAttack(Player player, EnemyModel enemy, double damageMultiplier)
         {
             return combatService.ExecuteSpecialAttack(player, enemy, damageMultiplier);
         }
-        public static bool IsCombatOver(Player player, CombatantModel enemy)
+        public static bool IsCombatOver(Player player, EnemyModel enemy)
         {
             return player.CurrentHealth <= 0 || enemy.CurrentHealth <= 0;
         }
 
-        public static string GetCombatResult(Player player, CombatantModel enemy)
+        public static string GetCombatResult(Player player, EnemyModel enemy)
         {
             if (player.CurrentHealth <= 0)
                 return $"{player.Name} has been defeated. Game Over!";

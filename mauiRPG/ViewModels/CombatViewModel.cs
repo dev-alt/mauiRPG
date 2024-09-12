@@ -21,7 +21,7 @@ public partial class CombatViewModel : ObservableObject
     private Player _player;
 
     [ObservableProperty]
-    private CombatantModel _enemy;
+    private EnemyModel _enemy;
 
     [ObservableProperty]
     private bool _isLoading;
@@ -59,7 +59,7 @@ public partial class CombatViewModel : ObservableObject
         _combatView = view;
     }
 
-    public CombatViewModel(CombatManagerService combatManager, InventoryService inventoryService, Player player, CombatantModel enemy, GameStateService gameStateService)
+    public CombatViewModel(CombatManagerService combatManager, InventoryService inventoryService, Player player, EnemyModel enemy, GameStateService gameStateService)
     {
         _combatManager = combatManager;
         _inventoryService = inventoryService;

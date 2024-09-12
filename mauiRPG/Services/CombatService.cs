@@ -4,8 +4,8 @@ namespace mauiRPG.Services
 {
     public interface ICombatService
     {
-        CombatResult ExecutePlayerAttack(Player player, CombatantModel enemy);
-        CombatResult ExecuteEnemyAttack(CombatantModel enemy, Player player);
+        CombatResult ExecutePlayerAttack(Player player, EnemyModel enemy);
+        CombatResult ExecuteEnemyAttack(EnemyModel enemy, Player player);
         CombatResult ExecuteAttack(Character attacker, Character defender, bool isDefending);
         CombatResult ExecuteSpecialAttack(Character attacker, Character defender, double damageMultiplier);
         CombatResult Defend(Character character);
@@ -16,12 +16,12 @@ namespace mauiRPG.Services
     {
         private readonly Random _random = new();
 
-        public CombatResult ExecutePlayerAttack(Player player, CombatantModel enemy)
+        public CombatResult ExecutePlayerAttack(Player player, EnemyModel enemy)
         {
             return ExecuteAttack(player, enemy, enemy.IsDefending);
         }
 
-        public CombatResult ExecuteEnemyAttack(CombatantModel enemy, Player player)
+        public CombatResult ExecuteEnemyAttack(EnemyModel enemy, Player player)
         {
             return ExecuteAttack(enemy, player, player.IsDefending);
         }
