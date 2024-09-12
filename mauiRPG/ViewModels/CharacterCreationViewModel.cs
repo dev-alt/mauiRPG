@@ -73,10 +73,10 @@ namespace mauiRPG.ViewModels
                     Level = 1,
                     CurrentHealth = 100,
                     MaxHealth = 100,
-                    Strength = 10,
-                    Intelligence = 10,
-                    Dexterity = 10,
-                    Constitution = 10
+                    Strength = 15,
+                    Intelligence = 15,
+                    Dexterity = 15,
+                    Constitution = 15
                 };
 
                 _logger.LogInformation("Player object created successfully");

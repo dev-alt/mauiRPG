@@ -17,13 +17,13 @@ namespace mauiRPG.Services
     {
         public async Task<IEnumerable<Quest>> GetAvailableQuests(Player? currentPlayer)
         {
-            await Task.Delay(100).ConfigureAwait(false); // Simulate I/O-bound delay
+            await Task.Delay(100).ConfigureAwait(false);
             return questRepository.GetAllQuests().Where(q => q.IsAvailable && (currentPlayer?.Level ?? 0) >= q.RequiredLevel);
         }
 
         public async Task AcceptQuest(Player currentPlayer, Quest quest)
         {
-            await Task.Delay(100).ConfigureAwait(false); // Simulate I/O-bound delay
+            await Task.Delay(100).ConfigureAwait(false);
             if (currentPlayer.Level < quest.RequiredLevel)
             {
                 throw new InvalidOperationException("Player level is too low to accept this quest.");
@@ -35,7 +35,7 @@ namespace mauiRPG.Services
 
         public async Task CompleteQuest(Player currentPlayer, Quest quest)
         {
-            await Task.Delay(100).ConfigureAwait(false); // Simulate I/O-bound delay
+            await Task.Delay(100).ConfigureAwait(false);
             if (!currentPlayer.ActiveQuests.Contains(quest))
             {
                 throw new InvalidOperationException("This quest is not active for the current player.");
@@ -49,7 +49,7 @@ namespace mauiRPG.Services
 
         public async Task<IEnumerable<Quest>> GetActiveQuests(Player currentPlayer)
         {
-            await Task.Delay(100).ConfigureAwait(false); // Simulate I/O-bound delay
+            await Task.Delay(100).ConfigureAwait(false);
             return currentPlayer.ActiveQuests;
         }
     }

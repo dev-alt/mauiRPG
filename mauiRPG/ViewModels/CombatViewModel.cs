@@ -47,6 +47,9 @@ public partial class CombatViewModel : ObservableObject
     [ObservableProperty]
     private string _currentBattleAction = string.Empty;
 
+    [ObservableProperty]
+    private ObservableCollection<SpecialAbility> _availableSpecialAbilities;
+
     public event EventHandler<CombatOutcome>? CombatEnded;
 
     private CombatView? _combatView;
@@ -69,6 +72,7 @@ public partial class CombatViewModel : ObservableObject
 
         Player.CurrentHealth = Player.MaxHealth;
         Enemy.CurrentHealth = Enemy.MaxHealth;
+        AvailableSpecialAbilities = new ObservableCollection<SpecialAbility>(player.SpecialAbilities);
 
         LoadPlayerInventory();
         InitializeCombatLog();
@@ -117,6 +121,40 @@ public partial class CombatViewModel : ObservableObject
             await CheckCombatEndAsync();
         }
     }
+    [RelayCommand]
+    private async Task UseSpecialAbility(SpecialAbility ability)
+    {
+        if (ability.CurrentCooldown > 0)
+        {
+            // Ability is on cooldown
+            return;
+        }
+
+        await ShowBattleAction($"Use {ability.Name}");
+        var specialAttackResult = _combatManager.ExecuteSpecialAttack(Player, Enemy, ability.DamageMultiplier);
+        await UpdateCombatLog(specialAttackResult);
+
+        ability.CurrentCooldown = ability.CooldownTurns;
+
+        // Decrease cooldowns for all abilities
+        foreach (var specialAbility in AvailableSpecialAbilities)
+        {
+            if (specialAbility.CurrentCooldown > 0)
+            {
+                specialAbility.CurrentCooldown--;
+            }
+        }
+
+        if (!IsCombatOver())
+        {
+            await ShowBattleAction("Enemy Attack");
+            var enemyResult = _combatManager.ExecuteEnemyTurn(Enemy, Player);
+            await UpdateCombatLog(enemyResult);
+        }
+
+        await CheckCombatEndAsync();
+    }
+
 
     [RelayCommand]
     private async Task DefendAsync()
@@ -260,10 +298,6 @@ public partial class CombatViewModel : ObservableObject
 
         CombatLog.Add(new CombatLogEntryModel { Message = $"Preparing for battle {BattleCount}!", IsPlayerAction = false });
 
-        CombatEnded?.Invoke(this, CombatOutcome.PlayerVictory);
-
-        CombatResult = string.Empty;
-
         OnPropertyChanged(nameof(Enemy));
     }
 
@@ -286,6 +320,7 @@ public partial class CombatViewModel : ObservableObject
                 CombatLog.Add(new CombatLogEntryModel { Message = $"{Player.Name} gained {experienceGained} experience!", IsPlayerAction = true });
 
                 await PrepareNextBattle();
+                CombatEnded?.Invoke(this, CombatOutcome.PlayerVictory);
             }
             else
             {

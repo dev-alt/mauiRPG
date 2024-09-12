@@ -38,19 +38,14 @@ namespace mauiRPG.ViewModels
         private void SimulateEnemyEncounter()
         {
             if (CurrentLevel == null) return;
-
-            var enemy = new CombatantModel
-            {
-                Name = $"Dark Wizard {CurrentLevel.Number}",
-                MaxHealth = 50,
-            };
-
             var currentPlayer = gameStateService.CurrentPlayer;
             if (currentPlayer != null)
             {
+                var enemy = combatManagerService.GenerateNewEnemy(CurrentLevel.Number);
                 InitiateCombat(currentPlayer, enemy);
             }
         }
+
 
         private void InitiateCombat(Player player, CombatantModel enemy)
         {
@@ -59,13 +54,19 @@ namespace mauiRPG.ViewModels
             IsCombatViewVisible = true;
         }
 
-        private void OnCombatEnded(object? sender, CombatViewModel.CombatOutcome result)
+        private async void OnCombatEnded(object? sender, CombatViewModel.CombatOutcome result)
         {
             IsCombatViewVisible = false;
+            await Task.Delay(1000);
 
-            if (CombatViewModel != null)
+            if (result == CombatViewModel.CombatOutcome.PlayerVictory)
             {
-                CombatViewModel.CombatEnded -= OnCombatEnded;
+                SimulateEnemyEncounter();
+            }
+            else if (result == CombatViewModel.CombatOutcome.EnemyVictory)
+            {
+                // Handle player defeat
+                IsCombatViewVisible = false;
             }
         }
     }

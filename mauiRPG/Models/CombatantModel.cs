@@ -8,7 +8,7 @@ namespace mauiRPG.Models
 
         public CombatantModel()
         {
-            Defense = 10;
+            Defense = 5;
         }
 
         public void Defend()

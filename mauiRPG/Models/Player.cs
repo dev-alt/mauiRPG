@@ -14,6 +14,30 @@ namespace mauiRPG.Models
         public List<Quest> ActiveQuests { get; set; } = [];
         public List<Quest> CompletedQuests { get; set; } = [];
         public int Gold { get; set; }
+        public List<SpecialAbility> SpecialAbilities { get; set; }
+        public Player()
+        {
+            SpecialAbilities =
+            [
+                new SpecialAbility
+                {
+                    Name = "Power Strike",
+                    Description = "A powerful attack that deals 2x damage",
+                    CooldownTurns = 3,
+                    DamageMultiplier = 2,
+                    CurrentCooldown = 0
+                },
+
+                new SpecialAbility
+                {
+                    Name = "Quick Slash",
+                    Description = "A fast attack that deals 1.5x damage and has a shorter cooldown",
+                    CooldownTurns = 2,
+                    DamageMultiplier = 1.5,
+                    CurrentCooldown = 0
+                }
+            ];
+        }
 
         public void UpdateStats()
         {
@@ -56,4 +80,5 @@ namespace mauiRPG.Models
             }
         }
     }
+
 }
