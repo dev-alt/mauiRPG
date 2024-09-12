@@ -1,74 +1,157 @@
 ﻿using mauiRPG.Models;
+using System;
+using System.Threading.Tasks;
 
 namespace mauiRPG.Services
 {
     public class CombatManagerService(ICombatService combatService)
     {
+        private readonly ICombatService _combatService = combatService ?? throw new ArgumentNullException(nameof(combatService));
         private readonly Random _random = new();
 
         public CombatResult ExecutePlayerTurn(Player player, EnemyModel enemy)
         {
-            return combatService.ExecutePlayerAttack(player, enemy);
+            try
+            {
+                return _combatService.ExecutePlayerAttack(player, enemy);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error executing player turn: {ex.Message}");
+                return new CombatResult
+                {
+                    Attacker = player.Name,
+                    Defender = enemy.Name,
+                    Message = "An error occurred during the player's turn."
+                };
+            }
         }
+
         public CombatResult ExecuteSpecialAttack(Character attacker, Character defender, double damageMultiplier)
         {
-            return combatService.ExecuteSpecialAttack(attacker, defender, damageMultiplier);
+            try
+            {
+                return _combatService.ExecuteSpecialAttack(attacker, defender, damageMultiplier);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error executing special attack: {ex.Message}");
+                return new CombatResult
+                {
+                    Attacker = attacker.Name,
+                    Defender = defender.Name,
+                    Message = "An error occurred during the special attack."
+                };
+            }
         }
+
         public CombatResult ExecuteEnemyTurn(EnemyModel enemy, Player player)
         {
-            int action = _random.Next(100);
-            if (action < 20 && !enemy.IsDefending)
+            try
             {
-                enemy.IsDefending = true;
-                return combatService.Defend(enemy);
+                int action = _random.Next(100);
+                if (action < 20 && !enemy.IsDefending)
+                {
+                    enemy.IsDefending = true;
+                    return _combatService.Defend(enemy);
+                }
+                else if (action < 40 && enemy.CurrentHealth < enemy.MaxHealth / 2)
+                {
+                    return ExecuteSpecialAttack(enemy, player, 1.5);
+                }
+                else
+                {
+                    return _combatService.ExecuteEnemyAttack(enemy, player);
+                }
             }
-            else if (action < 40 && enemy.CurrentHealth < enemy.MaxHealth / 2)
+            catch (Exception ex)
             {
-                // Assuming a default multiplier for enemy special attacks
-                return ExecuteSpecialAttack(enemy, player, 1.5);
-            }
-            else
-            {
-                return combatService.ExecuteEnemyAttack(enemy, player);
+                Console.WriteLine($"Error executing enemy turn: {ex.Message}");
+                return new CombatResult
+                {
+                    Attacker = enemy.Name,
+                    Defender = player.Name,
+                    Message = "An error occurred during the enemy's turn."
+                };
             }
         }
 
         public EnemyModel GenerateNewEnemy(int battleCount)
         {
-            string[] enemyTypes = ["Goblin", "Orc", "Troll", "Dark Elf", "Dragon"];
-            string enemyName = enemyTypes[_random.Next(enemyTypes.Length)];
-            int baseHealth = 10 + (battleCount * 10);
-            int healthVariation = _random.Next(-10, 11);
-            int finalHealth = baseHealth + healthVariation;
-
-            return new EnemyModel
+            try
             {
-                Name = $"{enemyName} Lvl {battleCount}",
-                MaxHealth = finalHealth,
-                CurrentHealth = finalHealth,
-                Attack = 5 + (battleCount * 2),
-                Defense = 3 + battleCount,
-                Level = battleCount
-            };
+                string[] enemyTypes = ["Goblin", "Orc", "Troll", "Dark Elf", "Dragon"];
+                string enemyName = enemyTypes[_random.Next(enemyTypes.Length)];
+                int baseHealth = 10 + (battleCount * 10);
+                int healthVariation = _random.Next(-10, 11);
+                int finalHealth = baseHealth + healthVariation;
+
+                return new EnemyModel
+                {
+                    Name = $"{enemyName} Lvl {battleCount}",
+                    MaxHealth = finalHealth,
+                    CurrentHealth = finalHealth,
+                    Attack = 5 + (battleCount * 2),
+                    Defense = 3 + battleCount,
+                    Level = battleCount
+                };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error generating new enemy: {ex.Message}");
+                return new EnemyModel { Name = "Default Enemy" };
+            }
         }
+
         public async Task<EnemyModel> PrepareNextBattle(Player player, int battleCount)
         {
-            await Task.Delay(1000); // Reduced delay for better game flow
-            var newEnemy = GenerateNewEnemy(battleCount);
-            int healAmount = (int)(player.MaxHealth * 0.2);
-            player.Heal(healAmount);
-            player.IsDefending = false;
-            return newEnemy;
+            try
+            {
+                await Task.Delay(1000);
+                var newEnemy = GenerateNewEnemy(battleCount);
+                int healAmount = (int)(player.MaxHealth * 0.2);
+                player.Heal(healAmount);
+                player.IsDefending = false;
+                return newEnemy;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error preparing next battle: {ex.Message}");
+                return new EnemyModel { Name = "Default Enemy" };
+            }
         }
 
         public bool AttemptEscape()
         {
-            return combatService.AttemptEscape();
+            try
+            {
+                return _combatService.AttemptEscape();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error attempting escape: {ex.Message}");
+                return false;
+            }
         }
+
         public CombatResult ExecuteSpecialAttack(Player player, EnemyModel enemy, double damageMultiplier)
         {
-            return combatService.ExecuteSpecialAttack(player, enemy, damageMultiplier);
+            try
+            {
+                return _combatService.ExecuteSpecialAttack(player, enemy, damageMultiplier);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error executing special attack: {ex.Message}");
+                return new CombatResult
+                {
+                    Attacker = player.Name,
+                    Defender = enemy.Name,
+                    Message = "An error occurred during the special attack."
+                };
+            }
         }
+
         public static bool IsCombatOver(Player player, EnemyModel enemy)
         {
             return player.CurrentHealth <= 0 || enemy.CurrentHealth <= 0;

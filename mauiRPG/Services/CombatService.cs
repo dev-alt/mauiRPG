@@ -1,4 +1,5 @@
 ﻿using mauiRPG.Models;
+using System;
 
 namespace mauiRPG.Services
 {
@@ -18,33 +19,70 @@ namespace mauiRPG.Services
 
         public CombatResult ExecutePlayerAttack(Player player, EnemyModel enemy)
         {
-            return ExecuteAttack(player, enemy, enemy.IsDefending);
+            try
+            {
+                return ExecuteAttack(player, enemy, enemy.IsDefending);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error executing player attack: {ex.Message}");
+                return new CombatResult
+                {
+                    Attacker = player.Name,
+                    Defender = enemy.Name,
+                    Message = "An error occurred during the player's attack."
+                };
+            }
         }
 
         public CombatResult ExecuteEnemyAttack(EnemyModel enemy, Player player)
         {
-            return ExecuteAttack(enemy, player, player.IsDefending);
+            try
+            {
+                return ExecuteAttack(enemy, player, player.IsDefending);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error executing enemy attack: {ex.Message}");
+                return new CombatResult
+                {
+                    Attacker = enemy.Name,
+                    Defender = player.Name,
+                    Message = "An error occurred during the enemy's attack."
+                };
+            }
         }
 
         public CombatResult ExecuteAttack(Character attacker, Character defender, bool isDefending = false)
         {
-            bool isCritical = _random.Next(100) < 10; // 10% chance of critical hit
-            int damage = CalculateDamage(attacker.Attack, defender.Defense, isDefending);
-
-            if (isCritical)
+            try
             {
-                damage = (int)(damage * 1.5);
+                bool isCritical = _random.Next(100) < 10; // 10% chance of critical hit
+                int damage = CalculateDamage(attacker.Attack, defender.Defense, isDefending);
+                if (isCritical)
+                {
+                    damage = (int)(damage * 1.5);
+                }
+                defender.TakeDamage(damage);
+                return new CombatResult
+                {
+                    Attacker = attacker.Name,
+                    Defender = defender.Name,
+                    Damage = damage,
+                    RemainingHealth = defender.CurrentHealth,
+                    Message = GenerateAttackMessage(attacker.Name, defender.Name, damage, isCritical)
+                };
             }
-
-            defender.TakeDamage(damage);
-            return new CombatResult
+            catch (Exception ex)
             {
-                Attacker = attacker.Name,
-                Defender = defender.Name,
-                Damage = damage,
-                RemainingHealth = defender.CurrentHealth,
-                Message = GenerateAttackMessage(attacker.Name, defender.Name, damage, isCritical)
-            };
+                Console.WriteLine($"Error executing attack: {ex.Message}");
+                return new CombatResult
+                {
+                    Attacker = attacker.Name,
+                    Defender = defender.Name,
+                    Message = "An error occurred during the attack."
+                };
+            }
         }
 
         private string GenerateAttackMessage(string attacker, string defender, int damage, bool isCritical)
@@ -57,43 +95,84 @@ namespace mauiRPG.Services
 
         public CombatResult ExecuteSpecialAttack(Character attacker, Character defender, double damageMultiplier)
         {
-            int damage = CalculateDamage(attacker.Attack * damageMultiplier, defender.Defense, false);
-            defender.TakeDamage(damage);
-            return new CombatResult
+            try
             {
-                Attacker = attacker.Name,
-                Defender = defender.Name,
-                Damage = damage,
-                RemainingHealth = defender.CurrentHealth,
-                Message = $"{attacker.Name} uses a special attack against {defender.Name} for {damage} damage!"
-            };
+                int damage = CalculateDamage(attacker.Attack * damageMultiplier, defender.Defense, false);
+                defender.TakeDamage(damage);
+                return new CombatResult
+                {
+                    Attacker = attacker.Name,
+                    Defender = defender.Name,
+                    Damage = damage,
+                    RemainingHealth = defender.CurrentHealth,
+                    Message = $"{attacker.Name} uses a special attack against {defender.Name} for {damage} damage!"
+                };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error executing special attack: {ex.Message}");
+                return new CombatResult
+                {
+                    Attacker = attacker.Name,
+                    Defender = defender.Name,
+                    Message = "An error occurred during the special attack."
+                };
+            }
         }
 
         public CombatResult Defend(Character character)
         {
-            return new CombatResult
+            try
             {
-                Attacker = character.Name,
-                Defender = character.Name,
-                Damage = 0,
-                RemainingHealth = character.CurrentHealth,
-                Message = $"{character.Name} takes a defensive stance."
-            };
+                return new CombatResult
+                {
+                    Attacker = character.Name,
+                    Defender = character.Name,
+                    Damage = 0,
+                    RemainingHealth = character.CurrentHealth,
+                    Message = $"{character.Name} takes a defensive stance."
+                };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error executing defend action: {ex.Message}");
+                return new CombatResult
+                {
+                    Attacker = character.Name,
+                    Defender = character.Name,
+                    Message = "An error occurred while taking a defensive stance."
+                };
+            }
         }
 
         public bool AttemptEscape()
         {
-            return _random.Next(100) < 50;  // 50% chance of escape
+            try
+            {
+                return _random.Next(100) < 50;  // 50% chance of escape
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error attempting escape: {ex.Message}");
+                return false;
+            }
         }
 
         private int CalculateDamage(double attack, int defense, bool isDefending)
         {
-            double damageReduction = defense / (defense + 100.0);
-            int baseDamage = (int)Math.Max(5, attack * (1 - damageReduction) * 1.5);
-            int variability = _random.Next(-3, 4);
-            int finalDamage = Math.Max(0, baseDamage + variability);
-            return isDefending ? finalDamage / 2 : finalDamage;
+            try
+            {
+                double damageReduction = defense / (defense + 100.0);
+                int baseDamage = (int)Math.Max(5, attack * (1 - damageReduction) * 1.5);
+                int variability = _random.Next(-3, 4);
+                int finalDamage = Math.Max(0, baseDamage + variability);
+                return isDefending ? finalDamage / 2 : finalDamage;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error calculating damage: {ex.Message}");
+                return 0;
+            }
         }
-
     }
 }

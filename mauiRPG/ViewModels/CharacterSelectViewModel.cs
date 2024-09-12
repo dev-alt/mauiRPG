@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using mauiRPG.Models;
 using mauiRPG.Services;
+using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
@@ -23,8 +24,8 @@ namespace mauiRPG.ViewModels
 
         public CharacterSelectViewModel(CharacterService characterService, GameStateService gameStateService)
         {
-            _characterService = characterService;
-            _gameStateService = gameStateService;
+            _characterService = characterService ?? throw new ArgumentNullException(nameof(characterService));
+            _gameStateService = gameStateService ?? throw new ArgumentNullException(nameof(gameStateService));
             LoadCharacters();
         }
 
@@ -48,52 +49,78 @@ namespace mauiRPG.ViewModels
         }
 
         [RelayCommand]
-        private void LoadCharacter()
+        private async Task LoadCharacter()
         {
-            if (SelectedCharacter == null)
+            try
             {
-                Debug.WriteLine("No character selected");
-                ErrorOccurred?.Invoke(this, "Please select a character before loading.");
-                return;
-            }
+                if (SelectedCharacter == null)
+                {
+                    Debug.WriteLine("No character selected");
+                    ErrorOccurred?.Invoke(this, "Please select a character before loading.");
+                    return;
+                }
 
-            if (SelectedCharacter is Player player)
-            {
-                _gameStateService.SetCurrentPlayer(player);
-                Debug.WriteLine($"Current player set to: {player.Name}");
-                CharacterSelected?.Invoke(this, player);
+                if (SelectedCharacter is Player player)
+                {
+                    _gameStateService.SetCurrentPlayer(player);
+                    Debug.WriteLine($"Current player set to: {player.Name}");
+                    CharacterSelected?.Invoke(this, player);
+                    await Shell.Current.GoToAsync("///LevelSelect");
+                    CloseRequested?.Invoke(this, EventArgs.Empty);
+                }
+                else
+                {
+                    Debug.WriteLine($"Selected character is not a valid player. Type: {SelectedCharacter.GetType().Name}");
+                    ErrorOccurred?.Invoke(this, "The selected character is not a valid player. Please select a different character.");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                Debug.WriteLine($"Selected character is not a valid player. Type: {SelectedCharacter.GetType().Name}");
-                ErrorOccurred?.Invoke(this, "The selected character is not a valid player. Please select a different character.");
+                Debug.WriteLine($"Error loading character: {ex.Message}");
+                ErrorOccurred?.Invoke(this, "An error occurred while loading the character. Please try again.");
             }
         }
 
         [RelayCommand]
         private void DeleteCharacter()
         {
-            if (SelectedCharacter == null)
+            try
             {
-                ErrorOccurred?.Invoke(this, "Please select a character to delete.");
-                return;
-            }
+                if (SelectedCharacter == null)
+                {
+                    ErrorOccurred?.Invoke(this, "Please select a character to delete.");
+                    return;
+                }
 
-            if (_characterService.DeleteCharacter(SelectedCharacter.Name))
-            {
-                Characters.Remove(SelectedCharacter);
-                SelectedCharacter = null;
+                if (_characterService.DeleteCharacter(SelectedCharacter.Name))
+                {
+                    Characters.Remove(SelectedCharacter);
+                    SelectedCharacter = null;
+                }
+                else
+                {
+                    ErrorOccurred?.Invoke(this, "Failed to delete the character. Please try again.");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                ErrorOccurred?.Invoke(this, "Failed to delete the character. Please try again.");
+                Debug.WriteLine($"Error deleting character: {ex.Message}");
+                ErrorOccurred?.Invoke(this, "An error occurred while deleting the character. Please try again.");
             }
         }
 
         [RelayCommand]
         private void ClosePopup()
         {
-            CloseRequested?.Invoke(this, EventArgs.Empty);
+            try
+            {
+                CloseRequested?.Invoke(this, EventArgs.Empty);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error closing popup: {ex.Message}");
+                ErrorOccurred?.Invoke(this, "An error occurred while closing the popup. Please try again.");
+            }
         }
     }
 }
