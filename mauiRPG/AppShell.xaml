@@ -6,25 +6,32 @@
     xmlns:local="clr-namespace:mauiRPG"
     xmlns:views="clr-namespace:mauiRPG.Views"
     Shell.FlyoutBehavior="Flyout"
-    FlyoutBackgroundColor="#1E1E2E"
+    FlyoutBackgroundColor="{StaticResource PrimaryBackgroundColor}"
     FlyoutHeaderBehavior="Fixed"
     Shell.NavBarIsVisible="False">
 
     <Shell.Resources>
-        <Style x:Key="BaseStyle" TargetType="Element">
-            <Setter Property="Shell.BackgroundColor" Value="#1E1E2E"/>
-            <Setter Property="Shell.ForegroundColor" Value="#E0E0E0"/>
-            <Setter Property="Shell.TitleColor" Value="#FFD700"/>
-            <Setter Property="Shell.TabBarBackgroundColor" Value="#2E2E3E"/>
-            <Setter Property="Shell.TabBarForegroundColor" Value="#E0E0E0"/>
-            <Setter Property="Shell.TabBarUnselectedColor" Value="#888888"/>
-            <Setter Property="Shell.TabBarTitleColor" Value="#FFD700"/>
-        </Style>
-        <Style TargetType="ShellItem" BasedOn="{StaticResource BaseStyle}" />
+        <ResourceDictionary>
+            <Color x:Key="PrimaryBackgroundColor">#1E1E2E</Color>
+            <Color x:Key="SecondaryBackgroundColor">#2E2E3E</Color>
+            <Color x:Key="PrimaryTextColor">#E0E0E0</Color>
+            <Color x:Key="AccentColor">#FFD700</Color>
+
+            <Style x:Key="BaseStyle" TargetType="Element">
+                <Setter Property="Shell.BackgroundColor" Value="{StaticResource PrimaryBackgroundColor}"/>
+                <Setter Property="Shell.ForegroundColor" Value="{StaticResource PrimaryTextColor}"/>
+                <Setter Property="Shell.TitleColor" Value="{StaticResource AccentColor}"/>
+                <Setter Property="Shell.TabBarBackgroundColor" Value="{StaticResource SecondaryBackgroundColor}"/>
+                <Setter Property="Shell.TabBarForegroundColor" Value="{StaticResource PrimaryTextColor}"/>
+                <Setter Property="Shell.TabBarUnselectedColor" Value="#888888"/>
+                <Setter Property="Shell.TabBarTitleColor" Value="{StaticResource AccentColor}"/>
+            </Style>
+            <Style TargetType="ShellContent" BasedOn="{StaticResource BaseStyle}" />
+        </ResourceDictionary>
     </Shell.Resources>
 
     <Shell.FlyoutHeader>
-        <Grid BackgroundColor="#1E1E2E" Padding="20">
+        <Grid BackgroundColor="{StaticResource PrimaryBackgroundColor}" Padding="20">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -33,7 +40,7 @@
             <Label Text="Realm of the Forgotten Crown"
                    FontSize="24"
                    FontFamily="MedievalSharp"
-                   TextColor="#FFD700"
+                   TextColor="{StaticResource AccentColor}"
                    HorizontalOptions="Center"
                    VerticalOptions="Center"
                    Margin="0,20" 
@@ -53,15 +60,10 @@
         IsVisible="{Binding IsCharacterLoaded}" />
 
     <ShellContent
-        Title="Character Tome"
-        ContentTemplate="{DataTemplate views:CharacterSelect}"
-        Route="CharacterSelect"
-        IsVisible="{Binding IsCharacterLoaded}" />
-
-    <ShellContent
         Title="Level Select"
         ContentTemplate="{DataTemplate views:LevelSelectView}"
         Route="LevelSelect"
         IsVisible="{Binding IsCharacterLoaded}" />
+
 
 </Shell>

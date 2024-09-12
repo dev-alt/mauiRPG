@@ -21,6 +21,7 @@ namespace mauiRPG.ViewModels
         private void OnCharacterLoadStateChanged(object? sender, EventArgs e)
         {
             IsCharacterLoaded = _gameStateService.IsCharacterLoaded;
+            OnPropertyChanged(nameof(IsCharacterLoaded));
         }
     }
 }

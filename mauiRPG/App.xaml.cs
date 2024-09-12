@@ -1,14 +1,15 @@
 ﻿using mauiRPG.ViewModels;
 using mauiRPG.Views;
+using Microsoft.Extensions.Logging;
 
 namespace mauiRPG
 {
     public partial class App : Application
     {
-        public App(MainMenuView mainMenuView, AppShellViewModel appShellViewModel)
+        public App(MainMenuView mainMenuView, AppShellViewModel appShellViewModel, ILogger<AppShell> logger)
         {
             InitializeComponent();
-            MainPage = new AppShell(appShellViewModel);
+            MainPage = new AppShell(appShellViewModel, logger);
             Shell.Current.Navigation.PushAsync(mainMenuView);
         }
 
@@ -20,7 +21,7 @@ namespace mauiRPG
             if (DeviceInfo.Idiom == DeviceIdiom.Desktop)
             {
                 window.Width = 800;
-                window.Height = 1200;
+                window.Height = 900;
             }
 #endif
 
