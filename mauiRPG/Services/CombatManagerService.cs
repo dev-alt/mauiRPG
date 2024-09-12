@@ -27,7 +27,7 @@ namespace mauiRPG.Services
             }
         }
 
-        public CombatResult ExecuteSpecialAttack(Character attacker, Character defender, double damageMultiplier)
+        private CombatResult ExecuteSpecialAttack(Character attacker, Character defender, double damageMultiplier)
         {
             try
             {
@@ -50,18 +50,15 @@ namespace mauiRPG.Services
             try
             {
                 int action = _random.Next(100);
-                if (action < 20 && !enemy.IsDefending)
+                switch (action)
                 {
-                    enemy.IsDefending = true;
-                    return _combatService.Defend(enemy);
-                }
-                else if (action < 40 && enemy.CurrentHealth < enemy.MaxHealth / 2)
-                {
-                    return ExecuteSpecialAttack(enemy, player, 1.5);
-                }
-                else
-                {
-                    return _combatService.ExecuteEnemyAttack(enemy, player);
+                    case < 20 when !enemy.IsDefending:
+                        enemy.IsDefending = true;
+                        return _combatService.Defend(enemy);
+                    case < 40 when enemy.CurrentHealth < enemy.MaxHealth / 2:
+                        return ExecuteSpecialAttack(enemy, player, 1.5);
+                    default:
+                        return _combatService.ExecuteEnemyAttack(enemy, player);
                 }
             }
             catch (Exception ex)
