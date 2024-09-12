@@ -6,7 +6,7 @@
     <ContentView.Resources>
         <ResourceDictionary>
             <converters:BoolToColorConverter x:Key="BoolToColorConverter"/>
-            <converters:IntToBoolConverter x:Key="IntToBoolConverter"/>
+            <converters:BoolIntConverter x:Key="BoolIntConverter"/>
 
             <Style x:Key="CombatantNameStyle" TargetType="Label">
                 <Setter Property="FontSize" Value="24"/>
@@ -139,13 +139,13 @@
                         Text="{Binding AvailableSpecialAbilities[0].Name}" 
                         Command="{Binding UseSpecialAbilityCommand}"
                         CommandParameter="{Binding AvailableSpecialAbilities[0]}"
-                        IsEnabled="{Binding AvailableSpecialAbilities[0].CurrentCooldown, Converter={StaticResource IntToBoolConverter}, ConverterParameter=0}"
+                        IsEnabled="{Binding AvailableSpecialAbilities[0].CurrentCooldown, Converter={StaticResource BoolIntConverter}, ConverterParameter=0}"
                         Style="{StaticResource ActionButtonStyle}"/>
                 <Button Grid.Column="1" 
                         Text="{Binding AvailableSpecialAbilities[1].Name}" 
                         Command="{Binding UseSpecialAbilityCommand}"
                         CommandParameter="{Binding AvailableSpecialAbilities[1]}"
-                        IsEnabled="{Binding AvailableSpecialAbilities[1].CurrentCooldown, Converter={StaticResource IntToBoolConverter}, ConverterParameter=0}"
+                        IsEnabled="{Binding AvailableSpecialAbilities[1].CurrentCooldown, Converter={StaticResource BoolIntConverter}, ConverterParameter=0}"
                         Style="{StaticResource ActionButtonStyle}"/>
             </Grid>
 
