@@ -10,24 +10,24 @@ namespace mauiRPG
 
         public AppShell(AppShellViewModel viewModel, ILogger<AppShell> logger)
         {
+            _logger = logger;
+
             try
             {
                 InitializeComponent();
                 BindingContext = viewModel;
-                _logger = logger;
-
                 RegisterRoutes();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error initializing AppShell");
+                _logger?.LogError(ex, "Error initializing AppShell");
                 throw;
             }
         }
 
         private void RegisterRoutes()
         {
-            _logger.LogInformation("Registering routes");
+            _logger?.LogInformation("Registering routes");
 
             var routes = new Dictionary<string, Type>
             {
@@ -41,7 +41,7 @@ namespace mauiRPG
             foreach (var route in routes)
             {
                 Routing.RegisterRoute(route.Key, route.Value);
-                _logger.LogDebug("Registered route: {RouteName}", route.Key);
+                _logger?.LogDebug("Registered route: {RouteName}", route.Key);
             }
         }
     }

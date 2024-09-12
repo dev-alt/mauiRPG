@@ -31,6 +31,7 @@ namespace mauiRPG.ViewModels
 
         public event EventHandler? ShowCharacterPopupRequested;
         public event EventHandler? ShowSettingsPopupRequested;
+        public event EventHandler<string>? ShowErrorPopupRequested;
 
         public MainViewModel(CharacterService characterService, ISettingsService settingsService, GameStateService gameStateService)
         {
@@ -43,65 +44,104 @@ namespace mauiRPG.ViewModels
 
         private void LoadCharacters()
         {
-            var loadedCharacters = _characterService.LoadCharacters();
-            Characters.Clear();
-            foreach (var character in loadedCharacters)
+            try
             {
-                Characters.Add(character);
+                var loadedCharacters = _characterService.LoadCharacters();
+                Characters.Clear();
+                foreach (var character in loadedCharacters)
+                {
+                    Characters.Add(character);
+                }
+                Debug.WriteLine($"Loaded {Characters.Count} characters");
             }
-            Debug.WriteLine($"Loaded {Characters.Count} characters");
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error loading characters: {ex.Message}");
+                ShowErrorPopupRequested?.Invoke(this, "Failed to load characters. Please try again.");
+            }
         }
 
         [RelayCommand]
         private async Task CreateNewCharacter()
         {
-            await Shell.Current.GoToAsync(nameof(CharacterSelect));
+            try
+            {
+                await Shell.Current.GoToAsync(nameof(CharacterSelect));
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error navigating to character creation: {ex.Message}");
+                ShowErrorPopupRequested?.Invoke(this, "Failed to open character creation. Please try again.");
+            }
         }
 
         [RelayCommand]
         private void ShowLoadCharacter()
         {
-            if (Characters.Count == 0)
+            try
             {
-                Shell.Current.DisplayAlert("No Characters", "No saved characters found. Please create a new character.", "OK");
-                return;
+                if (Characters.Count == 0)
+                {
+                    ShowErrorPopupRequested?.Invoke(this, "No saved characters found. Please create a new character.");
+                    return;
+                }
+                IsCharacterListVisible = true;
+                IsAnyPopupVisible = true;
+                ShowCharacterPopupRequested?.Invoke(this, EventArgs.Empty);
             }
-            IsCharacterListVisible = true;
-            IsAnyPopupVisible = true;
-            ShowCharacterPopupRequested?.Invoke(this, EventArgs.Empty);
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error showing load character: {ex.Message}");
+                ShowErrorPopupRequested?.Invoke(this, "Failed to load character selection. Please try again.");
+            }
         }
 
         [RelayCommand]
         private async Task LoadSelectedCharacter()
         {
-            if (SelectedCharacter == null)
+            try
             {
-                await Shell.Current.DisplayAlert("Error", "No character selected.", "OK");
-                return;
-            }
+                if (SelectedCharacter == null)
+                {
+                    ShowErrorPopupRequested?.Invoke(this, "No character selected.");
+                    return;
+                }
 
-            if (SelectedCharacter is Player player)
-            {
-                _gameStateService.SetCurrentPlayer(player);
-                Debug.WriteLine($"Current player set to: {player.Name}");
-                IsCharacterListVisible = false;
-                IsAnyPopupVisible = false;
-                await Shell.Current.GoToAsync($"//{nameof(LevelSelectView)}");
+                if (SelectedCharacter is Player player)
+                {
+                    _gameStateService.SetCurrentPlayer(player);
+                    Debug.WriteLine($"Current player set to: {player.Name}");
+                    IsCharacterListVisible = false;
+                    IsAnyPopupVisible = false;
+                    await Shell.Current.GoToAsync($"//{nameof(LevelSelectView)}");
+                }
+                else
+                {
+                    ShowErrorPopupRequested?.Invoke(this, "Selected character is not a valid player.");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Error", "Selected character is not a valid player.", "OK");
+                Debug.WriteLine($"Error loading selected character: {ex.Message}");
+                ShowErrorPopupRequested?.Invoke(this, "Failed to load the selected character. Please try again.");
             }
         }
 
         [RelayCommand]
         private void ShowOpenSettings()
         {
-            IsSettingsVisible = true;
-            IsAnyPopupVisible = true;
-            ShowSettingsPopupRequested?.Invoke(this, EventArgs.Empty);
+            try
+            {
+                IsSettingsVisible = true;
+                IsAnyPopupVisible = true;
+                ShowSettingsPopupRequested?.Invoke(this, EventArgs.Empty);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error opening settings: {ex.Message}");
+                ShowErrorPopupRequested?.Invoke(this, "Failed to open settings. Please try again.");
+            }
         }
-
 
         [RelayCommand]
         private void CancelLoadCharacter()
@@ -119,7 +159,14 @@ namespace mauiRPG.ViewModels
         [RelayCommand]
         private static void Exit()
         {
-            Application.Current?.Quit();
+            try
+            {
+                Application.Current?.Quit();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error exiting application: {ex.Message}");
+            }
         }
 
         [RelayCommand]

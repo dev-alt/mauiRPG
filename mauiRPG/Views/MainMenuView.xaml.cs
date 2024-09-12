@@ -27,7 +27,15 @@ namespace mauiRPG.Views
 
         private void OnPageLoaded(object? sender, EventArgs e)
         {
-            AnimateElements();
+            try
+            {
+                AnimateElements();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error in OnPageLoaded: {ex.Message}");
+                _ = ShowErrorPopup("An error occurred while loading the page.");
+            }
         }
 
         protected override void OnAppearing()
@@ -35,6 +43,7 @@ namespace mauiRPG.Views
             base.OnAppearing();
             _viewModel.ShowCharacterPopupRequested += OnShowCharacterPopupRequested;
             _viewModel.ShowSettingsPopupRequested += OnShowSettingsPopupRequested;
+            _viewModel.ShowErrorPopupRequested += OnShowErrorPopupRequested;
         }
 
         protected override void OnDisappearing()
@@ -42,18 +51,27 @@ namespace mauiRPG.Views
             base.OnDisappearing();
             _viewModel.ShowCharacterPopupRequested -= OnShowCharacterPopupRequested;
             _viewModel.ShowSettingsPopupRequested -= OnShowSettingsPopupRequested;
+            _viewModel.ShowErrorPopupRequested -= OnShowErrorPopupRequested;
         }
 
         private async void AnimateElements()
         {
-            var animationTasks = new[]
+            try
             {
-                FadeInBackground(),
-                ScaleUpLogo(),
-                FadeInTitle()
-            };
+                var animationTasks = new[]
+                {
+                    FadeInBackground(),
+                    ScaleUpLogo(),
+                    FadeInTitle()
+                };
 
-            await Task.WhenAll(animationTasks);
+                await Task.WhenAll(animationTasks);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error in AnimateElements: {ex.Message}");
+                await ShowErrorPopup("An error occurred while animating elements.");
+            }
         }
 
         private async Task FadeInBackground()
@@ -85,32 +103,45 @@ namespace mauiRPG.Views
 
         private async void OnShowCharacterPopupRequested(object? sender, EventArgs e)
         {
-            var characterSelectViewModel = new CharacterSelectViewModel(_characterService, _gameStateService);
-            var characterSelectPopup = new CharacterSelectPopup(characterSelectViewModel);
-            characterSelectPopup.ErrorOccurred += OnCharacterSelectErrorOccurred;
-            _currentPopup = characterSelectPopup;
-
-            var result = await ShowPopupSafely(_currentPopup);
-
-            if (result is Character selectedCharacter)
+            try
             {
-                Debug.WriteLine($"Character selected from popup: {selectedCharacter.Name}");
-                await _viewModel.LoadSelectedCharacterCommand.ExecuteAsync(selectedCharacter);
+                var characterSelectViewModel = new CharacterSelectViewModel(_characterService, _gameStateService);
+                var characterSelectPopup = new CharacterSelectPopup(characterSelectViewModel);
+                characterSelectPopup.ErrorOccurred += OnCharacterSelectErrorOccurred;
+                _currentPopup = characterSelectPopup;
+
+                var result = await ShowPopupSafely(_currentPopup);
+
+                if (result is Character selectedCharacter)
+                {
+                    Debug.WriteLine($"Character selected from popup: {selectedCharacter.Name}");
+                    await _viewModel.LoadSelectedCharacterCommand.ExecuteAsync(selectedCharacter);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error in OnShowCharacterPopupRequested: {ex.Message}");
+                await ShowErrorPopup("An error occurred while showing the character selection popup.");
             }
         }
 
         private async void OnCharacterSelectErrorOccurred(object? sender, string errorMessage)
         {
-            var errorPopup = new ErrorPopup(errorMessage);
-            await ShowPopupSafely(errorPopup);
+            await ShowErrorPopup(errorMessage);
         }
-
-
 
         private async void OnShowSettingsPopupRequested(object? sender, EventArgs e)
         {
-            _currentPopup = new SettingsSelectPopup(_settingsService);
-            await ShowPopupSafely(_currentPopup);
+            try
+            {
+                _currentPopup = new SettingsSelectPopup(_settingsService);
+                await ShowPopupSafely(_currentPopup);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error in OnShowSettingsPopupRequested: {ex.Message}");
+                await ShowErrorPopup("An error occurred while showing the settings popup.");
+            }
         }
 
         private async Task<object?> ShowPopupSafely(Popup popup)
@@ -120,7 +151,7 @@ namespace mauiRPG.Views
                 if (Application.Current?.MainPage == null)
                 {
                     Debug.WriteLine("MainPage is null");
-                    await DisplayAlert("Error", "An error occurred while loading the popup.", "OK");
+                    await ShowErrorPopup("An error occurred while loading the popup.");
                     return null;
                 }
 
@@ -130,8 +161,27 @@ namespace mauiRPG.Views
             catch (Exception ex)
             {
                 Debug.WriteLine($"Failed to show popup: {ex.Message}");
-                await DisplayAlert("Error", "An error occurred while loading the popup.", "OK");
+                await ShowErrorPopup("An error occurred while loading the popup.");
                 return null;
+            }
+        }
+
+        private async void OnShowErrorPopupRequested(object? sender, string errorMessage)
+        {
+            await ShowErrorPopup(errorMessage);
+        }
+
+        private async Task ShowErrorPopup(string errorMessage)
+        {
+            try
+            {
+                var errorPopup = new ErrorPopup(errorMessage);
+                await Application.Current?.MainPage?.ShowPopupAsync(errorPopup)!;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error showing error popup: {ex.Message}");
+                await DisplayAlert("Error", errorMessage, "OK");
             }
         }
     }
