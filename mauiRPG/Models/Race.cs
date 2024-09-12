@@ -7,8 +7,6 @@
         public int IntelligenceBonus { get; set; }
         public int DexterityBonus { get; set; }
         public int ConstitutionBonus { get; set; }
-
-        // Add any other common properties or methods here
     }
 
     public class Orc : Race
@@ -19,7 +17,6 @@
         {
             StrengthBonus = 2;
             ConstitutionBonus = 1;
-            // Set other Orc-specific bonuses or properties
         }
     }
 
@@ -29,7 +26,6 @@
 
         public Human()
         {
-            // Humans could have balanced stats
             StrengthBonus = 1;
             IntelligenceBonus = 1;
             DexterityBonus = 1;
@@ -45,7 +41,6 @@
         {
             ConstitutionBonus = 2;
             StrengthBonus = 1;
-            // Set other Dwarf-specific bonuses or properties
         }
     }
 
@@ -57,7 +52,6 @@
         {
             DexterityBonus = 2;
             IntelligenceBonus = 1;
-            // Set other Elf-specific bonuses or properties
         }
     }
 }
