@@ -191,6 +191,12 @@ public partial class CombatViewModel : ObservableObject
             item.Use(Player);
             int healthRestored = Player.CurrentHealth - previousHealth;
 
+            CombatLog.Add(new CombatLogEntryModel
+            {
+                Message = $"{Player.Name} used {item.Name} and restored {healthRestored} HP.",
+                IsPlayerAction = true
+            });
+
             await UpdateCombatLog(new CombatResult
             {
                 Attacker = Player.Name,

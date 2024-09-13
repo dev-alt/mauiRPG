@@ -9,7 +9,7 @@ namespace mauiRPG.Models
         public new int Id { get; set; }
         public Dictionary<EquipmentSlot, Equipment> EquippedItems { get; init; } = [];
         [JsonConverter(typeof(RaceConverter))] public required Race Race { get; init; }
-        public ObservableCollection<Item> Inventory { get; set; } = new();
+        public ObservableCollection<Item> Inventory { get; set; } = [];
         public int Experience { get; set; } = 0;
         public bool IsDefending { get; set; }
         public List<Quest> ActiveQuests { get; set; } = [];

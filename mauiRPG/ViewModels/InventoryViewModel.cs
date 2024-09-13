@@ -13,7 +13,7 @@ namespace mauiRPG.ViewModels
         private readonly InventoryService _inventoryService;
 
         [ObservableProperty]
-        private ObservableCollection<Item> _inventoryItems = new();
+        private ObservableCollection<Item> _inventoryItems = [];
 
         [ObservableProperty]
         private Item? _selectedItem;
@@ -36,16 +36,17 @@ namespace mauiRPG.ViewModels
             }
             else
             {
-                InventoryItems = new ObservableCollection<Item>();
+                InventoryItems = [];
             }
         }
 
         [RelayCommand]
         private void UseItem(Item item)
         {
-            if (_gameStateService.CurrentPlayer == null || item == null) return;
+            if (_gameStateService.CurrentPlayer == null) return;
 
             item.Use(_gameStateService.CurrentPlayer);
+
             if (item.Type == ItemType.Consumable)
             {
                 _inventoryService.RemoveItem(_gameStateService.CurrentPlayer.Id, item.Id);

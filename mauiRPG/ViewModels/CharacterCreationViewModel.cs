@@ -11,6 +11,7 @@ namespace mauiRPG.ViewModels
     {
         private readonly CharacterService _characterService;
         private readonly GameStateService _gameStateService;
+        private readonly InventoryService _inventoryService;
         private readonly ILogger<CharacterCreationViewModel> _logger;
 
         [ObservableProperty] private string _name = string.Empty;
@@ -28,11 +29,12 @@ namespace mauiRPG.ViewModels
         public event EventHandler<string>? ShowErrorRequested;
         public event EventHandler<string>? ShowSuccessRequested;
 
-        public CharacterCreationViewModel(CharacterService characterService, GameStateService gameStateService,
+        public CharacterCreationViewModel(CharacterService characterService, GameStateService gameStateService, InventoryService inventoryService,
             ILogger<CharacterCreationViewModel> logger)
         {
             _characterService = characterService;
             _gameStateService = gameStateService;
+            _inventoryService = inventoryService;
             _logger = logger;
             _logger.LogInformation("CharacterCreationViewModel initialized");
         }
@@ -56,6 +58,13 @@ namespace mauiRPG.ViewModels
         {
             try
             {
+                // Check if the services are not null
+                if (_characterService == null || _inventoryService == null || _gameStateService == null)
+                {
+                    throw new InvalidOperationException("One or more required services are not initialized.");
+                }
+
+                // Check for name and selected race
                 if (string.IsNullOrWhiteSpace(Name) || SelectedRace == null)
                 {
                     _logger.LogWarning("Attempted to create character with invalid input. Name: {Name}, Race: {Race}",
@@ -81,7 +90,34 @@ namespace mauiRPG.ViewModels
                     Constitution = 15
                 };
 
-                _logger.LogInformation("Player object created successfully");
+                // Check if inventory service is working correctly
+                if (_inventoryService == null)
+                {
+                    throw new InvalidOperationException("Inventory service is not initialized.");
+                }
+
+                var healthPotion = new HealthPotion
+                {
+                    Name = "Health Potion",
+                    Description = "Restores 50 health points",
+                    IconSource = "health_potion_icon.png",
+                    Id = 1,
+                    HealAmount = 50
+                };
+
+                _inventoryService.AddItem(player.Id, healthPotion);
+                _logger.LogInformation("Health potion added to player's inventory");
+
+                // Debug: Show current inventory
+                var inventoryItems = _inventoryService.GetPlayerItems(player.Id);
+                if (inventoryItems == null)
+                {
+                    _logger.LogWarning("Inventory items could not be retrieved.");
+                }
+                else
+                {
+                    _logger.LogInformation("Player inventory items: {InventoryItems}", string.Join(", ", inventoryItems.Select(item => item.Name)));
+                }
 
                 _characterService.SaveCharacter(player);
                 _logger.LogInformation("Player saved successfully");
@@ -92,6 +128,14 @@ namespace mauiRPG.ViewModels
                 ShowSuccessRequested?.Invoke(this,
                     "Huzzah! Thy character has been forged in the annals of legend. May thy quest be glorious!");
 
+                // Check if Shell.Current is null before using it
+                if (Shell.Current == null)
+                {
+                    _logger.LogError("Shell.Current is null. Cannot navigate.");
+                    ShowErrorRequested?.Invoke(this, "Navigation error: Shell.Current is not initialized.");
+                    return;
+                }
+
                 await Shell.Current.GoToAsync("///LevelSelect");
             }
             catch (Exception ex)
@@ -101,7 +145,8 @@ namespace mauiRPG.ViewModels
             }
         }
 
-        private int GenerateUniqueId()
+
+        private static int GenerateUniqueId()
         {
             int uniqueId = (int)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds;
             uniqueId += new Random().Next(1000, 9999);

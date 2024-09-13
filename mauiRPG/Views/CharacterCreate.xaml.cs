@@ -10,10 +10,10 @@ public partial class CharacterCreate : ContentPage
 
     private readonly CharacterCreationViewModel _viewModel;
 
-    public CharacterCreate(CharacterService characterService, GameStateService gameStateService, ILogger<CharacterCreationViewModel> logger)
+    public CharacterCreate(CharacterService characterService, GameStateService gameStateService, InventoryService inventoryService, ILogger<CharacterCreationViewModel> logger)
     {
         InitializeComponent();
-        _viewModel = new CharacterCreationViewModel(characterService, gameStateService, logger);
+        _viewModel = new CharacterCreationViewModel(characterService, gameStateService,inventoryService, logger);
         _viewModel.ShowErrorRequested += OnShowErrorRequested;
         _viewModel.ShowSuccessRequested += OnShowSuccessRequested;
         BindingContext = _viewModel;
