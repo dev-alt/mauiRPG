@@ -36,19 +36,6 @@
                    Grid.Column="1"/>
         </Grid>
 
-        <!-- Player Info -->
-        <Frame Grid.Row="1" BackgroundColor="#3A2F0B" BorderColor="#8B4513" Padding="15" CornerRadius="10">
-            <VerticalStackLayout Spacing="10">
-                <Label Text="{Binding CurrentPlayer.Name, StringFormat='Brave {0}, choose thy quest!'}"
-                       Style="{StaticResource MedievalLabelStyle}"
-                       FontSize="22"
-                       HorizontalOptions="Center"/>
-                <Button Text="View Hero's Chronicle"
-                        Command="{Binding ViewPlayerInfoCommand}"
-                        Style="{StaticResource MedievalButtonStyle}"
-                        HorizontalOptions="Center"/>
-            </VerticalStackLayout>
-        </Frame>
 
         <!-- Quest List -->
         <ScrollView Grid.Row="2">

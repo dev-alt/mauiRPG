@@ -31,7 +31,6 @@ namespace mauiRPG
             builder.Services.AddSingleton<InventoryService>();
             builder.Services.AddSingleton<ISettingsService, SettingsService>();
             builder.Services.AddTransient<IQuestService, QuestService>();
-            builder.Services.AddTransient<IDialogService, DialogService>();
             builder.Services.AddTransient<CombatManagerService>();
             builder.Services.AddSingleton<IQuestRepository, QuestRepository>();
 

@@ -16,7 +16,6 @@ namespace mauiRPG.ViewModels
     {
         private readonly GameStateService _gameStateService;
         private readonly IQuestService _questService;
-        private readonly IDialogService _dialogService;
         private readonly ILogger<QuestBoardViewModel> _logger;
 
         [ObservableProperty]
@@ -36,12 +35,10 @@ namespace mauiRPG.ViewModels
         public QuestBoardViewModel(
             GameStateService gameStateService,
             IQuestService questService,
-            IDialogService dialogService,
             ILogger<QuestBoardViewModel> logger)
         {
             _gameStateService = gameStateService ?? throw new ArgumentNullException(nameof(gameStateService));
             _questService = questService ?? throw new ArgumentNullException(nameof(questService));
-            _dialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             CurrentPlayer = _gameStateService.CurrentPlayer;
@@ -76,30 +73,7 @@ namespace mauiRPG.ViewModels
                 IsLoading = false;
             }
         }
-
-        [RelayCommand]
-        private async Task ViewPlayerInfo()
-        {
-            try
-            {
-                if (CurrentPlayer == null)
-                {
-                    _logger.LogWarning("Attempted to view player info with no current player");
-                    await ShowErrorPopupAsync("Error", "No player information available.");
-                    return;
-                }
-
-                _logger.LogInformation("Viewing player info for: {PlayerName}", CurrentPlayer.Name);
-                await _dialogService.ShowPlayerInfo(CurrentPlayer);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error viewing player info");
-                await ShowErrorPopupAsync("Error", "Failed to display player information. Please try again.");
-            }
-        }
-
-
+        
         [RelayCommand]
         private void SelectQuest(Quest quest)
         {

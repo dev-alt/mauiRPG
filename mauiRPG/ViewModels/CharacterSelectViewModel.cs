@@ -28,7 +28,11 @@ namespace mauiRPG.ViewModels
             _gameStateService = gameStateService ?? throw new ArgumentNullException(nameof(gameStateService));
             LoadCharacters();
         }
-
+        [RelayCommand]
+        private void SelectCharacter(Character character)
+        {
+            SelectedCharacter = character;
+        }
         private void LoadCharacters()
         {
             try
@@ -82,30 +86,18 @@ namespace mauiRPG.ViewModels
         }
 
         [RelayCommand]
-        private void DeleteCharacter()
+        private void DeleteCharacter(Character character)
         {
-            try
-            {
-                if (SelectedCharacter == null)
-                {
-                    ErrorOccurred?.Invoke(this, "Please select a character to delete.");
-                    return;
-                }
+            SelectCharacter(character);
 
-                if (_characterService.DeleteCharacter(SelectedCharacter.Name))
-                {
-                    Characters.Remove(SelectedCharacter);
-                    SelectedCharacter = null;
-                }
-                else
-                {
-                    ErrorOccurred?.Invoke(this, "Failed to delete the character. Please try again.");
-                }
-            }
-            catch (Exception ex)
+            if (SelectedCharacter != null && _characterService.DeleteCharacter(SelectedCharacter.Name))
             {
-                Debug.WriteLine($"Error deleting character: {ex.Message}");
-                ErrorOccurred?.Invoke(this, "An error occurred while deleting the character. Please try again.");
+                Characters.Remove(SelectedCharacter);
+                SelectedCharacter = null;
+            }
+            else
+            {
+                ErrorOccurred?.Invoke(this, "Failed to delete the character. Please try again.");
             }
         }
 

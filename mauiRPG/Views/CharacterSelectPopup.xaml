@@ -19,7 +19,7 @@
         </Style>
         <Style x:Key="CharacterItemStyle" TargetType="Frame">
             <Setter Property="BackgroundColor" Value="#3A2F0B"/>
-            <Setter Property="BorderColor" Value="#FFD700"/>
+            <Setter Property="BorderColor" Value="#8B4513"/>
             <Setter Property="CornerRadius" Value="0"/>
             <Setter Property="Padding" Value="10,5"/>
             <Setter Property="Margin" Value="0,5"/>
@@ -44,11 +44,22 @@
 
             <ScrollView Grid.Row="1">
                 <CollectionView ItemsSource="{Binding Characters}"
-                                SelectionMode="Single"
-                                SelectedItem="{Binding SelectedCharacter, Mode=TwoWay}">
+                                SelectionMode="None">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <Frame Style="{StaticResource CharacterItemStyle}">
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer 
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CharacterSelectViewModel}}, Path=SelectCharacterCommand}"
+                                        CommandParameter="{Binding .}" />
+                                </Frame.GestureRecognizers>
+                                <Frame.Triggers>
+                                    <DataTrigger TargetType="Frame"
+                                                 Binding="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CharacterSelectViewModel}}, Path=SelectedCharacter}"
+                                                 Value="{Binding .}">
+                                        <Setter Property="BorderColor" Value="#FFD700" />
+                                    </DataTrigger>
+                                </Frame.Triggers>
                                 <Grid ColumnDefinitions="Auto,*,Auto">
                                     <Image Source="character_icon.png" 
                                            WidthRequest="40" 
@@ -63,6 +74,7 @@
                                     <Button Grid.Column="2" 
                                             Text="🗑️" 
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CharacterSelectViewModel}}, Path=DeleteCharacterCommand}"
+                                            CommandParameter="{Binding .}"
                                             Style="{StaticResource MedievalButtonStyle}"
                                             BackgroundColor="Transparent"
                                             BorderColor="Transparent"

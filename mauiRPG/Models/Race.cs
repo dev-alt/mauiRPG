@@ -15,8 +15,8 @@
 
         public Orc()
         {
-            StrengthBonus = 2;
-            ConstitutionBonus = 1;
+            StrengthBonus = 6;
+            ConstitutionBonus = 3;
         }
     }
 
@@ -40,7 +40,7 @@
         public Dwarf()
         {
             ConstitutionBonus = 2;
-            StrengthBonus = 1;
+            StrengthBonus = 4;
         }
     }
 
@@ -50,7 +50,7 @@
 
         public Elf()
         {
-            DexterityBonus = 2;
+            DexterityBonus = 4;
             IntelligenceBonus = 1;
         }
     }
