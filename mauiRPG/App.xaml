@@ -1,7 +1,8 @@
-﻿<?xml version = "1.0" encoding = "UTF-8" ?>
+﻿<?xml version="1.0" encoding="UTF-8" ?>
 <Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:mauiRPG"
+             xmlns:converters="clr-namespace:mauiRPG.Converters"
              x:Class="mauiRPG.App">
     <Application.Resources>
         <ResourceDictionary>
@@ -21,6 +22,10 @@
                     <Color x:Key="Gray900">#101010</Color>
                     <Color x:Key="White">White</Color>
                     <Color x:Key="Black">Black</Color>
+
+                    <!-- Add converters here -->
+                    <converters:EqualityConverter x:Key="EqualityConverter"/>
+                    <converters:NullToBooleanConverter x:Key="NullToBooleanConverter"/>
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

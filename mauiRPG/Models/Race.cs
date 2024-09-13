@@ -1,30 +1,28 @@
 ﻿namespace mauiRPG.Models
 {
-    public abstract class Race
+    public abstract class Race(string name, string description)
     {
-        public abstract string Name { get; }
-        public int StrengthBonus { get; set; }
-        public int IntelligenceBonus { get; set; }
-        public int DexterityBonus { get; set; }
-        public int ConstitutionBonus { get; set; }
-    }
+        public string Name { get; init; } = name;
+        public string Description { get; init; } = description;
+        public int StrengthBonus { get; init; }
+        public int IntelligenceBonus { get; init; }
+        public int DexterityBonus { get; init; }
+        public int ConstitutionBonus { get; init; }
 
-    public class Orc : Race
-    {
-        public override string Name => "Orc";
-
-        public Orc()
+        public string GetBonusSummary()
         {
-            StrengthBonus = 6;
-            ConstitutionBonus = 3;
+            var bonuses = new List<string>();
+            if (StrengthBonus != 0) bonuses.Add($"Strength +{StrengthBonus}");
+            if (IntelligenceBonus != 0) bonuses.Add($"Intelligence +{IntelligenceBonus}");
+            if (DexterityBonus != 0) bonuses.Add($"Dexterity +{DexterityBonus}");
+            if (ConstitutionBonus != 0) bonuses.Add($"Constitution +{ConstitutionBonus}");
+            return string.Join(", ", bonuses);
         }
     }
 
     public class Human : Race
     {
-        public override string Name => "Human";
-
-        public Human()
+        public Human() : base("Human", "Versatile and adaptable, humans excel in various roles.")
         {
             StrengthBonus = 1;
             IntelligenceBonus = 1;
@@ -33,25 +31,30 @@
         }
     }
 
+    public class Elf : Race
+    {
+        public Elf() : base("Elf", "Graceful and long-lived, elves excel in magic and archery.")
+        {
+            DexterityBonus = 4;
+            IntelligenceBonus = 1;
+        }
+    }
+
     public class Dwarf : Race
     {
-        public override string Name => "Dwarf";
-
-        public Dwarf()
+        public Dwarf() : base("Dwarf", "Stout and hardy, dwarves are known for their craftsmanship and resilience.")
         {
             ConstitutionBonus = 2;
             StrengthBonus = 4;
         }
     }
 
-    public class Elf : Race
+    public class Orc : Race
     {
-        public override string Name => "Elf";
-
-        public Elf()
+        public Orc() : base("Orc", "Fierce warriors with unmatched strength and endurance.")
         {
-            DexterityBonus = 4;
-            IntelligenceBonus = 1;
+            StrengthBonus = 6;
+            ConstitutionBonus = 3;
         }
     }
 }

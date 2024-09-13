@@ -82,36 +82,47 @@
                             AlignItems="Center">
                     <BindableLayout.ItemTemplate>
                         <DataTemplate>
-                            <Frame Style="{StaticResource RaceSelectionFrameStyle}" Margin="10">
-                                <VisualStateManager.VisualStateGroups>
-                                    <VisualStateGroup Name="CommonStates">
-                                        <VisualState Name="Normal" />
-                                        <VisualState Name="Selected">
-                                            <VisualState.Setters>
-                                                <Setter Property="BorderColor" Value="#FFD700" />
-                                                <Setter Property="Scale" Value="1.1" />
-                                                <Setter Property="TranslationY" Value="-5" />
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                    </VisualStateGroup>
-                                </VisualStateManager.VisualStateGroups>
-                                <VerticalStackLayout Spacing="5">
-                                    <Image Source="{Binding Name, StringFormat='race_{0}.png'}"
-                                           HeightRequest="60" 
-                                           Aspect="AspectFit"/>
-                                    <Label Text="{Binding Name}"
-                                           Style="{StaticResource MedievalLabelStyle}"
-                                           FontSize="16"/>
-                                </VerticalStackLayout>
-                                <Frame.GestureRecognizers>
+                            <Grid WidthRequest="120" HeightRequest="160" Margin="10">
+                                <Frame Style="{StaticResource RaceSelectionFrameStyle}">
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroup Name="CommonStates">
+                                            <VisualState Name="Normal" />
+                                            <VisualState Name="Selected">
+                                                <VisualState.Setters>
+                                                    <Setter Property="BackgroundColor" Value="#3E3E5E" />
+                                                    <Setter Property="BorderColor" Value="#FFD700" />
+                                                    <Setter Property="Scale" Value="1.1" />
+                                                    <Setter Property="TranslationY" Value="-5" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                        </VisualStateGroup>
+                                    </VisualStateManager.VisualStateGroups>
+                                    <VerticalStackLayout Spacing="5">
+                                        <Image Source="{Binding Name, StringFormat='race_{0}.png'}"
+                                               HeightRequest="60" 
+                                               Aspect="AspectFit"/>
+                                        <Label Text="{Binding Name}"
+                                               Style="{StaticResource MedievalLabelStyle}"
+                                               FontSize="16"/>
+                                    </VerticalStackLayout>
+                                </Frame>
+                                <Image Source="scroll_border.png" 
+                                       Aspect="Fill" 
+                                       IsVisible="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectedRace, Converter={StaticResource EqualityConverter}, ConverterParameter={Binding}}"/>
+                                <Grid.GestureRecognizers>
                                     <TapGestureRecognizer 
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectRaceCommand}"
                                         CommandParameter="{Binding}" />
-                                </Frame.GestureRecognizers>
-                            </Frame>
+                                </Grid.GestureRecognizers>
+                            </Grid>
                         </DataTemplate>
                     </BindableLayout.ItemTemplate>
                 </FlexLayout>
+                <Label Text="{Binding SelectedRace.Description}" 
+                       Style="{StaticResource MedievalLabelStyle}" 
+                       FontSize="16" 
+                       Margin="0,20,0,0"
+                       IsVisible="{Binding SelectedRace, Converter={StaticResource NullToBooleanConverter}}"/>
 
                 <Button Text="Embark on your Quest"
                         Command="{Binding CreateCharacterCommand}"
