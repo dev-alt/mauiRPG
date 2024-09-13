@@ -36,11 +36,6 @@
                        FontSize="24" 
                        FontAttributes="Bold"/>
 
-                <Label Text="A Mystical Mishap Has Occurred"
-                       Style="{StaticResource MedievalLabelStyle}"
-                       FontSize="18"
-                       FontAttributes="Italic"/>
-
                 <Label x:Name="ErrorMessageLabel"
                        Style="{StaticResource MedievalLabelStyle}"
                        FontSize="16"

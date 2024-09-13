@@ -6,7 +6,6 @@
              x:Class="mauiRPG.Views.LevelSelectView"
              x:DataType="viewmodels:StageSelectViewModel"
              BackgroundColor="#2C2416">
-
     <ContentPage.Resources>
         <Style x:Key="MedievalLabelStyle" TargetType="Label">
             <Setter Property="FontFamily" Value="MedievalSharp"/>
@@ -20,15 +19,22 @@
             <Setter Property="Padding" Value="10,5"/>
         </Style>
     </ContentPage.Resources>
+    <Grid RowDefinitions="Auto,Auto,Auto,*" Padding="20">
+        <Grid ColumnDefinitions="*,Auto">
+            <Label Text="Choose Thy Quest" 
+                   Style="{StaticResource MedievalLabelStyle}"
+                   FontSize="32" 
+                   HorizontalOptions="Center" 
+                   VerticalOptions="Center"
+                   Grid.Column="0"/>
+            <Button Text="Quest Board"
+                    Command="{Binding GoToQuestBoardCommand}"
+                    Style="{StaticResource MedievalButtonStyle}"
+                    HorizontalOptions="End"
+                    Grid.Column="1"/>
+        </Grid>
 
-    <Grid RowDefinitions="Auto,Auto,*" Padding="20">
-        <Label Text="Choose Thy Quest" 
-               Style="{StaticResource MedievalLabelStyle}"
-               FontSize="32" 
-               HorizontalOptions="Center" 
-               Margin="0,0,0,20"/>
-
-        <Frame Grid.Row="1" BackgroundColor="#3A2F0B" BorderColor="#8B4513" Padding="10" Margin="0,0,0,20">
+        <Frame Grid.Row="1" BackgroundColor="#3A2F0B" BorderColor="#8B4513" Padding="10" Margin="0,20,0,20">
             <VerticalStackLayout Spacing="10">
                 <Label Text="{Binding CurrentPlayer.Name, StringFormat='Hero: {0}'}"
                        Style="{StaticResource MedievalLabelStyle}"
@@ -41,7 +47,7 @@
             </VerticalStackLayout>
         </Frame>
 
-        <CollectionView Grid.Row="2" 
+        <CollectionView Grid.Row="3" 
                         ItemsSource="{Binding Levels}"
                         SelectionMode="None">
             <CollectionView.ItemTemplate>

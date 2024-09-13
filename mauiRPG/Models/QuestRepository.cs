@@ -1,6 +1,4 @@
-﻿using mauiRPG.Models;
-
-namespace mauiRPG.Services;
+﻿namespace mauiRPG.Models;
 
 public interface IQuestRepository
 {

@@ -13,6 +13,7 @@ namespace mauiRPG.ViewModels
     {
         private readonly GameStateService _gameStateService;
         private readonly ILogger<PlayerInfoPopup> _logger;
+        private readonly Page _currentPage;
 
         [ObservableProperty]
         private Player? _currentPlayer;
@@ -20,14 +21,13 @@ namespace mauiRPG.ViewModels
         [ObservableProperty]
         private ObservableCollection<Level> _levels = [];
 
-        public StageSelectViewModel(GameStateService gameStateService, ILogger<PlayerInfoPopup> logger)
+        public StageSelectViewModel(GameStateService gameStateService, ILogger<PlayerInfoPopup> logger, Page currentPage)
         {
             _gameStateService = gameStateService;
             _logger = logger;
-
+            _currentPage = currentPage;
             _logger.LogInformation("StageSelectViewModel constructor called");
             _logger.LogInformation("GameStateService is {GameStateServiceStatus}", "not null");
-
             LoadData();
         }
 
@@ -36,7 +36,6 @@ namespace mauiRPG.ViewModels
         {
             CurrentPlayer = _gameStateService.CurrentPlayer;
             _logger.LogInformation("CurrentPlayer is {CurrentPlayerStatus}", $"set to {CurrentPlayer?.Name ?? "null"}");
-
             InitializeLevels();
         }
 
@@ -59,20 +58,18 @@ namespace mauiRPG.ViewModels
         private async Task ViewPlayerInfo()
         {
             _logger.LogInformation("ViewPlayerInfo called");
-
             _logger.LogInformation("CurrentPlayer: Name={Name}, Race={Race}",
                 CurrentPlayer?.Name ?? "null",
                 CurrentPlayer?.Race?.Name ?? "null");
-
             try
             {
                 var popup = new PlayerInfoPopup(CurrentPlayer!, _logger);
-                await Shell.Current.ShowPopupAsync(popup);
+                await _currentPage.ShowPopupAsync(popup);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error creating or showing PlayerInfoPopup");
-                await Shell.Current.DisplayAlert("Error", "Unable to display player information", "OK");
+                await ShowErrorPopup("Error", "Unable to display player information");
             }
         }
 
@@ -86,8 +83,28 @@ namespace mauiRPG.ViewModels
             }
             else
             {
-                await Shell.Current.DisplayAlert("Locked", $"Level {level.Number} is locked!", "OK");
+                await ShowErrorPopup("Locked", $"Level {level.Number} is locked!");
             }
+        }
+
+        [RelayCommand]
+        private async Task GoToQuestBoard()
+        {
+            try
+            {
+                await Shell.Current.GoToAsync("///QuestBoard");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error navigating to Quest Board");
+                await ShowErrorPopup("Error", "Unable to navigate to the Quest Board. Please try again.");
+            }
+        }
+
+        private async Task ShowErrorPopup(string title, string message)
+        {
+            var errorPopup = new ErrorPopup($"{title}\n\n{message}");
+            await _currentPage.ShowPopupAsync(errorPopup);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui;
+using mauiRPG.Models;
 using mauiRPG.Services;
 using mauiRPG.ViewModels;
 using mauiRPG.Views;
@@ -31,9 +32,8 @@ namespace mauiRPG
             builder.Services.AddSingleton<ISettingsService, SettingsService>();
             builder.Services.AddTransient<IQuestService, QuestService>();
             builder.Services.AddTransient<IDialogService, DialogService>();
-
-            // Add CombatManagerService
             builder.Services.AddTransient<CombatManagerService>();
+            builder.Services.AddSingleton<IQuestRepository, QuestRepository>();
 
             // Register ViewModels
             builder.Services.AddTransient<MainViewModel>();

@@ -7,13 +7,10 @@ namespace mauiRPG.Converters
     {
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            if (value is int intValue && parameter is string stringParameter)
+            if (value is not int intValue || parameter is not string stringParameter) return false;
+            if (int.TryParse(stringParameter, out int compareValue))
             {
-                if (int.TryParse(stringParameter, out int compareValue))
-                {
-                    Debug.WriteLine($"Converting: intValue = {intValue}, compareValue = {compareValue}");
-                    return intValue == compareValue;
-                }
+                return intValue == compareValue;
             }
             return false;
         }

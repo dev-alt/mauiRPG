@@ -1,18 +1,30 @@
-using mauiRPG.Services;
 using mauiRPG.ViewModels;
 
 namespace mauiRPG.Views;
 
 public partial class QuestBoardView : ContentPage
 {
-    public QuestBoardView(GameStateService gameStateService, IQuestService questService, IDialogService dialogService)
+    public QuestBoardView(QuestBoardViewModel viewModel)
     {
         InitializeComponent();
-        BindingContext = new QuestBoardViewModel(gameStateService, questService, dialogService, this);
+        BindingContext = viewModel;
     }
 
     protected override void OnAppearing()
     {
         base.OnAppearing();
+        if (BindingContext is QuestBoardViewModel viewModel)
+        {
+            viewModel.OnAppearing();
+        }
+    }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        if (BindingContext is QuestBoardViewModel viewModel)
+        {
+            viewModel.OnDisappearing();
+        }
     }
 }
