@@ -66,7 +66,7 @@ namespace mauiRPG.ViewModels
         {
             try
             {
-                await Shell.Current.GoToAsync(nameof(CharacterSelect));
+                await Shell.Current.GoToAsync(nameof(CharacterCreate));
             }
             catch (Exception ex)
             {

@@ -60,6 +60,9 @@
 	<ItemGroup>
 	  <None Remove="Resources\AppIcon\icon.svg" />
 	  <None Remove="Resources\Fonts\MedievalSharp-Regular.ttf" />
+	  <None Remove="Resources\Images\artifact_quest.png" />
+	  <None Remove="Resources\Images\dragon_quest.png" />
+	  <None Remove="Resources\Images\escort_quest.png" />
 	  <None Remove="Resources\Images\level2.jpg" />
 	</ItemGroup>
 
@@ -77,6 +80,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Views\CharacterCreate.xaml.cs">
+	    <DependentUpon>CharacterCreate.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\InventoryPopup.xaml.cs">
 	    <DependentUpon>InventoryPopup.xaml</DependentUpon>
 	  </Compile>
@@ -86,7 +92,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiXaml Update="Views\CharacterSelect.xaml">
+	  <MauiXaml Update="Views\CharacterCreate.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\CharacterSelectPopup.xaml">

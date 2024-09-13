@@ -5,12 +5,12 @@ using Microsoft.Extensions.Logging;
 
 namespace mauiRPG.Views;
 
-public partial class CharacterSelect : ContentPage
+public partial class CharacterCreate : ContentPage
 {
 
     private readonly CharacterCreationViewModel _viewModel;
 
-    public CharacterSelect(CharacterService characterService, GameStateService gameStateService, ILogger<CharacterCreationViewModel> logger)
+    public CharacterCreate(CharacterService characterService, GameStateService gameStateService, ILogger<CharacterCreationViewModel> logger)
     {
         InitializeComponent();
         _viewModel = new CharacterCreationViewModel(characterService, gameStateService, logger);

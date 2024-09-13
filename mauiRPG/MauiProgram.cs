@@ -46,7 +46,7 @@ namespace mauiRPG
 
             // Register Views
             builder.Services.AddTransient<MainMenuView>();
-            builder.Services.AddTransient<CharacterSelect>();
+            builder.Services.AddTransient<CharacterCreate>();
             builder.Services.AddTransient<LevelSelectView>();
             builder.Services.AddTransient<LevelPage>();
             builder.Services.AddTransient<QuestBoardView>();

@@ -33,7 +33,7 @@ namespace mauiRPG
             {
                 { nameof(MainMenuView), typeof(MainMenuView) },
                 { nameof(LevelSelectView), typeof(LevelSelectView) },
-                { nameof(CharacterSelect), typeof(CharacterSelect) },
+                { nameof(CharacterCreate), typeof(CharacterCreate) },
                 { nameof(QuestBoardView), typeof(QuestBoardView) },
                 { nameof(LevelPage), typeof(LevelPage) }
             };
