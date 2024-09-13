@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:mauiRPG.ViewModels"
              x:Class="mauiRPG.Views.MainMenuView"
-             Title="Realm of mauiRPG">
+             Title="Realm of the Forgotten Crown">
 
     <ContentPage.Resources>
         <Style x:Key="MenuButtonStyle" TargetType="Button">
