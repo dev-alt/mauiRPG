@@ -1,38 +1,37 @@
 ﻿using mauiRPG.Models;
+using System.Collections.ObjectModel;
 
 namespace mauiRPG.Services
 {
     public class InventoryService
     {
-        private readonly Dictionary<int, List<Item>> _playerInventories = [];
+        private readonly Dictionary<int, ObservableCollection<Item>> _playerInventories = [];
 
-        public List<Item> GetPlayerItems(int playerId)
+        public ObservableCollection<Item> GetPlayerItems(int playerId)
         {
             if (_playerInventories.TryGetValue(playerId, out var items))
             {
                 return items;
             }
-            return [];
+            var newInventory = new ObservableCollection<Item>();
+            _playerInventories[playerId] = newInventory;
+            return newInventory;
         }
 
         public void AddItem(int playerId, Item item)
         {
-            if (!_playerInventories.TryGetValue(playerId, out List<Item>? value))
-            {
-                value = [];
-                _playerInventories[playerId] = value;
-            }
-
-            value.Add(item);
+            var items = GetPlayerItems(playerId);
+            items.Add(item);
         }
 
         public void RemoveItem(int playerId, int itemId)
         {
-            if (_playerInventories.TryGetValue(playerId, out var items))
+            var items = GetPlayerItems(playerId);
+            var itemToRemove = items.FirstOrDefault(item => item.Id == itemId);
+            if (itemToRemove != null)
             {
-                items.RemoveAll(item => item.Id == itemId);
+                items.Remove(itemToRemove);
             }
         }
-
     }
 }

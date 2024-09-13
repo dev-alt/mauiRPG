@@ -97,7 +97,7 @@ public partial class CombatViewModel : ObservableObject
     [RelayCommand]
     private async Task OpenInventoryAsync()
     {
-        var inventoryViewModel = new InventoryViewModel(_gameStateService);
+        var inventoryViewModel = new InventoryViewModel(_gameStateService, _inventoryService);
         var inventoryPopup = new InventoryPopup(inventoryViewModel);
         await Shell.Current.ShowPopupAsync(inventoryPopup);
     }

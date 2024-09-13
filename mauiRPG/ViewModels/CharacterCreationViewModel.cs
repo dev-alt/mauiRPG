@@ -13,11 +13,9 @@ namespace mauiRPG.ViewModels
         private readonly GameStateService _gameStateService;
         private readonly ILogger<CharacterCreationViewModel> _logger;
 
-        [ObservableProperty]
-        private string _name = string.Empty;
+        [ObservableProperty] private string _name = string.Empty;
 
-        [ObservableProperty]
-        private Race? _selectedRace;
+        [ObservableProperty] private Race? _selectedRace;
 
         public ObservableCollection<Race> Races { get; } =
         [
@@ -30,7 +28,8 @@ namespace mauiRPG.ViewModels
         public event EventHandler<string>? ShowErrorRequested;
         public event EventHandler<string>? ShowSuccessRequested;
 
-        public CharacterCreationViewModel(CharacterService characterService, GameStateService gameStateService, ILogger<CharacterCreationViewModel> logger)
+        public CharacterCreationViewModel(CharacterService characterService, GameStateService gameStateService,
+            ILogger<CharacterCreationViewModel> logger)
         {
             _characterService = characterService;
             _gameStateService = gameStateService;
@@ -59,8 +58,10 @@ namespace mauiRPG.ViewModels
             {
                 if (string.IsNullOrWhiteSpace(Name) || SelectedRace == null)
                 {
-                    _logger.LogWarning("Attempted to create character with invalid input. Name: {Name}, Race: {Race}", Name, SelectedRace?.Name);
-                    ShowErrorRequested?.Invoke(this, "Brave adventurer, thy quest cannot begin without a name and chosen lineage. Please provide both to forge thy legend.");
+                    _logger.LogWarning("Attempted to create character with invalid input. Name: {Name}, Race: {Race}",
+                        Name, SelectedRace?.Name);
+                    ShowErrorRequested?.Invoke(this,
+                        "Brave adventurer, thy quest cannot begin without a name and chosen lineage. Please provide both to forge thy legend.");
                     return;
                 }
 
@@ -68,6 +69,7 @@ namespace mauiRPG.ViewModels
 
                 var player = new Player
                 {
+                    Id = GenerateUniqueId(),
                     Name = Name,
                     Race = SelectedRace,
                     Level = 1,
@@ -87,7 +89,8 @@ namespace mauiRPG.ViewModels
                 _gameStateService.SetCurrentPlayer(player);
                 _logger.LogInformation("Current player set in GameStateService");
 
-                ShowSuccessRequested?.Invoke(this, "Huzzah! Thy character has been forged in the annals of legend. May thy quest be glorious!");
+                ShowSuccessRequested?.Invoke(this,
+                    "Huzzah! Thy character has been forged in the annals of legend. May thy quest be glorious!");
 
                 await Shell.Current.GoToAsync("///LevelSelect");
             }
@@ -96,6 +99,13 @@ namespace mauiRPG.ViewModels
                 _logger.LogError(ex, "Error creating character");
                 ShowErrorRequested?.Invoke(this, $"An error occurred while creating your character: {ex.Message}");
             }
+        }
+
+        private int GenerateUniqueId()
+        {
+            int uniqueId = (int)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds;
+            uniqueId += new Random().Next(1000, 9999);
+            return uniqueId;
         }
     }
 }
